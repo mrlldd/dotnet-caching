@@ -12,12 +12,12 @@ namespace mrlldd.Caching.Loaders
     public interface ICachingLoader<in TArgs, TResult> : ICaching<TResult>
     {
         /// <summary>
-        /// The method used for getting (if cached) or loading the objects of <see cref="TResult"/> type.
+        /// The method used for getting (if cached) or loading the objects of result type.
         /// </summary>
         /// <param name="args">The argument.</param>
         /// <param name="omitCacheOnLoad">The boolean that indicates if cache should be omitted on getting (means there should be only load and caching).</param>
         /// <param name="token">The cancellation token.</param>
-        /// <returns>The <see cref="Task{TResult}"/> that returns the <see cref="TResult"/>.</returns>
+        /// <returns>The <see cref="Task{TResult}"/> that returns the object of result type.</returns>
         Task<TResult> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
     }
 }

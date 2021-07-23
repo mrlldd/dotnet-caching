@@ -41,11 +41,11 @@ namespace mrlldd.Caching.Loaders
             };
 
         /// <summary>
-        /// The abstract method for loading of objects of type <see cref="TResult"/>.
+        /// The abstract method for loading of objects of result type.
         /// </summary>
         /// <param name="args">The arguments.</param>
         /// <param name="token">The cancellation token.</param>
-        /// <returns>The <see cref="Task{TResult}"/> that returns <see cref="TResult"/></returns>
+        /// <returns>The <see cref="Task{TResult}"/> that returns object of result type.</returns>
         protected abstract Task<TResult> LoadAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>

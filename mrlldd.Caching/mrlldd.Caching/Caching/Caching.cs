@@ -57,7 +57,7 @@ namespace mrlldd.Caching.Caching
 
         // ReSharper disable once MemberCanBeProtected.Global
         /// <summary>
-        /// A method for storing <see cref="data"/> to cache.
+        /// A method for storing data to cache.
         /// </summary>
         /// <param name="data">The data to be stored in cache.</param>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
@@ -93,7 +93,7 @@ namespace mrlldd.Caching.Caching
         /// </summary>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <param name="token">The cancellation token.</param>
-        /// <returns>The <see cref="Task{T}"/> that returns <see cref="T"/> or null.</returns>
+        /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
         protected async Task<T> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
         {
             var key = CacheKeyFactory(keySuffix);

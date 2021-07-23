@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>mrlldd.Caching</name>
+    </assembly>
+    <members>
+        <member name="T:mrlldd.Caching.Caches.Cache`1">
+            <summary>
+            The base class for implementing caches.
+            </summary>
+            <typeparam name="T">The cached objects type.</typeparam>
+        </member>
+        <member name="P:mrlldd.Caching.Caches.Cache`1.DefaultKeySuffix">
+            <summary>
+            The default key suffix for given cache type.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.Cache`1.SetAsync(`0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:mrlldd.Caching.Caches.Cache`1.GetAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:mrlldd.Caching.Caches.ICache`1">
+            <summary>
+            The base interface for implementing caches.
+            </summary>
+            <typeparam name="T">The cached objects type.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.SetAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            The method used for performing a caching.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.GetAsync(System.Threading.CancellationToken)">
+            <summary>
+            The method used for retrieving data from cache.
+            </summary>
+            <param name="token">The cancellation token.</param>
+            <returns>The cached data.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Caches.ICacheProvider">
+            <summary>
+            The service used for providing caches.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICacheProvider.Get``1">
+            <summary>
+            The method used to get a cache.
+            </summary>
+            <typeparam name="T">The type of stored object in cache.</typeparam>
+            <returns>The cache.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Caching.Caching`1">
+            <summary>
+            The base class for implementing caching utilities.
+            </summary>
+            <typeparam name="T">The cached objects type.</typeparam>
+        </member>
+        <member name="P:mrlldd.Caching.Caching.Caching`1.Logger">
+            <summary>
+            The logger.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Caching.Caching`1.MemoryCacheOptions">
+            <summary>
+            The options used to set up the memory cache for given object type.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Caching.Caching`1.DistributedCacheOptions">
+            <summary>
+            The options used to set up the distributed cache for given object type.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Caching.Caching`1.CacheKey">
+            <summary>
+            The global cache key for given object type.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caching.Caching`1.Populate(Microsoft.Extensions.Caching.Memory.IMemoryCache,Microsoft.Extensions.Caching.Distributed.IDistributedCache,Microsoft.Extensions.Logging.ILogger{mrlldd.Caching.Caching.ICaching{`0}})">
+            <inheritdoc />
+        </member>
+        <member name="M:mrlldd.Caching.Caching.Caching`1.PerformCachingAsync(`0,System.String,System.Threading.CancellationToken)">
+            <summary>
+            A method for storing data to cache.
+            </summary>
+            <param name="data">The data to be stored in cache.</param>
+            <param name="keySuffix">The suffix extension to generated cache key.</param>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caching.Caching`1.TryGetFromCacheAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            A method for retrieving cached data.
+            </summary>
+            <param name="keySuffix">The suffix extension to generated cache key.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1"/> that returns data or null.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Caching.Caching`1.CacheKeyPrefixesFactory">
+            <summary>
+            The method used for creating additional global cache keys prefixes in order to make them more unique.
+            </summary>
+            <returns>The <see cref="T:System.Collections.Generic.IEnumerable`1"/> of prefixes.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Caching.CachingOptions">
+            <summary>
+            The class that represents a caching options used to set up the caches.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Caching.CachingOptions.Timeout">
+            <summary>
+            The cache item expiration timeout.
+            </summary>
+        </member>
+        <member name="F:mrlldd.Caching.Caching.CachingOptions.Disabled">
+            <summary>
+            Options that represents a disabled caching.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caching.CachingOptions.Enabled(System.TimeSpan)">
+            <summary>
+            The factory method used for creating an enabled caching.
+            </summary>
+            <param name="timeout">The cache item expiration timeout.</param>
+            <returns>The caching options.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Caching.ICaching`1">
+            <summary>
+            The interface that represents a base class for implementing caching utilities.
+            </summary>
+            <typeparam name="T">The cached objects type.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Caching.ICaching`1.Populate(Microsoft.Extensions.Caching.Memory.IMemoryCache,Microsoft.Extensions.Caching.Distributed.IDistributedCache,Microsoft.Extensions.Logging.ILogger{mrlldd.Caching.Caching.ICaching{`0}})">
+            <summary>
+            A method used for populating that class with dependencies,
+            created in order to reduce the boilerplate constructor code in every implementation.
+            </summary>
+            <param name="memoryCache">The memory cache.</param>
+            <param name="distributedCache">The distributed cache.</param>
+            <param name="logger">The logger.</param>
+        </member>
+        <member name="T:mrlldd.Caching.Extensions.ServiceCollectionExtensions">
+            <summary>
+            The class that contains extensions methods for dependency injection of caching utilities.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.ServiceCollectionExtensions.AddCaching(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly,mrlldd.Caching.Models.ICacheConfig)">
+            <summary>
+            The method used for adding the caching utilities to service container.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="assembly">The assembly that contains implemented cached utilities and used in order to collect those types and add them to container.</param>
+            <param name="config">The cache config.</param>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Loaders.CachingLoader`2">
+            <summary>
+            The base class for implemented caching loaders
+            </summary>
+            <typeparam name="TArgs">Loading argument type.</typeparam>
+            <typeparam name="TResult">Loading result type.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.CachingLoader`2.GetOrLoadAsync(`0,System.Boolean,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.CachingLoader`2.CacheKeyPrefixesFactory">
+            <summary>
+            The sealed factory method used for creating the global cache key prefixes.
+            </summary>
+            <returns>The collection of prefixes.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.CachingLoader`2.LoadAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            The abstract method for loading of objects of result type.
+            </summary>
+            <param name="args">The arguments.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1"/> that returns object of result type.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.CachingLoader`2.CacheKeySuffixFactory(`0)">
+            <summary>
+            The abstract method for creating cache key suffix in order to make stored items keys really unique,
+            the returned string should be kinda hashcode of argument.
+            </summary>
+            <param name="args">The arguments.</param>
+            <returns>The additional cache key suffix.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Loaders.ICachingLoader`2">
+            <summary>
+            The base class for implemented caching loaders
+            </summary>
+            <typeparam name="TArgs">Loading argument type.</typeparam>
+            <typeparam name="TResult">Loading result type.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`2.GetOrLoadAsync(`0,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            The method used for getting (if cached) or loading the objects of result type.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="omitCacheOnLoad">The boolean that indicates if cache should be omitted on getting (means there should be only load and caching).</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1"/> that returns the object of result type.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Loaders.ILoaderProvider">
+            <summary>
+            The service used for providing loaders.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ILoaderProvider.Get``2">
+            <summary>
+            The method used to get a loader.
+            </summary>
+            <typeparam name="TArgs">The type of loader argument.</typeparam>
+            <typeparam name="TResult">The type of loader result.</typeparam>
+            <returns>The caching loader.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Models.DefaultCacheConfig">
+            <summary>
+            The default cache config implementation.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Models.DefaultCacheConfig.ConnectionString">
+            <inheritdoc />
+        </member>
+        <member name="P:mrlldd.Caching.Models.DefaultCacheConfig.LinearRetries">
+            <inheritdoc />
+        </member>
+        <member name="P:mrlldd.Caching.Models.DefaultCacheConfig.KeepAliveSeconds">
+            <inheritdoc />
+        </member>
+        <member name="T:mrlldd.Caching.Models.ICacheConfig">
+            <summary>
+            The cache config interface.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Models.ICacheConfig.ConnectionString">
+            <summary>
+            The cache connection string.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Models.ICacheConfig.LinearRetries">
+            <summary>
+            The linear retries count.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Models.ICacheConfig.KeepAliveSeconds">
+            <summary>
+            The keep alive seconds for items in distributed cache.
+            </summary>
+        </member>
+    </members>
+</doc>
