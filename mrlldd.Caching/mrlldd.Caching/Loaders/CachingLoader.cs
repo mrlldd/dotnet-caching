@@ -6,8 +6,14 @@ using mrlldd.Caching.Caching;
 
 namespace mrlldd.Caching.Loaders
 {
+    /// <summary>
+    /// The base class for implemented caching loaders
+    /// </summary>
+    /// <typeparam name="TArgs">Loading argument type.</typeparam>
+    /// <typeparam name="TResult">Loading result type.</typeparam>
     public abstract class CachingLoader<TArgs, TResult> : Caching<TResult>, ICachingLoader<TArgs, TResult> where TResult : class
     {
+        /// <inheritdoc />
         public async Task<TResult> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
@@ -24,14 +30,30 @@ namespace mrlldd.Caching.Loaders
             return await loaded.EffectAsync(x => PerformCachingAsync(x, keySuffix, token));
         }
 
+        /// <summary>
+        /// The sealed factory method used for creating the global cache key prefixes.
+        /// </summary>
+        /// <returns>The collection of prefixes.</returns>
         protected sealed override IEnumerable<string> CacheKeyPrefixesFactory()
             => new List<string>
             {
                 "loader"
             };
 
+        /// <summary>
+        /// The abstract method for loading of objects of type <see cref="TResult"/>.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>The <see cref="Task{TResult}"/> that returns <see cref="TResult"/></returns>
         protected abstract Task<TResult> LoadAsync(TArgs args, CancellationToken token = default);
 
+        /// <summary>
+        /// The abstract method for creating cache key suffix in order to make stored items keys really unique,
+        /// the returned string should be kinda hashcode of argument.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        /// <returns>The additional cache key suffix.</returns>
         protected abstract string CacheKeySuffixFactory(TArgs args);
     }
 }

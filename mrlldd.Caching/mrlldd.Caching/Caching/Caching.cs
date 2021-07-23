@@ -10,15 +10,32 @@ using Microsoft.Extensions.Logging;
 
 namespace mrlldd.Caching.Caching
 {
+    /// <summary>
+    /// The base class for implementing caching utilities.
+    /// </summary>
+    /// <typeparam name="T">The cached objects type.</typeparam>
     public abstract class Caching<T> : ICaching<T>
     {
         private IMemoryCache MemoryCache { get; set; }
         private IDistributedCache DistributedCache { get; set; }
+        /// <summary>
+        /// The logger.
+        /// </summary>
         protected ILogger<ICaching<T>> Logger { get; private set; }
+        /// <summary>
+        /// The options used to set up the memory cache for given object type.
+        /// </summary>
         protected abstract CachingOptions MemoryCacheOptions { get; }
+        /// <summary>
+        /// The options used to set up the distributed cache for given object type.
+        /// </summary>
         protected abstract CachingOptions DistributedCacheOptions { get; }
+        /// <summary>
+        /// The global cache key for given object type.
+        /// </summary>
         protected abstract string CacheKey { get; }
 
+        /// <inheritdoc />
         public void Populate(IMemoryCache memoryCache,
             IDistributedCache distributedCache,
             ILogger<ICaching<T>> logger)
@@ -39,6 +56,12 @@ namespace mrlldd.Caching.Caching
                 );
 
         // ReSharper disable once MemberCanBeProtected.Global
+        /// <summary>
+        /// A method for storing <see cref="data"/> to cache.
+        /// </summary>
+        /// <param name="data">The data to be stored in cache.</param>
+        /// <param name="keySuffix">The suffix extension to generated cache key.</param>
+        /// <param name="token">The cancellation token.</param>
         protected internal async Task PerformCachingAsync(T data, string keySuffix, CancellationToken token = default)
         {
             var key = CacheKeyFactory(keySuffix);
@@ -65,6 +88,12 @@ namespace mrlldd.Caching.Caching
             }
         }
 
+        /// <summary>
+        /// A method for retrieving cached data.
+        /// </summary>
+        /// <param name="keySuffix">The suffix extension to generated cache key.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>The <see cref="Task{T}"/> that returns <see cref="T"/> or null.</returns>
         protected async Task<T> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
         {
             var key = CacheKeyFactory(keySuffix);
@@ -121,6 +150,10 @@ namespace mrlldd.Caching.Caching
             return default;
         }
 
+        /// <summary>
+        /// The method used for creating additional global cache keys prefixes in order to make them more unique.
+        /// </summary>
+        /// <returns>The <see cref="IEnumerable{T}"/> of prefixes.</returns>
         protected abstract IEnumerable<string> CacheKeyPrefixesFactory();
     }
 }

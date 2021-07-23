@@ -1,7 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>9</LangVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageId>mrlldd.Caching</PackageId>
+        <PackageProjectUrl>https://github.com/mrlldd/dotnet-caching</PackageProjectUrl>
+        <PackageTags>mrlldd;caching;utilities;</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <RootNamespace>mrlldd.Caching</RootNamespace>
+        <PackageVersion>1.0.0</PackageVersion>
+        <AssemblyName>mrlldd.Caching</AssemblyName>
+        <Description>
+            Provides utilities for performing caching operations.
+        </Description>
+        <Authors>mrlldd</Authors>
+        <Title>mrlldd.Caching</Title>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/mrlldd/dotnet-caching.git</RepositoryUrl>
+        <RepositoryBranch>main</RepositoryBranch>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <Optimize>true</Optimize>
+        <DocumentationFile>mrlldd.Caching.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,6 +40,7 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
       <PackageReference Include="mrlldd.Functional.Object" Version="0.1.4" />
+      <PackageReference Include="System.Text.Json" Version="5.0.2" />
     </ItemGroup>
 
 </Project>
