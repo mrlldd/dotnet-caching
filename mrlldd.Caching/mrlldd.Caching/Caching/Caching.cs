@@ -35,6 +35,11 @@ namespace mrlldd.Caching.Caching
         /// </summary>
         protected abstract string CacheKey { get; }
 
+        /// <summary>
+        /// Delimiter used in cache key formatting.
+        /// </summary>
+        protected virtual string KeyPartsDelimiter { get; } = ":";
+
         /// <inheritdoc />
         public void Populate(IMemoryCache memoryCache,
             IDistributedCache distributedCache,
@@ -46,7 +51,7 @@ namespace mrlldd.Caching.Caching
         }
 
         private string CacheKeyFactory(string suffix) 
-            => string.Join(":",
+            => string.Join(KeyPartsDelimiter,
                 CacheKeyPrefixesFactory()
                     .Concat(new[]
                     {
@@ -71,8 +76,7 @@ namespace mrlldd.Caching.Caching
                 {
                     SlidingExpiration = MemoryCacheOptions.Timeout
                 });
-                Logger
-                    .LogDebug("Put data to memory cache with key: {0}", key);
+                Logger.LogDebug("Put data to memory cache with key: {0}", key);
             }
             
             token.ThrowIfCancellationRequested();
@@ -83,8 +87,7 @@ namespace mrlldd.Caching.Caching
                 {
                     SlidingExpiration = DistributedCacheOptions.Timeout
                 }, token);
-                Logger
-                    .LogDebug("Put data to distributed cache with key: {0}", key);
+                Logger.LogDebug("Put data to distributed cache with key: {0}", key);
             }
         }
 
@@ -99,16 +102,14 @@ namespace mrlldd.Caching.Caching
             var key = CacheKeyFactory(keySuffix);
             if (MemoryCacheOptions.IsCaching && MemoryCache.TryGetValue<T>(key, out var inMemory))
             {
-                Logger
-                    .LogDebug("Loaded data from memory cache with key {0}.", key);
+                Logger.LogDebug("Loaded data from memory cache with key {0}.", key);
                 return inMemory;
             }
 
             token.ThrowIfCancellationRequested();
             if (!DistributedCacheOptions.IsCaching)
             {
-                Logger
-                    .LogDebug("Not found data in memory cache with key: {0}. Distributed cache is disabled.", key);
+                Logger.LogDebug("Not found data in memory cache with key: {0}. Distributed cache is disabled.", key);
                 return default;
             }
 
@@ -116,13 +117,11 @@ namespace mrlldd.Caching.Caching
 
             if (string.IsNullOrEmpty(inDistributed))
             {
-                Logger
-                    .LogDebug("Not found data in both memory and distributed caches with key: {0}.", key);
+                Logger.LogDebug("Not found data in both memory and distributed caches with key: {0}.", key);
                 return default;
             }
             
-            Logger
-                .LogDebug("Found requested data in distributed cache with key: {0}.", key);
+            Logger.LogDebug("Found requested data in distributed cache with key: {0}.", key);
             try
             {
                 var deserialized = JsonSerializer.Deserialize<T>(inDistributed);
@@ -132,8 +131,7 @@ namespace mrlldd.Caching.Caching
                     {
                         SlidingExpiration = MemoryCacheOptions.Timeout
                     });
-                    Logger
-                        .LogDebug("Put requested data in memory cache with key: {0}.", key);
+                    Logger.LogDebug("Put requested data in memory cache with key: {0}.", key);
                 }
                 return deserialized;
             }
@@ -143,8 +141,7 @@ namespace mrlldd.Caching.Caching
                 {
                     MemoryCache.Remove(key);
                 }
-                Logger
-                    .LogDebug(e, "Cache data load failed for key {0}, removed memory cache value.", key);
+                Logger.LogDebug(e, "Cache data load failed for key {0}, removed memory cache value.", key);
             }
 
             return default;

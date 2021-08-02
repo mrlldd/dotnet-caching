@@ -35,10 +35,9 @@ namespace mrlldd.Caching.Loaders
         /// </summary>
         /// <returns>The collection of prefixes.</returns>
         protected sealed override IEnumerable<string> CacheKeyPrefixesFactory()
-            => new List<string>
-            {
-                "loader"
-            };
+        {
+            yield return "loader";
+        }
 
         /// <summary>
         /// The abstract method for loading of objects of result type.
