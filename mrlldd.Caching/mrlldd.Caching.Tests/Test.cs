@@ -2,7 +2,6 @@
 using DryIoc.Microsoft.DependencyInjection;
 using Functional.Object.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,11 +26,11 @@ namespace mrlldd.Caching.Tests
                     .WithDefaultIfAlreadyRegistered(IfAlreadyRegistered.Replace)
                     .WithTrackingDisposableTransients()
                     .With(FactoryMethod.ConstructorWithResolvableArguments));
-            Container.RegisterInstance(LoggerFactory.Create(x => x.AddFilter(level => level >= LogLevel.Debug)));
-            new ServiceCollection().AddMemoryCache().Effect(x => Container.Populate(x));
-            Container.Register(typeof(ILogger<>), typeof(Logger<>));
+            new ServiceCollection()
+                .AddLogging(x => x.AddConsole().AddFilter(level => level >= LogLevel.Debug))
+                .AddMemoryCache()
+                .Effect(x => Container.Populate(x));
             Container.Register<IDistributedCache, NoOpDistributedCache>();
-            Container.Register<ICacheProvider, CacheProvider>();
             FillContainer(Container);
         }
         

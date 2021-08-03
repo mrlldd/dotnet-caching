@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Caching;
 
-namespace mrlldd.Caching.Tests
+namespace mrlldd.Caching.Tests.Caches.TestUtilities
 {
     public class TestCache<T> : Cache<T>
     {

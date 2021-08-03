@@ -70,24 +70,25 @@ namespace mrlldd.Caching.Caching
         protected internal async Task PerformCachingAsync(T data, string keySuffix, CancellationToken token = default)
         {
             var key = CacheKeyFactory(keySuffix);
+            byte[] serialized = null;
             if (MemoryCacheOptions.IsCaching)
             {
-                MemoryCache.Set(key, data, new MemoryCacheEntryOptions
+                MemoryCache.Set(key, serialized = JsonSerializer.SerializeToUtf8Bytes(data), new MemoryCacheEntryOptions
                 {
                     SlidingExpiration = MemoryCacheOptions.Timeout
                 });
-                Logger.LogDebug("Put data to memory cache with key: {0}", key);
+                Logger.LogDebug("Put data to memory cache with key: \"{0}\".", key);
             }
             
             token.ThrowIfCancellationRequested();
             
             if (DistributedCacheOptions.IsCaching)
             {
-                await DistributedCache.SetStringAsync(key, JsonSerializer.Serialize(data), new DistributedCacheEntryOptions
+                await DistributedCache.SetAsync(key, serialized ?? JsonSerializer.SerializeToUtf8Bytes(data), new DistributedCacheEntryOptions
                 {
                     SlidingExpiration = DistributedCacheOptions.Timeout
                 }, token);
-                Logger.LogDebug("Put data to distributed cache with key: {0}", key);
+                Logger.LogDebug("Put data to distributed cache with key: \"{0}\".", key);
             }
         }
 
@@ -100,40 +101,39 @@ namespace mrlldd.Caching.Caching
         protected async Task<T> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
         {
             var key = CacheKeyFactory(keySuffix);
-            if (MemoryCacheOptions.IsCaching && MemoryCache.TryGetValue<T>(key, out var inMemory))
+            if (MemoryCacheOptions.IsCaching && MemoryCache.TryGetValue<byte[]>(key, out var inMemory))
             {
-                Logger.LogDebug("Loaded data from memory cache with key {0}.", key);
-                return inMemory;
+                Logger.LogDebug("Loaded data from memory cache with key: \"{0}\".", key);
+                return JsonSerializer.Deserialize<T>(inMemory);
             }
 
             token.ThrowIfCancellationRequested();
             if (!DistributedCacheOptions.IsCaching)
             {
-                Logger.LogDebug("Not found data in memory cache with key: {0}. Distributed cache is disabled.", key);
+                Logger.LogDebug("Not found data in memory cache with key: \"{0}\". Distributed cache is disabled.", key);
                 return default;
             }
 
-            var inDistributed = await DistributedCache.GetStringAsync(key, token);
+            var fromDistributed = await DistributedCache.GetAsync(key, token);
 
-            if (string.IsNullOrEmpty(inDistributed))
+            if (fromDistributed == null || !fromDistributed.Any())
             {
-                Logger.LogDebug("Not found data in both memory and distributed caches with key: {0}.", key);
+                Logger.LogDebug("Not found data in both memory and distributed caches with key: \"{0}\".", key);
                 return default;
             }
             
-            Logger.LogDebug("Found requested data in distributed cache with key: {0}.", key);
+            Logger.LogDebug("Found requested data in distributed cache with key: \"{0}\".", key);
             try
             {
-                var deserialized = JsonSerializer.Deserialize<T>(inDistributed);
                 if (MemoryCacheOptions.IsCaching)
                 {
-                    MemoryCache.Set(key, deserialized, new MemoryCacheEntryOptions
+                    MemoryCache.Set(key, fromDistributed, new MemoryCacheEntryOptions
                     {
                         SlidingExpiration = MemoryCacheOptions.Timeout
                     });
-                    Logger.LogDebug("Put requested data in memory cache with key: {0}.", key);
+                    Logger.LogDebug("Put requested data in memory cache with key: \"{0}\".", key);
                 }
-                return deserialized;
+                return JsonSerializer.Deserialize<T>(fromDistributed);
             }
             catch (Exception e)
             {
@@ -141,7 +141,8 @@ namespace mrlldd.Caching.Caching
                 {
                     MemoryCache.Remove(key);
                 }
-                Logger.LogDebug(e, "Cache data load failed for key {0}, removed memory cache value.", key);
+                Logger.LogError(e, "Failed to set data in distributed cache for key \"{0}\".", key);
+                Logger.LogDebug(e, "Distributed cache data setting failed for key \"{0}\", removed memory cache entry.", key);
             }
 
             return default;

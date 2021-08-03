@@ -1,8 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2522fd5e_002D53e2_002D4e27_002Db14f_002D6ee4d1ae9cf5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CachesToMemory" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::E69B505D-87E2-4344-BBB1-5EC2ED228AE2::net5.0::mrlldd.Caching.Tests.Caches.CacheTests.CachesToMemory&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::E69B505D-87E2-4344-BBB1-5EC2ED228AE2::net5.0::mrlldd.Caching.Tests.Caches.CacheTests.KeepsEntriesImmutable&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::E69B505D-87E2-4344-BBB1-5EC2ED228AE2::net5.0::mrlldd.Caching.Tests.Caches.CacheTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	</wpf:ResourceDictionary>
