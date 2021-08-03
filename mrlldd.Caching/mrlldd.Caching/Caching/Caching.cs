@@ -140,9 +140,9 @@ namespace mrlldd.Caching.Caching
                 if (MemoryCacheOptions.IsCaching)
                 {
                     MemoryCache.Remove(key);
+                    Logger.LogDebug(e, "Removed memory cache entry \"{0}\".", key);
                 }
-                Logger.LogError(e, "Failed to set data in distributed cache for key \"{0}\".", key);
-                Logger.LogDebug(e, "Distributed cache data setting failed for key \"{0}\", removed memory cache entry.", key);
+                Logger.LogError(e, "Failed to deserialize data from distributed cache with key \"{0}\".", key);
             }
 
             return default;

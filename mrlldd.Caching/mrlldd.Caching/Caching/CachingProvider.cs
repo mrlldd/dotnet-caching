@@ -29,7 +29,6 @@ namespace mrlldd.Caching.Caching
                 .Populate(memoryCache,
                     distributedCache,
                     serviceProvider.GetRequiredService<ILogger<ICaching<TCached>>>());
-        
 
         protected T InternalGet<T, TCached>() where T : ICaching<TCached>
             => scopedServicesCache.TryGetValue(typeof(T), out var raw)

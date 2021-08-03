@@ -2,7 +2,6 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Loaders;
-using mrlldd.Caching.Models;
 
 namespace mrlldd.Caching.Extensions
 {
