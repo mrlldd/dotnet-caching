@@ -7,13 +7,9 @@ namespace mrlldd.Caching.Loaders
 {
     internal sealed class LoaderProvider : CachingProvider, ILoaderProvider
     {
-        public LoaderProvider(
-            IMemoryCache memoryCache,
-            IDistributedCache distributedCache,
-            IServiceProvider serviceProvider) 
-            : base(memoryCache, distributedCache, serviceProvider)
-        {
-        }
+        public LoaderProvider(IServiceProvider serviceProvider) 
+            : base(serviceProvider)
+        { }
 
         public ICachingLoader<TArgs, TResult> Get<TArgs, TResult>()
             where TResult : class

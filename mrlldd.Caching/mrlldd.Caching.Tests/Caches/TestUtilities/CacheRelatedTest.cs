@@ -1,5 +1,6 @@
 ﻿using DryIoc;
 using mrlldd.Caching.Caches;
+using mrlldd.Caching.Tests.TestUtilities;
 
 namespace mrlldd.Caching.Tests.Caches.TestUtilities
 {
@@ -9,7 +10,7 @@ namespace mrlldd.Caching.Tests.Caches.TestUtilities
         {
             base.FillContainer(container);
             container.Register<ICache<TestUnit>, TestCache<TestUnit>>();
-            Container.Register<ICacheProvider, CacheProvider>();
+            container.Register<ICacheProvider, CacheProvider>();
         }
     }
 }

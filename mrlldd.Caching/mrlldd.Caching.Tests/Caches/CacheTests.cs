@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -11,13 +9,12 @@ using FluentAssertions;
 using Functional.Object.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using mrlldd.Caching.Caches;
-using mrlldd.Caching.Caching;
+using mrlldd.Caching.Stores;
 using mrlldd.Caching.Tests.Caches.TestUtilities;
 using mrlldd.Caching.Tests.Caches.TestUtilities.Extensions;
+using mrlldd.Caching.Tests.TestUtilities;
 using mrlldd.Caching.Tests.TestUtilities.Extensions;
 using NUnit.Framework;
 
@@ -159,35 +156,25 @@ namespace mrlldd.Caching.Tests.Caches
             });
 
         [Test]
-        public Task GetsUntouchedFromMemory() => Container
-            .WithMemoryCacheOnly<TestUnit>()
-            .Map(async c =>
-            {
-                var provider = c.Resolve<ICacheProvider>();
-                var cache = provider.Get<TestUnit>();
-                var unit = TestUnit.Create();
-                await cache.SetAsync(unit);
-                var fromCache = await cache.GetAsync();
-                fromCache.Should().BeEquivalentTo(unit);
-            });
+        public Task GetsUntouchedFromMemory()
+            => Container
+                .WithMemoryCacheOnly<TestUnit>()
+                .MockStores(MockRepository)
+                .Map(async c =>
+                {
+                    var provider = c.Resolve<ICacheProvider>();
+                    var cache = provider.Get<TestUnit>();
+                    var unit = TestUnit.Create();
+                    await cache.SetAsync(unit);
+                    var fromCache = await cache.GetAsync();
+                    fromCache.Should().BeEquivalentTo(unit);
+                });
 
         [Test]
         public Task GetsUntouchedFromDistributed() => Container
             .WithDistributedCacheOnly<TestUnit>()
             .WithFakeDistributedCache()
-            .Map(async c =>
-            {
-                var provider = c.Resolve<ICacheProvider>();
-                var cache = provider.Get<TestUnit>();
-                var unit = TestUnit.Create();
-                await cache.SetAsync(unit);
-                var fromCache = await cache.GetAsync();
-                fromCache.Should().BeEquivalentTo(unit);
-            });
-
-        [Test]
-        public Task GetUntouchedFromMemory() => Container
-            .WithMemoryCacheOnly<TestUnit>()
+            .MockStores(MockRepository)
             .Map(async c =>
             {
                 var provider = c.Resolve<ICacheProvider>();
@@ -246,7 +233,8 @@ namespace mrlldd.Caching.Tests.Caches
                 dcMock.Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey),
                     It.Is<byte[]>(b => serialized.SequenceEqual(b)),
                     It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()), Times.Once);
-                dcMock.Verify(x => x.GetAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()), Times.Once);
+                dcMock.Verify(x => x.GetAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                    Times.Once);
             });
 
         [Test]
@@ -335,62 +323,36 @@ namespace mrlldd.Caching.Tests.Caches
         [Test]
         public Task ReturnsDefaultIfCacheEntriesRemovedOrExpired() => Container
             .WithFakeDistributedCache()
+            .MockStores(MockRepository)
             .Map(async c =>
             {
-                var memoryCache = c.Resolve<IMemoryCache>();
-                var distributedCache = c.Resolve<IDistributedCache>();
+                var dsMock = c.Resolve<Mock<IDistributedCachingStore>>();
+                var msMock = c.Resolve<Mock<IMemoryCachingStore>>();
                 var unit = TestUnit.Create();
-
-                var mcMock = MockRepository
-                    .Create<IMemoryCache>()
-                    .Effect(x =>
-                        x.Setup(mc => mc.CreateEntry(It.Is<string>(s => s == cacheKey)))
-                            .Returns<string>(k => memoryCache.CreateEntry(k))
-                            .Verifiable())
-                    .Effect(x =>
-                        x.Setup(mc => mc.Remove(It.Is<string>(s => s == cacheKey)))
-                            .Callback<object>(k => memoryCache.Remove(k))
-                            .Verifiable())
-                    .AddToContainer(c);
-                var serialized = JsonSerializer.SerializeToUtf8Bytes(unit);
-                var dcMock = MockRepository
-                    .Create<IDistributedCache>()
-                    .Effect(x =>
-                        x.Setup(dc => dc.SetAsync(It.Is<string>(s => s == cacheKey),
-                                It.Is<byte[]>(b => serialized.SequenceEqual(b)),
-                                It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()))
-                            .Returns<string, byte[], DistributedCacheEntryOptions, CancellationToken>((s, b, o, ct) =>
-                                distributedCache.SetAsync(s, b, o, ct))
-                            .Verifiable())
-                    .Effect(x =>
-                        x.Setup(dc => dc.GetAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()))
-                            .Returns<string, CancellationToken>((s, ct) => distributedCache.GetAsync(s, ct)))
-                    .Effect(x =>
-                        x.Setup(dc => dc.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()))
-                            .Returns<string, CancellationToken>((s, ct) => distributedCache.RemoveAsync(s, ct))
-                            .Verifiable())
-                    .AddToContainer(c);
                 var provider = c.Resolve<ICacheProvider>();
                 var ourCache = provider.Get<TestUnit>();
                 await ourCache.SetAsync(unit);
-                mcMock.Object.Remove(cacheKey);
-                await dcMock.Object.RemoveAsync(cacheKey);
+                await msMock.Object.RemoveAsync(cacheKey);
+                await dsMock.Object.RemoveAsync(cacheKey);
                 var fromCache = await ourCache.GetAsync();
                 fromCache.Should().Be(default(TestUnit));
-                mcMock.Verify(x => x.CreateEntry(It.Is<string>(s => s == cacheKey)),
+                msMock.Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey),
+                    It.Is<TestUnit>(u => unit.PublicProperty == u.PublicProperty),
+                    It.IsAny<MemoryCacheEntryOptions>(),
+                    It.IsAny<CancellationToken>()), 
                     Times.Exactly(1)); // 2 as it saves to memory if successfully got from distributed
-                mcMock.Verify(x => x.Remove(It.Is<string>(s => s == cacheKey)), Times.Once);
-                mcMock.Verify(x => x.TryGetValue(It.Is<string>(s => s == cacheKey), out It.Ref<object>.IsAny),
+                msMock.Verify(x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()), Times.Once);
+                msMock.Verify(x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
                     Times.Once);
-                dcMock.Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey),
-                    It.Is<byte[]>(b => serialized.SequenceEqual(b)),
+                dsMock.Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey),
+                    It.Is<TestUnit>(u => unit.PublicProperty == u.PublicProperty),
                     It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()), Times.Once);
-                dcMock.Verify(x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                dsMock.Verify(x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
                     Times.Once);
-                dcMock.Verify(x => x.GetAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                dsMock.Verify(x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
                     Times.Once);
             });
-        
+
         [Test]
         public Task ReturnsDefaultIfDistributedCacheEntryIsInvalid() => Container
             .WithDistributedCacheOnly<TestUnit>()
@@ -399,7 +361,6 @@ namespace mrlldd.Caching.Tests.Caches
             {
                 var distributedCache = c.Resolve<IDistributedCache>();
                 var unit = TestUnit.Create();
-                var serialized = JsonSerializer.SerializeToUtf8Bytes(unit);
                 var dcMock = MockRepository
                     .Create<IDistributedCache>()
                     .Effect(x =>
@@ -408,6 +369,7 @@ namespace mrlldd.Caching.Tests.Caches
                     .AddToContainer(c);
                 var provider = c.Resolve<ICacheProvider>();
                 var ourCache = provider.Get<TestUnit>();
+                var serialized = JsonSerializer.SerializeToUtf8Bytes(unit);
                 await distributedCache.SetAsync(cacheKey, serialized.Take(3).ToArray());
                 var fromCache = await ourCache.GetAsync();
                 fromCache.Should().Be(default(TestUnit));
@@ -418,40 +380,24 @@ namespace mrlldd.Caching.Tests.Caches
         [Test]
         public Task AlsoCleansMemoryCacheIfDistributedCacheEntryIsInvalid() => Container
             .WithFakeDistributedCache()
+            .MockStores(MockRepository)
             .Map(async c =>
             {
-                var distributedCache = c.Resolve<IDistributedCache>();
-                var memoryCache = c.Resolve<IMemoryCache>();
-                var unit = TestUnit.Create();
-                var mcMock = MockRepository
-                    .Create<IMemoryCache>()
-                    .Effect(x =>
-                        x.Setup(mc => mc.CreateEntry(It.Is<string>(s => s == cacheKey)))
-                            .Returns<string>(k => memoryCache.CreateEntry(k))
-                            .Verifiable())
-                    .Effect(x =>
-                        x.Setup(mc => mc.TryGetValue(It.Is<string>(s => s == cacheKey), out It.Ref<object>.IsAny))
-                            .Returns(false)
-                            .Verifiable())
-                    .Effect(x =>
-                        x.Setup(mc => mc.Remove(It.Is<string>(s => s == cacheKey)))
-                            .Verifiable())
-                    .AddToContainer(c);
-                var serialized = JsonSerializer.SerializeToUtf8Bytes(unit);
-                var dcMock = MockRepository
-                    .Create<IDistributedCache>()
-                    .Effect(x =>
-                        x.Setup(dc => dc.GetAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()))
-                            .Returns<string, CancellationToken>((s, ct) => distributedCache.GetAsync(s, ct)))
-                    .AddToContainer(c);
+                var distributedStore = c.Resolve<Mock<IDistributedCachingStore>>();
+                var memoryStore = c.Resolve<Mock<IMemoryCachingStore>>();
                 var provider = c.Resolve<ICacheProvider>();
                 var ourCache = provider.Get<TestUnit>();
-                await distributedCache.SetAsync(cacheKey, serialized.Take(3).ToArray());
+                var serialized = TestUnit.Create().Map(x => JsonSerializer.SerializeToUtf8Bytes(x));
+                await distributedStore.Object.SetAsync(cacheKey, serialized.Take(3).ToArray(), new DistributedCacheEntryOptions
+                {
+                    SlidingExpiration = TimeSpan.MaxValue
+                });
+                
                 var fromCache = await ourCache.GetAsync();
                 fromCache.Should().Be(default(TestUnit));
-                dcMock.Verify(x => x.GetAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                distributedStore.Verify(x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
                     Times.Once);
-                mcMock.Verify(x => x.Remove(It.Is<string>(s => s == cacheKey)), Times.Once);
+                memoryStore.Verify(x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()), Times.Once);
             });
     }
 }

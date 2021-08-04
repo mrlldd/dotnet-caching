@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Loaders;
+using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Extensions
 {
@@ -21,6 +22,7 @@ namespace mrlldd.Caching.Extensions
             Assembly assembly)
             => services
                 .AddCaches(assembly)
-                .AddLoaders(assembly);
+                .AddLoaders(assembly)
+                .AddStores();
     }
 }

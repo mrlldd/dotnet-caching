@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace mrlldd.Caching.Tests.Caches.TestUtilities
+namespace mrlldd.Caching.Tests.TestUtilities
 {
     internal class FakeDistributedCache : IDistributedCache
     {

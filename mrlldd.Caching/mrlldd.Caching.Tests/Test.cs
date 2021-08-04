@@ -1,12 +1,16 @@
-﻿using DryIoc;
+﻿using System;
+using System.Threading;
+using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Functional.Object.Extensions;
+using ImTools;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
-using mrlldd.Caching.Caches;
+using mrlldd.Caching.Stores;
+using mrlldd.Caching.Tests.TestUtilities.Extensions;
 using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests
@@ -16,8 +20,8 @@ namespace mrlldd.Caching.Tests
     {
         protected IContainer Container { get; private set; }
 
-        protected MockRepository MockRepository { get; } = new MockRepository(MockBehavior.Loose);
-        
+        protected MockRepository MockRepository { get; } = new(MockBehavior.Loose);
+
         [SetUp]
         protected void Setup()
         {
@@ -29,11 +33,14 @@ namespace mrlldd.Caching.Tests
             new ServiceCollection()
                 .AddLogging(x => x.AddConsole().AddFilter(level => level >= LogLevel.Debug))
                 .AddMemoryCache()
+                .AddStores()
                 .Effect(x => Container.Populate(x));
             Container.Register<IDistributedCache, NoOpDistributedCache>();
             FillContainer(Container);
         }
-        
-        protected virtual void FillContainer(IContainer container) {}
+
+        protected virtual void FillContainer(IContainer container)
+        {
+        }
     }
 }

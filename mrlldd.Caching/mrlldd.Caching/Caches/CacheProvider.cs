@@ -7,12 +7,8 @@ namespace mrlldd.Caching.Caches
 {
     internal sealed class CacheProvider : CachingProvider, ICacheProvider
     {
-        public CacheProvider(IMemoryCache memoryCache,
-            IDistributedCache distributedCache,
-            IServiceProvider serviceProvider)
-            : base(memoryCache,
-                distributedCache,
-                serviceProvider)
+        public CacheProvider(IServiceProvider serviceProvider)
+            : base(serviceProvider)
         {
         }
 

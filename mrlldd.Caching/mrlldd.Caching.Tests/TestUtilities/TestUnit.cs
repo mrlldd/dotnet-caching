@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace mrlldd.Caching.Tests.Caches.TestUtilities
+namespace mrlldd.Caching.Tests.TestUtilities
 {
     public class TestUnit
     {
