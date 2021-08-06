@@ -2,7 +2,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Loaders;
-using mrlldd.Caching.Models;
+using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Extensions
 {
@@ -19,10 +19,10 @@ namespace mrlldd.Caching.Extensions
         /// <param name="config">The cache config.</param>
         /// <returns>The service collection.</returns>
         public static IServiceCollection AddCaching(this IServiceCollection services,
-            Assembly assembly,
-            ICacheConfig config)
+            Assembly assembly)
             => services
-                .AddCaches(assembly, config)
-                .AddLoaders(assembly);
+                .AddCaches(assembly)
+                .AddLoaders(assembly)
+                .AddStores();
     }
 }

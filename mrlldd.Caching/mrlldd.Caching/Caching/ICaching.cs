@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Caching
 {
@@ -14,11 +15,20 @@ namespace mrlldd.Caching.Caching
         /// A method used for populating that class with dependencies,
         /// created in order to reduce the boilerplate constructor code in every implementation.
         /// </summary>
-        /// <param name="memoryCache">The memory cache.</param>
-        /// <param name="distributedCache">The distributed cache.</param>
+        /// <param name="memoryCachingCache">The memory cache.</param>
+        /// <param name="distributedCachingCache">The distributed cache.</param>
         /// <param name="logger">The logger.</param>
-        void Populate(IMemoryCache memoryCache,
-            IDistributedCache distributedCache,
+        void Populate(IMemoryCachingStore memoryCachingCache,
+            IDistributedCachingStore distributedCachingCache,
             ILogger<ICaching<T>> logger);
+        
+        /// <summary>
+        /// Indicates that caching service is using memory to cache data.
+        /// </summary>
+        bool IsUsingMemory { get; }
+        /// <summary>
+        /// Indicates that caching service is using distributed cache to cache data.
+        /// </summary>
+        bool IsUsingDistributed { get; }
     }
 }
