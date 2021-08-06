@@ -1,6 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using mrlldd.Caching.Extensions.Internal;
+using mrlldd.Caching.Extensions.DependencyInjection.Internal;
 
 namespace mrlldd.Caching.Loaders
 {

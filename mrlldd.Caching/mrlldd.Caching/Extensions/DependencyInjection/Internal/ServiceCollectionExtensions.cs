@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace mrlldd.Caching.Extensions.Internal
+namespace mrlldd.Caching.Extensions.DependencyInjection.Internal
 {
     internal static class ServiceCollectionExtensions
     {

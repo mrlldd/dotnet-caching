@@ -1,10 +1,12 @@
 using System.Reflection;
+using Functional.Object.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
+using mrlldd.Caching.Extensions.DependencyInjection.Internal;
 using mrlldd.Caching.Loaders;
 using mrlldd.Caching.Stores;
 
-namespace mrlldd.Caching.Extensions
+namespace mrlldd.Caching.Extensions.DependencyInjection
 {
     /// <summary>
     /// The class that contains extensions methods for dependency injection of caching utilities.
@@ -18,11 +20,12 @@ namespace mrlldd.Caching.Extensions
         /// <param name="assembly">The assembly that contains implemented cached utilities and used in order to collect those types and add them to container.</param>
         /// <param name="config">The cache config.</param>
         /// <returns>The service collection.</returns>
-        public static IServiceCollection AddCaching(this IServiceCollection services,
+        public static ICachingServiceCollection AddCaching(this IServiceCollection services,
             Assembly assembly)
             => services
                 .AddCaches(assembly)
                 .AddLoaders(assembly)
-                .AddStores();
+                .AddStores()
+                .Map(x => new CachingServiceCollection(x));
     }
 }

@@ -1,33 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Functional.Object.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using mrlldd.Caching.Stores;
+using mrlldd.Caching.Stores.Decoration;
 
 namespace mrlldd.Caching.Caching
 {
     internal abstract class CachingProvider
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly ICachingStoreDecorator[] decorators;
         private readonly IDictionary<Type, object> scopedServicesCache = new Dictionary<Type, object>();
+        private readonly IBubbleCachingStore bubbleCachingStore;
+        private readonly IMemoryCachingStore memoryCachingStore;
+        private readonly IDistributedCachingStore distributedCachingStore;
 
-        protected CachingProvider(IServiceProvider serviceProvider) 
-            => this.serviceProvider = serviceProvider;
-
-        private void Populate<T, TCached>(T target) where T : ICaching<TCached>
+        protected CachingProvider(IServiceProvider serviceProvider,
+            IMemoryCachingStore memoryCachingStore,
+            IDistributedCachingStore distributedCachingStore,
+            IBubbleCachingStore bubbleCachingStore,
+            IEnumerable<ICachingStoreDecorator> decorators)
         {
-            IBubbleCachingStore bubbleCachingStore = null;
-            target.Populate(
-                target.IsUsingMemory
-                    ? serviceProvider.GetRequiredService<IMemoryCachingStore>()
-                    : bubbleCachingStore = serviceProvider.GetRequiredService<IBubbleCachingStore>(),
-                target.IsUsingDistributed
-                    ? serviceProvider.GetRequiredService<IDistributedCachingStore>()
-                    : bubbleCachingStore ?? serviceProvider.GetRequiredService<IBubbleCachingStore>(),
-                serviceProvider.GetRequiredService<ILogger<ICaching<TCached>>>()
-            );
+            this.serviceProvider = serviceProvider;
+            this.memoryCachingStore = memoryCachingStore;
+            this.distributedCachingStore = distributedCachingStore;
+            this.bubbleCachingStore = bubbleCachingStore;
+            this.decorators = decorators
+                .OrderByDescending(x => x.Order)
+                .ToArray();
         }
+
+        private void Populate<T, TCached>(T target) where T : ICaching<TCached> 
+            => target.Populate(
+                target.IsUsingMemory
+                    ? decorators.Aggregate(memoryCachingStore, (store, decorator) => decorator.Decorate(store))
+                    : bubbleCachingStore,
+                target.IsUsingDistributed
+                    ? decorators.Aggregate(distributedCachingStore, (store, decorator) => decorator.Decorate(store))
+                    : bubbleCachingStore
+            );
 
         protected T InternalGet<T, TCached>() where T : ICaching<TCached>
             => scopedServicesCache.TryGetValue(typeof(T), out var raw)
