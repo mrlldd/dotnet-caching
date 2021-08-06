@@ -44,7 +44,7 @@ namespace mrlldd.Caching.Caching
         /// <summary>
         /// Delimiter used in cache key formatting.
         /// </summary>
-        protected virtual string KeyPartsDelimiter { get; } = ":";
+        protected virtual string KeyPartsDelimiter => ":";
 
         /// <inheritdoc />
         public void Populate(IMemoryCachingStore memoryCachingCache,
@@ -134,10 +134,11 @@ namespace mrlldd.Caching.Caching
                     Logger.LogDebug("Loaded data from memory cache with key: \"{0}\".", key);
                     return fromMemory;
                 }
+                Logger.LogDebug("Entry with key \"{0}\" not found in memory cache.", key);
             }
             else
             {
-                Logger.LogDebug("Entry with key \"{0}\" not found in memory cache.", key);
+                Logger.LogError(fromMemory, "Failed to get entry with key \"{0}\" in memory cache.", key);
             }
 
             token.ThrowIfCancellationRequested();

@@ -20,9 +20,10 @@ using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests.Caches
 {
+    [TestFixture]
     public class CacheTests : CacheRelatedTest
     {
-        private readonly string cacheKey = $"test:testcache:{nameof(TestUnit)}";
+        private readonly string cacheKey = $"{TestCache<TestUnit>.CacheKeyPrefix}:{TestCache<TestUnit>.GlobalCacheKey}:{nameof(TestUnit)}";
 
         [Test]
         public Task CachesToMemory() => Container

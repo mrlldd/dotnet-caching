@@ -15,7 +15,6 @@ using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests
 {
-    [TestFixture]
     public class Test
     {
         protected IContainer Container { get; private set; }

@@ -13,6 +13,7 @@ namespace mrlldd.Caching.Loaders
     /// <typeparam name="TResult">Loading result type.</typeparam>
     public abstract class CachingLoader<TArgs, TResult> : Caching<TResult>, ICachingLoader<TArgs, TResult> where TResult : class
     {
+        internal const string CacheKeyPrefix = "loader";
         /// <inheritdoc />
         public async Task<TResult> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
         {
@@ -36,7 +37,7 @@ namespace mrlldd.Caching.Loaders
         /// <returns>The collection of prefixes.</returns>
         protected sealed override IEnumerable<string> CacheKeyPrefixesFactory()
         {
-            yield return "loader";
+            yield return CacheKeyPrefix;
         }
 
         /// <summary>

@@ -9,12 +9,16 @@ namespace mrlldd.Caching.Tests.Caches.TestUtilities
     {
         protected override CachingOptions MemoryCacheOptions => CachingOptions.Enabled(TimeSpan.MaxValue);
         protected override CachingOptions DistributedCacheOptions => CachingOptions.Enabled(TimeSpan.MaxValue);
-        protected override string CacheKey => "testcache";
+
+        public const string GlobalCacheKey = "testcache";
+
+        public const string CacheKeyPrefix = "test";
+        protected override string CacheKey => GlobalCacheKey;
         protected override string DefaultKeySuffix => typeof(T).Name;
 
         protected override IEnumerable<string> CacheKeyPrefixesFactory()
         {
-            yield return "test";
+            yield return CacheKeyPrefix;
         }
     }
 }

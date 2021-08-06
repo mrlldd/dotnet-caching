@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Functional.Result;
 
 namespace mrlldd.Caching.Stores.Internal
 {

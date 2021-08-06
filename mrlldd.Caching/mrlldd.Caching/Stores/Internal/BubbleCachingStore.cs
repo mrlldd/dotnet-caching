@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
+using Functional.Result.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -10,10 +11,10 @@ namespace mrlldd.Caching.Stores.Internal
     internal class BubbleCachingStore : IBubbleCachingStore
     {
         public Result<T> Get<T>(string key)
-            => default;
+            => default(T).AsSuccess();
 
         public Task<Result<T>> GetAsync<T>(string key, CancellationToken token = default)
-            => Task.FromResult(Result.Of(new Func<T>(() => default)));
+            => Task.FromResult(default(T).AsSuccess());
 
 
         public Result Set<T>(string key, T value, MemoryCacheEntryOptions options) 

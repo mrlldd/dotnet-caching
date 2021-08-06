@@ -12,7 +12,9 @@ namespace mrlldd.Caching.Tests.Loaders.TestUtilities
         private readonly ITestClient client;
         protected override CachingOptions MemoryCacheOptions => CachingOptions.Enabled(TimeSpan.MaxValue);
         protected override CachingOptions DistributedCacheOptions => CachingOptions.Enabled(TimeSpan.MaxValue);
-        protected override string CacheKey => "argumentToUnit";
+
+        public const string GlobalCacheKey = "argumentToUnit";
+        protected override string CacheKey => GlobalCacheKey;
         
         public TestLoader(ITestClient client) 
             => this.client = client;
