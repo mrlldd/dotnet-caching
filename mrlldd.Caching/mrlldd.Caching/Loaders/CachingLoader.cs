@@ -31,6 +31,28 @@ namespace mrlldd.Caching.Loaders
             return await loaded.EffectAsync(x => PerformCachingAsync(x, keySuffix, token));
         }
 
+        public TResult GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
+        {
+            var keySuffix = CacheKeySuffixFactory(args);
+            if (!omitCacheOnLoad)
+            {
+                var inCache = TryGetFromCache(keySuffix, token);
+                if (inCache != null)
+                {
+                    return inCache;
+                }
+            }
+            
+            var loaded = LoadAsync(args, token).GetAwaiter().GetResult();
+            return loaded.Effect(x => PerformCaching(x, keySuffix, token));
+        }
+        
+        public void Refresh(TArgs args, CancellationToken token = default) 
+            => Refresh(CacheKeySuffixFactory(args), token);
+
+        public Task RefreshAsync(TArgs args, CancellationToken token = default)
+            => RefreshAsync(CacheKeySuffixFactory(args), token);
+
         /// <summary>
         /// The sealed factory method used for creating the global cache key prefixes.
         /// </summary>
