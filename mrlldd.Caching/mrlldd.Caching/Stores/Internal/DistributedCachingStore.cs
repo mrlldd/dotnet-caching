@@ -14,10 +14,10 @@ namespace mrlldd.Caching.Stores.Internal
         public DistributedCachingStore(IDistributedCache distributedCache)
             => this.distributedCache = distributedCache;
 
-        public Result<T> Get<T>(string key) 
+        public Result<T?> Get<T>(string key) 
             => Result.Of(() => distributedCache.Get(key).Map(Deserialize<T>));
 
-        public Task<Result<T>> GetAsync<T>(string key, CancellationToken token = default) 
+        public Task<Result<T?>> GetAsync<T>(string key, CancellationToken token = default) 
             => Result.Of(async () =>
             {
                 var fromCache = await distributedCache.GetAsync(key, token);

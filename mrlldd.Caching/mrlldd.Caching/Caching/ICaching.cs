@@ -1,6 +1,3 @@
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Caching
@@ -8,8 +5,7 @@ namespace mrlldd.Caching.Caching
     /// <summary>
     /// The interface that represents a base class for implementing caching utilities.
     /// </summary>
-    /// <typeparam name="T">The cached objects type.</typeparam>
-    public interface ICaching<T>
+    public interface ICaching
     {
         /// <summary>
         /// A method used for populating that class with dependencies,

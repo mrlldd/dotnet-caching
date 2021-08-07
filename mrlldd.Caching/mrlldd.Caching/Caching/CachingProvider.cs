@@ -28,11 +28,11 @@ namespace mrlldd.Caching.Caching
             this.distributedCachingStore = distributedCachingStore;
             this.bubbleCachingStore = bubbleCachingStore;
             this.decorators = decorators
-                .OrderByDescending(x => x.Order)
+                .OrderBy(x => x.Order)
                 .ToArray();
         }
 
-        private void Populate<T, TCached>(T target) where T : ICaching<TCached> 
+        private void Populate<T>(T target) where T : ICaching 
             => target.Populate(
                 target.IsUsingMemory
                     ? decorators.Aggregate(memoryCachingStore, (store, decorator) => decorator.Decorate(store))
@@ -42,13 +42,13 @@ namespace mrlldd.Caching.Caching
                     : bubbleCachingStore
             );
 
-        protected T InternalGet<T, TCached>() where T : ICaching<TCached>
+        protected T InternalGet<T>() where T : ICaching
             => scopedServicesCache.TryGetValue(typeof(T), out var raw)
                && raw is T service
                 ? service
                 : serviceProvider
                     .GetRequiredService<T>()
-                    .Effect(Populate<T, TCached>)
+                    .Effect(Populate)
                     .Effect(x => scopedServicesCache[typeof(T)] = x);
     }
 }

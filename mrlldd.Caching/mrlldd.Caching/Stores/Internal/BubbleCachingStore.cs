@@ -10,13 +10,12 @@ namespace mrlldd.Caching.Stores.Internal
 {
     internal class BubbleCachingStore : IBubbleCachingStore
     {
-        public Result<T> Get<T>(string key)
+        public Result<T?> Get<T>(string key)
             => default(T).AsSuccess();
 
-        public Task<Result<T>> GetAsync<T>(string key, CancellationToken token = default)
+        public Task<Result<T?>> GetAsync<T>(string key, CancellationToken token = default)
             => Task.FromResult(default(T).AsSuccess());
-
-
+        
         public Result Set<T>(string key, T value, MemoryCacheEntryOptions options) 
             => Result.Success;
 

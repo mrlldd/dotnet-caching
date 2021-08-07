@@ -22,6 +22,6 @@ namespace mrlldd.Caching.Caches
         }
 
         public ICache<T> Get<T>()
-            => InternalGet<ICache<T>, T>();
+            => InternalGet<ICache<T>>();
     }
 }

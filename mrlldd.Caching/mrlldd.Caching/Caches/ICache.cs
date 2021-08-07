@@ -8,7 +8,7 @@ namespace mrlldd.Caching.Caches
     /// The base interface for implementing caches.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
-    public interface ICache<T> : ICaching<T>
+    public interface ICache<T> : ICaching
     {
         /// <summary>
         /// The method used for performing a caching.
@@ -29,14 +29,14 @@ namespace mrlldd.Caching.Caches
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        Task<T> GetAsync(CancellationToken token = default);
+        Task<T?> GetAsync(CancellationToken token = default);
         
         /// <summary>
         /// The method used for retrieving data from cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        public T Get(CancellationToken token = default);
+        public T? Get(CancellationToken token = default);
 
         /// <summary>
         /// The method used for refreshing data expiration in cache.

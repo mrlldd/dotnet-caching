@@ -32,11 +32,11 @@ namespace mrlldd.Caching.Caches
             => PerformCaching(value, DefaultKeySuffix, token);
 
         /// <inheritdoc />
-        public Task<T> GetAsync(CancellationToken token = default)
+        public Task<T?> GetAsync(CancellationToken token = default)
             => TryGetFromCacheAsync(DefaultKeySuffix, token);
 
         /// <inheritdoc />
-        public T Get(CancellationToken token = default)
+        public T? Get(CancellationToken token = default)
             => TryGetFromCache(DefaultKeySuffix, token);
 
         /// <inheritdoc />

@@ -15,7 +15,7 @@ namespace mrlldd.Caching.Loaders
     {
         internal const string CacheKeyPrefix = "loader";
         /// <inheritdoc />
-        public async Task<TResult> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
+        public async Task<TResult?> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
@@ -31,7 +31,8 @@ namespace mrlldd.Caching.Loaders
             return await loaded.EffectAsync(x => PerformCachingAsync(x, keySuffix, token));
         }
 
-        public TResult GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
+        /// <inheritdoc />
+        public TResult? GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
@@ -46,12 +47,38 @@ namespace mrlldd.Caching.Loaders
             var loaded = LoadAsync(args, token).GetAwaiter().GetResult();
             return loaded.Effect(x => PerformCaching(x, keySuffix, token));
         }
-        
+
+        /// <inheritdoc />
+        public Task SetAsync(TArgs args, TResult result, CancellationToken token = default)
+            => PerformCachingAsync(result, CacheKeySuffixFactory(args), token);
+
+        /// <inheritdoc />
+        public void Set(TArgs args, TResult result, CancellationToken token = default)
+            => PerformCaching(result, CacheKeySuffixFactory(args), token);
+
+        /// <inheritdoc />
+        public Task<TResult?> GetAsync(TArgs args, CancellationToken token = default)
+            => TryGetFromCacheAsync(CacheKeySuffixFactory(args), token);
+
+        /// <inheritdoc />
+        public TResult? Get(TArgs args, CancellationToken token = default)
+            => TryGetFromCache(CacheKeySuffixFactory(args), token);
+
+        /// <inheritdoc />
+        public Task RefreshAsync(TArgs args, CancellationToken token = default)
+            => RefreshAsync(CacheKeySuffixFactory(args), token);
+
+        /// <inheritdoc />
         public void Refresh(TArgs args, CancellationToken token = default) 
             => Refresh(CacheKeySuffixFactory(args), token);
 
-        public Task RefreshAsync(TArgs args, CancellationToken token = default)
-            => RefreshAsync(CacheKeySuffixFactory(args), token);
+        /// <inheritdoc />
+        public Task RemoveAsync(TArgs args, CancellationToken token = default)
+            => RemoveAsync(CacheKeySuffixFactory(args), token);
+
+        /// <inheritdoc />
+        public void Remove(TArgs args, CancellationToken token = default)
+            => Remove(CacheKeySuffixFactory(args), token);
 
         /// <summary>
         /// The sealed factory method used for creating the global cache key prefixes.
@@ -68,11 +95,11 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The arguments.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}"/> that returns object of result type.</returns>
-        protected abstract Task<TResult> LoadAsync(TArgs args, CancellationToken token = default);
+        protected abstract Task<TResult?> LoadAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>
         /// The abstract method for creating cache key suffix in order to make stored items keys really unique,
-        /// the returned string should be kinda hashcode of argument.
+        /// the returned string should be kinda hash of argument.
         /// </summary>
         /// <param name="args">The arguments.</param>
         /// <returns>The additional cache key suffix.</returns>

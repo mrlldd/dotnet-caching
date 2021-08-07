@@ -28,7 +28,7 @@ namespace mrlldd.Caching.Stores.Decoration.Internal.Logging
             this.storeLogPrefix = storeLogPrefix;
         }
 
-        public Result<T> Get<T>(string key)
+        public Result<T?> Get<T>(string key)
         {
             LogGetTry<T>(key);
             var stopwatch = new Stopwatch();
@@ -40,7 +40,7 @@ namespace mrlldd.Caching.Stores.Decoration.Internal.Logging
                 });
         }
 
-        public async Task<Result<T>> GetAsync<T>(string key, CancellationToken token = default)
+        public async Task<Result<T?>> GetAsync<T>(string key, CancellationToken token = default)
         {
             LogGetTry<T>(key);
             var stopwatch = new Stopwatch();

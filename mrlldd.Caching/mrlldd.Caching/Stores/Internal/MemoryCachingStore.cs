@@ -15,14 +15,14 @@ namespace mrlldd.Caching.Stores.Internal
         public MemoryCachingStore(IMemoryCache memoryCache)
             => this.memoryCache = memoryCache;
 
-        public Result<T> Get<T>(string key)
+        public Result<T?> Get<T>(string key)
             => Result.Of(() =>
             {
                 var fromCache = memoryCache.Get<byte[]>(key);
                 return fromCache != null && fromCache.Any() ? Deserialize<T>(fromCache) : default;
             });
 
-        public Task<Result<T>> GetAsync<T>(string key, CancellationToken token = default)
+        public Task<Result<T?>> GetAsync<T>(string key, CancellationToken token = default)
             => Get<T>(key).Map(Task.FromResult);
 
         public Result Set<T>(string key, T value, MemoryCacheEntryOptions options)

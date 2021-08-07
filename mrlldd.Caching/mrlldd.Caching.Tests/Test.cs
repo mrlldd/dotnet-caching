@@ -37,7 +37,7 @@ namespace mrlldd.Caching.Tests
             new ServiceCollection()
                 .AddLogging(x => x.AddConsole().AddFilter(level => level >= LogLevel.Debug))
                 .AddMemoryCache()
-                .AddStores()
+                .AddCachingStores()
                 .AddScoped<ICachingStoreDecorator, LoggingCachingStoreDecorator>()
                 .AddSingleton<ICachingLoggingOptions>(new CachingLoggingOptions(LogLevel.Information))
                 .Effect(x => Container.Populate(x));

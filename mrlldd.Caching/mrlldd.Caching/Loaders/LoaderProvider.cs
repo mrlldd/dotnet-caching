@@ -23,6 +23,6 @@ namespace mrlldd.Caching.Loaders
 
         public ICachingLoader<TArgs, TResult> Get<TArgs, TResult>()
             where TResult : class
-            => InternalGet<ICachingLoader<TArgs, TResult>, TResult>();
+            => InternalGet<ICachingLoader<TArgs, TResult>>();
     }
 }

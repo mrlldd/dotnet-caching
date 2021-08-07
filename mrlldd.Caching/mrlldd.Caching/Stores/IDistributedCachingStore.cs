@@ -2,6 +2,9 @@
 
 namespace mrlldd.Caching.Stores
 {
+    /// <summary>
+    /// The interface that represents distributed caching store.
+    /// </summary>
     public interface IDistributedCachingStore : ICachingStore<DistributedCacheEntryOptions>
     {
         
