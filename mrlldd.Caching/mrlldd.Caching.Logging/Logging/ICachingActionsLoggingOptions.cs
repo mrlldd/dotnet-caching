@@ -3,7 +3,7 @@
 namespace mrlldd.Caching.Logging
 {
     /// <summary>
-    /// The interface that represents logging options used by logging decorators.
+    /// The interface that represents logging options used by actions logging decorators.
     /// </summary>
     public interface ICachingActionsLoggingOptions
     {

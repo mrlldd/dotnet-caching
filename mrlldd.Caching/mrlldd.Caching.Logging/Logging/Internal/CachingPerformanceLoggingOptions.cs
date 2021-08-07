@@ -2,7 +2,7 @@
 
 namespace mrlldd.Caching.Logging.Internal
 {
-    public record CachingPerformanceLoggingOptions : ICachingPerformanceLoggingOptions
+    internal record CachingPerformanceLoggingOptions : ICachingPerformanceLoggingOptions
     {
         public LogLevel LogLevel { get; }
 

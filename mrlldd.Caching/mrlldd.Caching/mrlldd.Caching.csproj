@@ -4,6 +4,8 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
+        <RootNamespace>mrlldd.Caching</RootNamespace>
+        <AssemblyName>mrlldd.Caching</AssemblyName>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -16,9 +18,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <RootNamespace>mrlldd.Caching</RootNamespace>
         <PackageVersion>1.0.0</PackageVersion>
-        <AssemblyName>mrlldd.Caching</AssemblyName>
         <Description>
             Provides utilities for performing caching operations.
         </Description>

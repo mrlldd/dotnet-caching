@@ -24,7 +24,37 @@ namespace mrlldd.Caching.Tests.Caches
     public class CacheTests : CacheRelatedTest
     {
         private readonly string cacheKey =
-            $"{TestCache<TestUnit>.CacheKeyPrefix}:{TestCache<TestUnit>.GlobalCacheKey}:{nameof(TestUnit)}";
+            $"{TestCache<TestUnit>.GlobalCacheKey}:{nameof(TestUnit)}";
+
+        [Test]
+        public Task UsesMemoryBubbleIfMemoryDisabled() => Container
+            .WithDistributedCacheOnly<TestUnit>()
+            .MockStores(MockRepository)
+            .Map(async c =>
+            {
+                var provider = c.Resolve<ICacheProvider>();
+                var unit = TestUnit.Create();
+                await provider.Get<TestUnit>().SetAsync(unit);
+                c.Resolve<Mock<IBubbleCacheStore>>()
+                    .Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey), It.Is<TestUnit>(u => u == unit),
+                        It.IsAny<MemoryCacheEntryOptions>(), It.IsAny<ICacheStoreOperationMetadata>(),
+                        It.IsAny<CancellationToken>()), Times.Once);
+            });
+        
+        [Test]
+        public Task UsesDistributedBubbleIfDistributedDisabled() => Container
+            .WithMemoryCacheOnly<TestUnit>()
+            .MockStores(MockRepository)
+            .Map(async c =>
+            {
+                var provider = c.Resolve<ICacheProvider>();
+                var unit = TestUnit.Create();
+                await provider.Get<TestUnit>().SetAsync(unit);
+                c.Resolve<Mock<IBubbleCacheStore>>()
+                    .Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey), It.Is<TestUnit>(u => u == unit),
+                        It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<ICacheStoreOperationMetadata>(),
+                        It.IsAny<CancellationToken>()), Times.Once);
+            });
 
         [Test]
         public Task CachesToMemory() => Container

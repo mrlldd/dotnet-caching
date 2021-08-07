@@ -11,7 +11,7 @@ namespace mrlldd.Caching.Caches
     public abstract class Cache<T> : Caching<T>, ICache<T>
     {
         /// <inheritdoc />
-        protected override IEnumerable<string> CacheKeyPrefixesFactory()
+        protected sealed override IEnumerable<string> CacheKeyPrefixesFactory()
         {
             yield break;
         }

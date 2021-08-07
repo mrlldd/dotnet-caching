@@ -9,11 +9,11 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
     {
         public PerformanceLoggingMemoryCacheStore(IMemoryCacheStore sourceCacheStore,
             ILogger<PerformanceLoggingCacheStore<IMemoryCacheStore, MemoryCacheEntryOptions>> logger, 
-            ICachingPerformanceLoggingOptions performanceLoggingOptions, 
+            ICachingPerformanceLoggingOptions loggingOptions, 
             string storeLogPrefix) 
             : base(sourceCacheStore, 
                 logger, 
-                performanceLoggingOptions,
+                loggingOptions,
                 storeLogPrefix)
         {
         }

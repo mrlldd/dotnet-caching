@@ -5,8 +5,31 @@
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
         <RootNamespace>mrlldd.Caching</RootNamespace>
+        <AssemblyName>mrlldd.Caching.Logging</AssemblyName>
     </PropertyGroup>
 
+
+    <PropertyGroup>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageId>mrlldd.Caching.Logging</PackageId>
+        <PackageProjectUrl>https://github.com/mrlldd/dotnet-caching</PackageProjectUrl>
+        <PackageTags>mrlldd;caching;utilities;logging;</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Description>
+            Provides logging utilites for cache stores in mrlldd.Caching library.
+        </Description>
+        <Authors>mrlldd</Authors>
+        <Title>mrlldd.Caching.Logging</Title>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/mrlldd/dotnet-caching.git</RepositoryUrl>
+        <RepositoryBranch>main</RepositoryBranch>
+    </PropertyGroup>
+    
     <ItemGroup>
       <ProjectReference Include="..\mrlldd.Caching.Abstractions\mrlldd.Caching.Abstractions.csproj" />
     </ItemGroup>

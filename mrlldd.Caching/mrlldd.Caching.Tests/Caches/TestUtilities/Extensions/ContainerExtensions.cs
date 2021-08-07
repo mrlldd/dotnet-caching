@@ -23,19 +23,27 @@ namespace mrlldd.Caching.Tests.Caches.TestUtilities.Extensions
         {
             container
                 .Resolve<IDistributedCacheStore>()
-                .Map(x => MockStore<IDistributedCacheStore, DistributedCacheEntryOptions>(x, mockRepository))
+                .Map(x => MockStore<IDistributedCacheStore, DistributedCacheEntryOptions>(x,
+                    mockRepository.Create<IDistributedCacheStore>()))
                 .AddToContainer(container);
             container
                 .Resolve<IMemoryCacheStore>()
-                .Map(x => MockStore<IMemoryCacheStore, MemoryCacheEntryOptions>(x, mockRepository))
+                .Map(x => MockStore<IMemoryCacheStore, MemoryCacheEntryOptions>(x,
+                    mockRepository.Create<IMemoryCacheStore>()))
+                .AddToContainer(container);
+            container
+                .Resolve<IBubbleCacheStore>()
+                .Map(x => MockStore<IBubbleCacheStore, MemoryCacheEntryOptions>(x,
+                        mockRepository.Create<IBubbleCacheStore>())
+                    .Effect(y => MockStore<IBubbleCacheStore, DistributedCacheEntryOptions>(x, y))
+                )
                 .AddToContainer(container);
             return container;
         }
 
-        private static Mock<TStore> MockStore<TStore, TOptions>(TStore store, MockRepository repository)
+        private static Mock<TStore> MockStore<TStore, TOptions>(TStore store, Mock<TStore> mock)
             where TStore : class, ICacheStore<TOptions>
-            => repository
-                .Create<TStore>()
+            => mock
                 .Effect(s =>
                     s.Setup(x => x.GetAsync<TestUnit>(It.IsAny<string>(), It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()))

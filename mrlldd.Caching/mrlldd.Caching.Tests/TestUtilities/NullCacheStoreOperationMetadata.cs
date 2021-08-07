@@ -1,4 +1,6 @@
-﻿namespace mrlldd.Caching.Stores
+﻿using mrlldd.Caching.Stores;
+
+namespace mrlldd.Caching.Tests.TestUtilities
 {
     public class NullCacheStoreOperationMetadata : ICacheStoreOperationMetadata
     {

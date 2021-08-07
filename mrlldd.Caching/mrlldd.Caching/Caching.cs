@@ -141,6 +141,11 @@ namespace mrlldd.Caching
         /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
         protected T? TryGetFromCache(string keySuffix, CancellationToken token = default)
         {
+            if (!(IsUsingDistributed || IsUsingMemory))
+            {
+                return default;
+            }
+            
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
             var fromMemory = MemoryCacheStore.Get<T>(key, operation);
@@ -191,6 +196,11 @@ namespace mrlldd.Caching
         /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
         protected async Task<T?> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
         {
+            if (!(IsUsingDistributed || IsUsingMemory))
+            {
+                return default;
+            }
+            
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
             var fromMemory = await MemoryCacheStore.GetAsync<T>(key, operation, token);
@@ -298,7 +308,7 @@ namespace mrlldd.Caching
 
             token.ThrowIfCancellationRequested();
 
-            await DistributedCacheStore.RemoveAsync(keySuffix, operation, token);
+            await DistributedCacheStore.RemoveAsync(key, operation, token);
         }
 
         /// <summary>

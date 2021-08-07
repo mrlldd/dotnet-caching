@@ -9,9 +9,9 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
     {
         public ActionsLoggingMemoryCacheStore(IMemoryCacheStore sourceCacheStore,
             ILogger<ActionsLoggingCacheStore<IMemoryCacheStore, MemoryCacheEntryOptions>> logger,
-            ICachingActionsLoggingOptions performanceLoggingOptions,
+            ICachingActionsLoggingOptions loggingOptions,
             string storeLogPrefix)
-            : base(sourceCacheStore, logger, performanceLoggingOptions, storeLogPrefix)
+            : base(sourceCacheStore, logger, loggingOptions, storeLogPrefix)
         {
         }
     }

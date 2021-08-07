@@ -14,10 +14,5 @@ namespace mrlldd.Caching.Tests.Caches.TestUtilities
         public const string CacheKeyPrefix = "test";
         protected override string CacheKey => GlobalCacheKey;
         protected override string DefaultKeySuffix => typeof(T).Name;
-
-        protected override IEnumerable<string> CacheKeyPrefixesFactory()
-        {
-            yield return CacheKeyPrefix;
-        }
     }
 }
