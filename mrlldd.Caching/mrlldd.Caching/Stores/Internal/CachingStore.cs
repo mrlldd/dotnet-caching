@@ -7,7 +7,7 @@ namespace mrlldd.Caching.Stores.Internal
         protected static byte[] Serialize<T>(T data)
             => JsonSerializer.SerializeToUtf8Bytes(data);
 
-        protected static T Deserialize<T>(byte[] raw)
+        protected static T? Deserialize<T>(byte[] raw)
             => JsonSerializer.Deserialize<T>(raw);
     }
 }

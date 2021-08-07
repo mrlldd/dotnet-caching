@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using DryIoc;
 using Functional.Object.Extensions;
@@ -29,26 +28,30 @@ namespace mrlldd.Caching.Tests.Loaders
                 var loader = provider.Get<TestArgument, TestUnit>();
                 await loader.GetOrLoadAsync(argument);
                 c.Resolve<Mock<ITestClient>>()
-                    .Verify(x => x.LoadAsync(It.IsAny<TestArgument>()), Times.Once);
+                    .Verify(x => x.LoadAsync(It.Is<TestArgument>(a => a == argument)), Times.Once);
                 var key = CacheKeyFactory(argument);
-                c.Resolve<Mock<IMemoryCachingStore>>()
+                c.Resolve<Mock<IMemoryCacheStore>>()
                     .Effect(mock => mock.Verify(x =>
                         x.SetAsync(It.Is<string>(s => s == key),
                             It.Is<TestUnit>(a => a.PublicProperty == argument.Id),
                             It.IsAny<MemoryCacheEntryOptions>(),
+                            It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()), Times.Once))
                     .Effect(mock => mock.Verify(x =>
                         x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                            It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()), Times.Once));
 
-                c.Resolve<Mock<IDistributedCachingStore>>()
+                c.Resolve<Mock<IDistributedCacheStore>>()
                     .Effect(mock => mock.Verify(x =>
                         x.SetAsync(It.Is<string>(s => s == key),
                             It.Is<TestUnit>(a => a.PublicProperty == argument.Id),
                             It.IsAny<DistributedCacheEntryOptions>(),
+                            It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()), Times.Once))
                     .Effect(mock => mock.Verify(x =>
                         x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                            It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()), Times.Once));
             });
 
@@ -63,15 +66,17 @@ namespace mrlldd.Caching.Tests.Loaders
                 await loader.GetOrLoadAsync(argument);
                 await loader.GetOrLoadAsync(argument);
                 c.Resolve<Mock<ITestClient>>()
-                    .Verify(x => x.LoadAsync(It.IsAny<TestArgument>()), Times.Once);
+                    .Verify(x => x.LoadAsync(It.Is<TestArgument>(a => a == argument)), Times.Once);
                 var key = CacheKeyFactory(argument);
-                c.Resolve<Mock<IMemoryCachingStore>>()
+                c.Resolve<Mock<IMemoryCacheStore>>()
                     .Verify(
                         x => x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                            It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()), Times.Exactly(2));
-                c.Resolve<Mock<IDistributedCachingStore>>()
+                c.Resolve<Mock<IDistributedCacheStore>>()
                     .Verify(
                         x => x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                            It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()), Times.Exactly(1));
             });
 
@@ -86,30 +91,80 @@ namespace mrlldd.Caching.Tests.Loaders
                 var loader = provider.Get<TestArgument, TestUnit>();
                 await loader.GetOrLoadAsync(argument);
                 var key = CacheKeyFactory(argument);
-                await c.Resolve<IMemoryCachingStore>().RemoveAsync(key);
+                await c.Resolve<IMemoryCacheStore>().RemoveAsync(key, NullCacheStoreOperationMetadata.Instance);
                 await loader.GetOrLoadAsync(argument);
                 c.Resolve<Mock<ITestClient>>()
-                    .Verify(x => x.LoadAsync(It.IsAny<TestArgument>()), Times.Once);
-                c.Resolve<Mock<IMemoryCachingStore>>()
+                    .Verify(x => x.LoadAsync(It.Is<TestArgument>(a => a == argument)), Times.Once);
+                c.Resolve<Mock<IMemoryCacheStore>>()
                     .Effect(memoryStore =>
                         memoryStore.Verify(
                             x => x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                                It.IsAny<ICacheStoreOperationMetadata>(),
                                 It.IsAny<CancellationToken>()),
                             Times.Exactly(2))
                     )
                     .Effect(memoryStore =>
                         memoryStore.Verify(
                             x => x.RemoveAsync(It.Is<string>(s => s == key),
+                                It.IsAny<ICacheStoreOperationMetadata>(),
                                 It.IsAny<CancellationToken>()),
                             Times.Once)
                     );
-                c.Resolve<Mock<IDistributedCachingStore>>()
+                c.Resolve<Mock<IDistributedCacheStore>>()
                     .Verify(
                         x => x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                            It.IsAny<ICacheStoreOperationMetadata>(),
                             It.IsAny<CancellationToken>()), Times.Exactly(2));
             });
 
-        private string CacheKeyFactory(TestArgument argument)
+        [Test]
+        public Task LoadsIfRemoved() => Container
+            .WithFakeDistributedCache()
+            .MockStores(MockRepository)
+            .Map(async c =>
+            {
+                var argument = TestArgument.Create();
+                var provider = c.Resolve<ILoaderProvider>();
+                var loader = provider.Get<TestArgument, TestUnit>();
+                await loader.GetOrLoadAsync(argument);
+                var key = CacheKeyFactory(argument);
+                await loader.RemoveAsync(argument);
+                await loader.GetOrLoadAsync(argument);
+                c.Resolve<Mock<ITestClient>>()
+                    .Verify(x => x.LoadAsync(It.Is<TestArgument>(a => a == argument)), Times.Exactly(2));
+                c.Resolve<Mock<IMemoryCacheStore>>()
+                    .Effect(memoryStore =>
+                        memoryStore.Verify(
+                            x => x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                                It.IsAny<ICacheStoreOperationMetadata>(),
+                                It.IsAny<CancellationToken>()),
+                            Times.Exactly(2))
+                    )
+                    .Effect(memoryStore =>
+                        memoryStore.Verify(
+                            x => x.RemoveAsync(It.Is<string>(s => s == key),
+                                It.IsAny<ICacheStoreOperationMetadata>(),
+                                It.IsAny<CancellationToken>()),
+                            Times.Once));
+                c.Resolve<Mock<IDistributedCacheStore>>()
+                    .Effect(memoryStore =>
+                        memoryStore.Verify(
+                            x => x.GetAsync<TestUnit>(It.Is<string>(s => s == key),
+                                It.IsAny<ICacheStoreOperationMetadata>(),
+                                It.IsAny<CancellationToken>()),
+                            Times.Exactly(2))
+                    )
+                    .Effect(memoryStore =>
+                        memoryStore.Verify(
+                            x => x.RemoveAsync(It.Is<string>(s => s == key),
+                                It.IsAny<ICacheStoreOperationMetadata>(),
+                                It.IsAny<CancellationToken>()),
+                            Times.Once));
+            });
+        
+        
+
+        private static string CacheKeyFactory(TestArgument argument)
             => $"{TestLoader.CacheKeyPrefix}:{TestLoader.GlobalCacheKey}:{argument.Id}";
 
         protected override void FillContainer(IContainer container)

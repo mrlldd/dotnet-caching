@@ -3,7 +3,7 @@ using Functional.Object.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using mrlldd.Caching.Extensions.Internal;
+using mrlldd.Caching.Extensions.DependencyInjection.Internal;
 
 namespace mrlldd.Caching.Caches
 {

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -7,10 +8,10 @@ namespace mrlldd.Caching
     internal class NoOpDistributedCache : IDistributedCache
     {
         public byte[] Get(string key) 
-            => null;
+            => Array.Empty<byte>();
 
         public Task<byte[]> GetAsync(string key, CancellationToken token = default)
-            => Task.FromResult<byte[]>(null);
+            => Task.FromResult(Array.Empty<byte>());
 
         public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
         {
