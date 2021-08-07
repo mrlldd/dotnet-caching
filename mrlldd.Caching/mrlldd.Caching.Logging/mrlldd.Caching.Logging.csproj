@@ -19,7 +19,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>2.0.0</PackageVersion>
         <Description>
             Provides logging utilites for cache stores in mrlldd.Caching library.
         </Description>
@@ -31,11 +31,11 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\mrlldd.Caching.Abstractions\mrlldd.Caching.Abstractions.csproj" />
+      <ProjectReference Include="..\mrlldd.Caching.Abstractions\mrlldd.Caching.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="mrlldd.Functional.Object" Version="0.2.0" />
+      <PackageReference Include="mrlldd.Functional.Object" Version="0.2.0"/>
     </ItemGroup>
 
 </Project>
