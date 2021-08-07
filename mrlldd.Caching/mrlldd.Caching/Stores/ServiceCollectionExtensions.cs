@@ -6,7 +6,7 @@ namespace mrlldd.Caching.Stores
     /// <summary>
     /// The class that contains extensions methods for dependency injection of caching stores.
     /// </summary>
-    public static class ServiceCollectionExtensions
+    internal static class ServiceCollectionExtensions
     {
         /// <summary>
         /// The method for registering caching stores used by caches and loaders.
