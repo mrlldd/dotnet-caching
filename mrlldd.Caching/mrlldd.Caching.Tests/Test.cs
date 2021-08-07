@@ -1,21 +1,17 @@
-﻿using System;
-using System.Threading;
-using DryIoc;
+﻿using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Functional.Object.Extensions;
-using ImTools;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using mrlldd.Caching.Extensions.DependencyInjection;
-using mrlldd.Caching.Extensions.DependencyInjection.Internal;
+using mrlldd.Caching.Decoration.Internal.Logging.Actions;
+using mrlldd.Caching.Decoration.Internal.Logging.Performance;
+using mrlldd.Caching.Logging;
+using mrlldd.Caching.Logging.Internal;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Decoration;
-using mrlldd.Caching.Stores.Decoration.Internal;
-using mrlldd.Caching.Stores.Decoration.Internal.Logging;
-using mrlldd.Caching.Tests.TestUtilities.Extensions;
+using mrlldd.Caching.Stores.Internal;
 using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests
@@ -38,10 +34,13 @@ namespace mrlldd.Caching.Tests
                 .AddLogging(x => x.AddConsole().AddFilter(level => level >= LogLevel.Debug))
                 .AddMemoryCache()
                 .AddCachingStores()
-                .AddScoped<ICachingStoreDecorator, LoggingCachingStoreDecorator>()
-                .AddSingleton<ICachingLoggingOptions>(new CachingLoggingOptions(LogLevel.Information))
+                .AddSingleton<ICachingPerformanceLoggingOptions>(new CachingPerformanceLoggingOptions(LogLevel.Information))
+                .AddSingleton<ICachingActionsLoggingOptions>(new CachingActionsLoggingOptions(LogLevel.Information, LogLevel.Error))
                 .Effect(x => Container.Populate(x));
+            Container.Register<ICacheStoreDecorator, PerformanceLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);
+            Container.Register<ICacheStoreDecorator, ActionsLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);
             Container.Register<IDistributedCache, NoOpDistributedCache>();
+            Container.Register<IStoreOperationProvider, StoreOperationProvider>();
             FillContainer(Container);
         }
 

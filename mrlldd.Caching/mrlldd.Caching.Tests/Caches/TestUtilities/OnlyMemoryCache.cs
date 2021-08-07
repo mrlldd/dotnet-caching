@@ -1,6 +1,4 @@
-﻿using mrlldd.Caching.Caching;
-
-namespace mrlldd.Caching.Tests.Caches.TestUtilities
+﻿namespace mrlldd.Caching.Tests.Caches.TestUtilities
 {
     public class OnlyMemoryCache<T> : TestCache<T>
     {

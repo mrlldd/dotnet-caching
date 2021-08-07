@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
-using mrlldd.Caching.Caching;
 
 namespace mrlldd.Caching.Loaders
 {

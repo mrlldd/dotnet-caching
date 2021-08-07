@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using mrlldd.Caching.Caching;
 using mrlldd.Caching.Loaders;
 using mrlldd.Caching.Tests.TestUtilities;
 

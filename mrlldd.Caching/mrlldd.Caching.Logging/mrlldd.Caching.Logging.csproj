@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>9</LangVersion>
+        <Nullable>enable</Nullable>
+        <RootNamespace>mrlldd.Caching</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\mrlldd.Caching.Abstractions\mrlldd.Caching.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="mrlldd.Functional.Object" Version="0.2.0" />
+    </ItemGroup>
+
+</Project>

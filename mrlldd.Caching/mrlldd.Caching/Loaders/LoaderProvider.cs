@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using mrlldd.Caching.Caching;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Decoration;
 
@@ -9,14 +8,16 @@ namespace mrlldd.Caching.Loaders
     internal sealed class LoaderProvider : CachingProvider, ILoaderProvider
     {
         public LoaderProvider(IServiceProvider serviceProvider,
-            IMemoryCachingStore memoryCachingStore,
-            IDistributedCachingStore distributedCachingStore,
-            IBubbleCachingStore bubbleCachingStore,
-            IEnumerable<ICachingStoreDecorator> decorators)
+            IMemoryCacheStore memoryCacheStore,
+            IDistributedCacheStore distributedCacheStore,
+            IBubbleCacheStore bubbleCacheStore,
+            IStoreOperationProvider storeOperationProvider,
+            IEnumerable<ICacheStoreDecorator> decorators)
             : base(serviceProvider,
-                memoryCachingStore,
-                distributedCachingStore,
-                bubbleCachingStore,
+                memoryCacheStore,
+                distributedCacheStore,
+                bubbleCacheStore,
+                storeOperationProvider,
                 decorators)
         {
         }

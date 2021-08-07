@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using mrlldd.Caching.Caches;
-using mrlldd.Caching.Caching;
 
 namespace mrlldd.Caching.Tests.Caches.TestUtilities
 {

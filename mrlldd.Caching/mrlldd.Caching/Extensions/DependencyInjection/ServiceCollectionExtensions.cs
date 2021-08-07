@@ -5,6 +5,7 @@ using mrlldd.Caching.Caches;
 using mrlldd.Caching.Extensions.DependencyInjection.Internal;
 using mrlldd.Caching.Loaders;
 using mrlldd.Caching.Stores;
+using mrlldd.Caching.Stores.Internal;
 
 namespace mrlldd.Caching.Extensions.DependencyInjection
 {
@@ -22,6 +23,7 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
         public static ICachingServiceCollection AddCaching(this IServiceCollection services,
             Assembly assembly)
             => services
+                .AddScoped<IStoreOperationProvider, StoreOperationProvider>()
                 .AddCaches(assembly)
                 .AddLoaders(assembly)
                 .AddCachingStores()

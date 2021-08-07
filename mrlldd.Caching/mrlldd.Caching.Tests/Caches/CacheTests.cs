@@ -23,7 +23,8 @@ namespace mrlldd.Caching.Tests.Caches
     [TestFixture]
     public class CacheTests : CacheRelatedTest
     {
-        private readonly string cacheKey = $"{TestCache<TestUnit>.CacheKeyPrefix}:{TestCache<TestUnit>.GlobalCacheKey}:{nameof(TestUnit)}";
+        private readonly string cacheKey =
+            $"{TestCache<TestUnit>.CacheKeyPrefix}:{TestCache<TestUnit>.GlobalCacheKey}:{nameof(TestUnit)}";
 
         [Test]
         public Task CachesToMemory() => Container
@@ -327,30 +328,40 @@ namespace mrlldd.Caching.Tests.Caches
             .MockStores(MockRepository)
             .Map(async c =>
             {
-                var dsMock = c.Resolve<Mock<IDistributedCachingStore>>();
-                var msMock = c.Resolve<Mock<IMemoryCachingStore>>();
+                var dsMock = c.Resolve<Mock<IDistributedCacheStore>>();
+                var msMock = c.Resolve<Mock<IMemoryCacheStore>>();
                 var unit = TestUnit.Create();
                 var provider = c.Resolve<ICacheProvider>();
                 var ourCache = provider.Get<TestUnit>();
                 await ourCache.SetAsync(unit);
-                await msMock.Object.RemoveAsync(cacheKey);
-                await dsMock.Object.RemoveAsync(cacheKey);
+                await msMock.Object.RemoveAsync(cacheKey, NullCacheStoreOperationMetadata.Instance);
+                await dsMock.Object.RemoveAsync(cacheKey, NullCacheStoreOperationMetadata.Instance);
                 var fromCache = await ourCache.GetAsync();
                 fromCache.Should().Be(default(TestUnit));
                 msMock.Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey),
-                    It.Is<TestUnit>(u => unit.PublicProperty == u.PublicProperty),
-                    It.IsAny<MemoryCacheEntryOptions>(),
-                    It.IsAny<CancellationToken>()), 
+                        It.Is<TestUnit>(u => unit.PublicProperty == u.PublicProperty),
+                        It.IsAny<MemoryCacheEntryOptions>(),
+                        It.IsAny<ICacheStoreOperationMetadata>(),
+                        It.IsAny<CancellationToken>()),
                     Times.Exactly(1)); // 2 as it saves to memory if successfully got from distributed
-                msMock.Verify(x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()), Times.Once);
-                msMock.Verify(x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                msMock.Verify(
+                    x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<ICacheStoreOperationMetadata>(),
+                        It.IsAny<CancellationToken>()), Times.Once);
+                msMock.Verify(
+                    x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey),
+                        It.IsAny<ICacheStoreOperationMetadata>(), It.IsAny<CancellationToken>()),
                     Times.Once);
                 dsMock.Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey),
                     It.Is<TestUnit>(u => unit.PublicProperty == u.PublicProperty),
-                    It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()), Times.Once);
-                dsMock.Verify(x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                    It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<ICacheStoreOperationMetadata>(),
+                    It.IsAny<CancellationToken>()), Times.Once);
+                dsMock.Verify(
+                    x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<ICacheStoreOperationMetadata>(),
+                        It.IsAny<CancellationToken>()),
                     Times.Once);
-                dsMock.Verify(x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                dsMock.Verify(
+                    x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey),
+                        It.IsAny<ICacheStoreOperationMetadata>(), It.IsAny<CancellationToken>()),
                     Times.Once);
             });
 
@@ -384,21 +395,26 @@ namespace mrlldd.Caching.Tests.Caches
             .MockStores(MockRepository)
             .Map(async c =>
             {
-                var distributedStore = c.Resolve<Mock<IDistributedCachingStore>>();
-                var memoryStore = c.Resolve<Mock<IMemoryCachingStore>>();
+                var distributedStore = c.Resolve<Mock<IDistributedCacheStore>>();
+                var memoryStore = c.Resolve<Mock<IMemoryCacheStore>>();
                 var provider = c.Resolve<ICacheProvider>();
                 var ourCache = provider.Get<TestUnit>();
                 var serialized = TestUnit.Create().Map(x => JsonSerializer.SerializeToUtf8Bytes(x));
-                await distributedStore.Object.SetAsync(cacheKey, serialized.Take(3).ToArray(), new DistributedCacheEntryOptions
-                {
-                    SlidingExpiration = TimeSpan.MaxValue
-                });
-                
+                await distributedStore.Object.SetAsync(cacheKey, serialized.Take(3).ToArray(),
+                    new DistributedCacheEntryOptions
+                    {
+                        SlidingExpiration = TimeSpan.MaxValue
+                    }, NullCacheStoreOperationMetadata.Instance);
+
                 var fromCache = await ourCache.GetAsync();
                 fromCache.Should().Be(default(TestUnit));
-                distributedStore.Verify(x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()),
+                distributedStore.Verify(
+                    x => x.GetAsync<TestUnit>(It.Is<string>(s => s == cacheKey),
+                        It.IsAny<ICacheStoreOperationMetadata>(), It.IsAny<CancellationToken>()),
                     Times.Once);
-                memoryStore.Verify(x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<CancellationToken>()), Times.Once);
+                memoryStore.Verify(
+                    x => x.RemoveAsync(It.Is<string>(s => s == cacheKey), It.IsAny<ICacheStoreOperationMetadata>(),
+                        It.IsAny<CancellationToken>()), Times.Once);
             });
     }
 }

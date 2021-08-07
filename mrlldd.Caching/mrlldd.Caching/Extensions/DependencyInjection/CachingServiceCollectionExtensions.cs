@@ -1,8 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using mrlldd.Caching.Extensions.DependencyInjection.Internal;
 using mrlldd.Caching.Stores.Decoration;
-using mrlldd.Caching.Stores.Decoration.Internal.Logging;
 
 namespace mrlldd.Caching.Extensions.DependencyInjection
 {
@@ -12,27 +9,14 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
     public static class CachingServiceCollectionExtensions
     {
         /// <summary>
-        /// The method used for adding default logging decoration of cache actions.
-        /// </summary>
-        /// <param name="cachingServiceCollection">The caching service collection.</param>
-        /// <param name="logLevel">The log level used on logging.</param>
-        /// <returns>The caching service collection.</returns>
-        public static ICachingServiceCollection AddLogging(this ICachingServiceCollection cachingServiceCollection, LogLevel logLevel = LogLevel.Debug)
-        {
-            cachingServiceCollection.AddScoped<ICachingStoreDecorator, LoggingCachingStoreDecorator>();
-            cachingServiceCollection.AddSingleton<ICachingLoggingOptions>(new CachingLoggingOptions(logLevel));
-            return cachingServiceCollection;
-        }
-
-        /// <summary>
         /// The method used for registering custom decorators of caching stores.
         /// </summary>
         /// <param name="cachingServiceCollection">The caching service collection.</param>
-        /// <typeparam name="T">The type of decorator class that implements <see cref="ICachingStoreDecorator"/>.</typeparam>
+        /// <typeparam name="T">The type of decorator class that implements <see cref="ICacheStoreDecorator"/>.</typeparam>
         /// <returns>The caching service collection.</returns>
-        public static ICachingServiceCollection Decorate<T>(this ICachingServiceCollection cachingServiceCollection) where T : class, ICachingStoreDecorator
+        public static ICachingServiceCollection Decorate<T>(this ICachingServiceCollection cachingServiceCollection) where T : class, ICacheStoreDecorator
         {
-            cachingServiceCollection.AddScoped<ICachingStoreDecorator, T>();
+            cachingServiceCollection.AddScoped<ICacheStoreDecorator, T>();
             return cachingServiceCollection;
         }
     }

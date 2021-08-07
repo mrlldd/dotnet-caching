@@ -15,8 +15,8 @@ namespace mrlldd.Caching.Stores
         /// <returns>The service collection.</returns>
         public static IServiceCollection AddCachingStores(this IServiceCollection services)
             => services
-                .AddScoped<IMemoryCachingStore, MemoryCachingStore>()
-                .AddScoped<IDistributedCachingStore, DistributedCachingStore>()
-                .AddScoped<IBubbleCachingStore, BubbleCachingStore>();
+                .AddScoped<IMemoryCacheStore, MemoryCacheStore>()
+                .AddScoped<IDistributedCacheStore, DistributedCacheStore>()
+                .AddScoped<IBubbleCacheStore, BubbleCacheStore>();
     }
 }
