@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Functional.Result;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Decoration;
 
@@ -22,7 +23,7 @@ namespace mrlldd.Caching.Caches
         {
         }
 
-        public ICache<T> Get<T>()
+        public Result<ICache<T>> Get<T>()
             => InternalGet<ICache<T>>();
     }
 }

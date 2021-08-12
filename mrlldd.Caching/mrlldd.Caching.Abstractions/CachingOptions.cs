@@ -13,7 +13,10 @@ namespace mrlldd.Caching
             SlidingExpiration = slidingExpiration;
         }
 
-        internal bool IsCaching { get; }
+        /// <summary>
+        /// The bool that indicates if caching is enabled.
+        /// </summary>
+        public bool IsCaching { get; }
         /// <summary>
         /// The cache item expiration timeout.
         /// </summary>
