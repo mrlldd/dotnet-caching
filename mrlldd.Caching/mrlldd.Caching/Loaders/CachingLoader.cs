@@ -2,19 +2,79 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
+using Functional.Result.Extensions;
 
 namespace mrlldd.Caching.Loaders
 {
+    public sealed class CachingLoader
+    {
+        private readonly ILoaderProvider loaderProvider;
+
+        internal CachingLoader(ILoaderProvider loaderProvider)
+            => this.loaderProvider = loaderProvider;
+
+        public Task<TResult?> GetOrLoadAsync<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
+            CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().GetOrLoadAsync(args, omitCacheOnLoad, token);
+
+        public TResult? GetOrLoad<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
+            CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().GetOrLoad(args, omitCacheOnLoad, token);
+
+        public Task SetAsync<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().SetAsync(args, result, token);
+
+        public void Set<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().Set(args, result, token);
+
+        public Task<TResult?> GetAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().GetAsync(args, token);
+
+        public TResult? Get<TArgs, TResult>(TArgs args, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().Get(args, token);
+
+        public Task RefreshAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().RefreshAsync(args, token);
+
+        public void Refresh<TArgs, TResult>(TArgs args, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().Refresh(args, token);
+
+        public Task RemoveAsync<TArgs, TResult>(TArgs args, CancellationToken token = default) 
+            where TResult : class
+            => GetLoader<TArgs, TResult>().RemoveAsync(args, token);
+
+        public void Remove<TArgs, TResult>(TArgs args, CancellationToken token = default) 
+            where TResult : class
+            => GetLoader<TArgs, TResult>().Remove(args, token);
+
+        private ICachingLoader<TArgs, TResult> GetLoader<TArgs, TResult>() where TResult : class
+            => loaderProvider.Get<TArgs, TResult>()
+                .Map(x => x.Successful
+                    ? x.UnwrapAsSuccess()
+                    : throw x);
+    }
+
     /// <summary>
     /// The base class for implemented caching loaders
     /// </summary>
     /// <typeparam name="TArgs">Loading argument type.</typeparam>
     /// <typeparam name="TResult">Loading result type.</typeparam>
-    public abstract class CachingLoader<TArgs, TResult> : Caching<TResult>, ICachingLoader<TArgs, TResult> where TResult : class
+    public abstract class CachingLoader<TArgs, TResult> : Caching<TResult>, ICachingLoader<TArgs, TResult>
+        where TResult : class
     {
         internal const string CacheKeyPrefix = "loader";
+
         /// <inheritdoc />
-        public async Task<TResult?> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
+        public async Task<TResult?> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
+            CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
@@ -25,7 +85,7 @@ namespace mrlldd.Caching.Loaders
                     return inCache;
                 }
             }
-            
+
             var loaded = await LoadAsync(args, token);
             return await loaded.EffectAsync(x => PerformCachingAsync(x, keySuffix, token));
         }
@@ -42,7 +102,7 @@ namespace mrlldd.Caching.Loaders
                     return inCache;
                 }
             }
-            
+
             var loaded = LoadAsync(args, token).GetAwaiter().GetResult();
             return loaded.Effect(x => PerformCaching(x, keySuffix, token));
         }
@@ -68,7 +128,7 @@ namespace mrlldd.Caching.Loaders
             => RefreshAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
-        public void Refresh(TArgs args, CancellationToken token = default) 
+        public void Refresh(TArgs args, CancellationToken token = default)
             => Refresh(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
