@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DryIoc;
 using FluentAssertions;
 using Functional.Object.Extensions;
+using Functional.Result.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
@@ -34,7 +35,7 @@ namespace mrlldd.Caching.Tests.Caches
             {
                 var provider = c.Resolve<ICacheProvider>();
                 var unit = TestUnit.Create();
-                await provider.Get<TestUnit>().SetAsync(unit);
+                await provider.GetRequired<TestUnit>().UnwrapAsSuccess().SetAsync(unit);
                 c.Resolve<Mock<IBubbleCacheStore>>()
                     .Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey), It.Is<TestUnit>(u => u == unit),
                         It.IsAny<MemoryCacheEntryOptions>(), It.IsAny<ICacheStoreOperationMetadata>(),
@@ -49,7 +50,7 @@ namespace mrlldd.Caching.Tests.Caches
             {
                 var provider = c.Resolve<ICacheProvider>();
                 var unit = TestUnit.Create();
-                await provider.Get<TestUnit>().SetAsync(unit);
+                await provider.GetRequired<TestUnit>().UnwrapAsSuccess().SetAsync(unit);
                 c.Resolve<Mock<IBubbleCacheStore>>()
                     .Verify(x => x.SetAsync(It.Is<string>(s => s == cacheKey), It.Is<TestUnit>(u => u == unit),
                         It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<ICacheStoreOperationMetadata>(),
@@ -70,7 +71,7 @@ namespace mrlldd.Caching.Tests.Caches
 
                 var provider = c.Resolve<ICacheProvider>();
 
-                var cache = provider.Get<TestUnit>();
+                var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
 
                 var unit = TestUnit.Create();
                 await cache.SetAsync(unit);
@@ -93,7 +94,7 @@ namespace mrlldd.Caching.Tests.Caches
 
                 var provider = c.Resolve<ICacheProvider>();
 
-                var cache = provider.Get<TestUnit>();
+                var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
 
                 var unit = TestUnit.Create();
                 await cache.SetAsync(unit);
@@ -123,7 +124,7 @@ namespace mrlldd.Caching.Tests.Caches
 
                 var provider = c.Resolve<ICacheProvider>();
 
-                var cache = provider.Get<TestUnit>();
+                var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
 
                 var unit = TestUnit.Create();
                 await cache.SetAsync(unit);
@@ -152,7 +153,7 @@ namespace mrlldd.Caching.Tests.Caches
                     .AddToContainer(c);
 
                 var provider = c.Resolve<ICacheProvider>();
-                var cache = provider.Get<TestUnit>();
+                var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
 
                 await cache.SetAsync(unit);
                 mock.Verify(x => x.SetAsync(cacheKey,
@@ -178,7 +179,7 @@ namespace mrlldd.Caching.Tests.Caches
                     .AddToContainer(c);
 
                 var provider = c.Resolve<ICacheProvider>();
-                var cache = provider.Get<TestUnit>();
+                var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
 
                 await cache.SetAsync(unit);
                 mock.Verify(x => x.SetAsync(cacheKey,
@@ -195,7 +196,7 @@ namespace mrlldd.Caching.Tests.Caches
                 .Map(async c =>
                 {
                     var provider = c.Resolve<ICacheProvider>();
-                    var cache = provider.Get<TestUnit>();
+                    var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                     var unit = TestUnit.Create();
                     await cache.SetAsync(unit);
                     var fromCache = await cache.GetAsync();
@@ -210,7 +211,7 @@ namespace mrlldd.Caching.Tests.Caches
             .Map(async c =>
             {
                 var provider = c.Resolve<ICacheProvider>();
-                var cache = provider.Get<TestUnit>();
+                var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                 var unit = TestUnit.Create();
                 await cache.SetAsync(unit);
                 var fromCache = await cache.GetAsync();
@@ -252,7 +253,7 @@ namespace mrlldd.Caching.Tests.Caches
                             .Returns<string, CancellationToken>((s, ct) => distributedCache.GetAsync(s, ct)))
                     .AddToContainer(c);
                 var provider = c.Resolve<ICacheProvider>();
-                var ourCache = provider.Get<TestUnit>();
+                var ourCache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                 await ourCache.SetAsync(unit);
                 mcMock.Object.Remove(cacheKey);
                 var fromCache = await ourCache.GetAsync();
@@ -302,7 +303,7 @@ namespace mrlldd.Caching.Tests.Caches
                     .AddToContainer(c);
 
                 var provider = c.Resolve<ICacheProvider>();
-                var ourCache = provider.Get<TestUnit>();
+                var ourCache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                 await ourCache.SetAsync(unit);
                 var fromCache = await ourCache.GetAsync();
                 fromCache.Should().BeEquivalentTo(unit);
@@ -339,7 +340,7 @@ namespace mrlldd.Caching.Tests.Caches
                     .AddToContainer(c);
 
                 var provider = c.Resolve<ICacheProvider>();
-                var cache = provider.Get<TestUnit>();
+                var cache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                 await cache.SetAsync(unit);
                 var result = await cache.GetAsync();
                 result.Should().Be(default(TestUnit));
@@ -362,7 +363,7 @@ namespace mrlldd.Caching.Tests.Caches
                 var msMock = c.Resolve<Mock<IMemoryCacheStore>>();
                 var unit = TestUnit.Create();
                 var provider = c.Resolve<ICacheProvider>();
-                var ourCache = provider.Get<TestUnit>();
+                var ourCache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                 await ourCache.SetAsync(unit);
                 await msMock.Object.RemoveAsync(cacheKey, NullCacheStoreOperationMetadata.Instance);
                 await dsMock.Object.RemoveAsync(cacheKey, NullCacheStoreOperationMetadata.Instance);
@@ -410,7 +411,7 @@ namespace mrlldd.Caching.Tests.Caches
                             .Returns<string, CancellationToken>((s, ct) => distributedCache.GetAsync(s, ct)))
                     .AddToContainer(c);
                 var provider = c.Resolve<ICacheProvider>();
-                var ourCache = provider.Get<TestUnit>();
+                var ourCache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                 var serialized = JsonSerializer.SerializeToUtf8Bytes(unit);
                 await distributedCache.SetAsync(cacheKey, serialized.Take(3).ToArray());
                 var fromCache = await ourCache.GetAsync();
@@ -428,7 +429,7 @@ namespace mrlldd.Caching.Tests.Caches
                 var distributedStore = c.Resolve<Mock<IDistributedCacheStore>>();
                 var memoryStore = c.Resolve<Mock<IMemoryCacheStore>>();
                 var provider = c.Resolve<ICacheProvider>();
-                var ourCache = provider.Get<TestUnit>();
+                var ourCache = provider.GetRequired<TestUnit>().UnwrapAsSuccess();
                 var serialized = TestUnit.Create().Map(x => JsonSerializer.SerializeToUtf8Bytes(x));
                 await distributedStore.Object.SetAsync(cacheKey, serialized.Take(3).ToArray(),
                     new DistributedCacheEntryOptions

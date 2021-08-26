@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Functional.Object.Extensions;
+using Functional.Result;
+using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using mrlldd.Caching.Caches;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Decoration;
 
@@ -46,13 +49,22 @@ namespace mrlldd.Caching
                 storeOperationProvider
             );
 
-        protected T InternalGet<T>() where T : ICaching
+        protected Result<T> InternalRequiredGet<T>() where T : ICaching
+            => scopedServicesCache.TryGetValue(typeof(T), out var raw)
+               && raw is T service
+                ? service.AsSuccess()
+                : Result.Of(() => serviceProvider
+                    .GetRequiredService<T>()
+                    .Effect(Populate)
+                    .Effect(x => scopedServicesCache[typeof(T)] = x));
+
+        protected T? InternalGet<T>() where T : ICaching
             => scopedServicesCache.TryGetValue(typeof(T), out var raw)
                && raw is T service
                 ? service
                 : serviceProvider
-                    .GetRequiredService<T>()
-                    .Effect(Populate)
-                    .Effect(x => scopedServicesCache[typeof(T)] = x);
+                    .GetService<T>()
+                    .EffectIfPresent(Populate)
+                    .EffectIfPresent(x => scopedServicesCache[typeof(T)] = x);
     }
 }

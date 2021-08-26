@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Functional.Result;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Decoration;
 
@@ -22,8 +23,8 @@ namespace mrlldd.Caching.Loaders
         {
         }
 
-        public ICachingLoader<TArgs, TResult> Get<TArgs, TResult>()
+        public Result<ICachingLoader<TArgs, TResult>> GetRequired<TArgs, TResult>()
             where TResult : class
-            => InternalGet<ICachingLoader<TArgs, TResult>>();
+            => InternalRequiredGet<ICachingLoader<TArgs, TResult>>();
     }
 }

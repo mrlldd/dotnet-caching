@@ -1,3 +1,5 @@
+using Functional.Result;
+
 namespace mrlldd.Caching.Loaders
 {
     /// <summary>
@@ -11,8 +13,8 @@ namespace mrlldd.Caching.Loaders
         /// </summary>
         /// <typeparam name="TArgs">The type of loader argument.</typeparam>
         /// <typeparam name="TResult">The type of loader result.</typeparam>
-        /// <returns>The caching loader.</returns>
-        ICachingLoader<TArgs, TResult> Get<TArgs, TResult>()
+        /// <returns>The result of getting the caching loader.</returns>
+        Result<ICachingLoader<TArgs, TResult>> GetRequired<TArgs, TResult>()
             where TResult : class;
     }
 }
