@@ -26,7 +26,7 @@ namespace mrlldd.Caching.Tests.Loaders
             {
                 var argument = TestArgument.Create();
                 var provider = c.Resolve<ILoaderProvider>();
-                var loader = provider.Get<TestArgument, TestUnit>().UnwrapAsSuccess();
+                var loader = provider.GetRequired<TestArgument, TestUnit>().UnwrapAsSuccess();
                 await loader.GetOrLoadAsync(argument);
                 c.Resolve<Mock<ITestClient>>()
                     .Verify(x => x.LoadAsync(It.Is<TestArgument>(a => a == argument)), Times.Once);
@@ -63,7 +63,7 @@ namespace mrlldd.Caching.Tests.Loaders
             {
                 var argument = TestArgument.Create();
                 var provider = c.Resolve<ILoaderProvider>();
-                var loader = provider.Get<TestArgument, TestUnit>().UnwrapAsSuccess();
+                var loader = provider.GetRequired<TestArgument, TestUnit>().UnwrapAsSuccess();
                 await loader.GetOrLoadAsync(argument);
                 await loader.GetOrLoadAsync(argument);
                 c.Resolve<Mock<ITestClient>>()
@@ -89,7 +89,7 @@ namespace mrlldd.Caching.Tests.Loaders
             {
                 var argument = TestArgument.Create();
                 var provider = c.Resolve<ILoaderProvider>();
-                var loader = provider.Get<TestArgument, TestUnit>().UnwrapAsSuccess();
+                var loader = provider.GetRequired<TestArgument, TestUnit>().UnwrapAsSuccess();
                 await loader.GetOrLoadAsync(argument);
                 var key = CacheKeyFactory(argument);
                 await c.Resolve<IMemoryCacheStore>().RemoveAsync(key, NullCacheStoreOperationMetadata.Instance);
@@ -126,7 +126,7 @@ namespace mrlldd.Caching.Tests.Loaders
             {
                 var argument = TestArgument.Create();
                 var provider = c.Resolve<ILoaderProvider>();
-                var loader = provider.Get<TestArgument, TestUnit>().UnwrapAsSuccess();
+                var loader = provider.GetRequired<TestArgument, TestUnit>().UnwrapAsSuccess();
                 await loader.GetOrLoadAsync(argument);
                 var key = CacheKeyFactory(argument);
                 await loader.RemoveAsync(argument);

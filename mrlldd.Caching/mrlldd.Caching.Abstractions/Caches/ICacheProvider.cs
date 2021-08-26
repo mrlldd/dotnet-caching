@@ -13,6 +13,13 @@ namespace mrlldd.Caching.Caches
         /// </summary>
         /// <typeparam name="T">The type of stored object in cache.</typeparam>
         /// <returns>The result of getting the cache.</returns>
-        Result<ICache<T>> Get<T>();
+        Result<ICache<T>> GetRequired<T>();
+
+        /// <summary>
+        /// The method used to get a cache (if exists) or default cache.
+        /// </summary>
+        /// <typeparam name="T">The type of stored object in cache.</typeparam>
+        /// <returns>The cache.</returns>
+        ICache<T> GetOrDefault<T>();
     }
 }

@@ -12,12 +12,10 @@ namespace mrlldd.Caching.Caches
     public sealed class Cache
     {
         private readonly ICacheProvider cacheProvider;
-        private readonly ICacheOptions defaultCacheOptions;
 
-        internal Cache(ICacheProvider cacheProvider, ICacheOptions defaultCacheOptions)
+        internal Cache(ICacheProvider cacheProvider)
         {
             this.cacheProvider = cacheProvider;
-            this.defaultCacheOptions = defaultCacheOptions;
         }
 
         /// <summary>
@@ -92,11 +90,7 @@ namespace mrlldd.Caching.Caches
             => GetCache<T>().Remove(token);
 
         private ICache<T> GetCache<T>()
-            => cacheProvider.Get<T>()
-                .Map(x => x.Successful
-                    ? x.UnwrapAsSuccess()
-                    : new DefaultCache<T>(defaultCacheOptions)
-                );
+            => cacheProvider.GetOrDefault<T>();
     }
 
     /// <summary>

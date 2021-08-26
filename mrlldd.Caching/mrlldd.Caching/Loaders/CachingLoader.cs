@@ -122,7 +122,7 @@ namespace mrlldd.Caching.Loaders
             => GetLoader<TArgs, TResult>().Remove(args, token);
 
         private ICachingLoader<TArgs, TResult> GetLoader<TArgs, TResult>() where TResult : class
-            => loaderProvider.Get<TArgs, TResult>()
+            => loaderProvider.GetRequired<TArgs, TResult>()
                 .Map(x => x.Successful
                     ? x.UnwrapAsSuccess()
                     : throw x);

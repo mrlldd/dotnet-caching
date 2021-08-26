@@ -14,7 +14,7 @@ namespace mrlldd.Caching.Loaders
         /// <typeparam name="TArgs">The type of loader argument.</typeparam>
         /// <typeparam name="TResult">The type of loader result.</typeparam>
         /// <returns>The result of getting the caching loader.</returns>
-        Result<ICachingLoader<TArgs, TResult>> Get<TArgs, TResult>()
+        Result<ICachingLoader<TArgs, TResult>> GetRequired<TArgs, TResult>()
             where TResult : class;
     }
 }
