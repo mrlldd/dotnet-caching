@@ -9,6 +9,12 @@
             The cache service-wrapper that provides generic access to generic caches.
             </summary>
         </member>
+        <member name="M:mrlldd.Caching.Caches.Cache.#ctor(mrlldd.Caching.Caches.ICacheProvider)">
+            <summary>
+            The constructor for cache.
+            </summary>
+            <param name="cacheProvider"> The cache provider.</param>
+        </member>
         <member name="M:mrlldd.Caching.Caches.Cache.SetAsync``1(``0,System.Threading.CancellationToken)">
             <summary>
             The method used for performing a caching.
@@ -249,6 +255,12 @@
             <summary>
             The cache service-wrapper that provides generic access to generic loaders.
             </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.CachingLoader.#ctor(mrlldd.Caching.Loaders.ILoaderProvider)">
+            <summary>
+            The constructor for caching loader.
+            </summary>
+            <param name="loaderProvider">The loader provider.</param>
         </member>
         <member name="M:mrlldd.Caching.Loaders.CachingLoader.GetOrLoadAsync``2(``0,System.Boolean,System.Threading.CancellationToken)">
             <summary>

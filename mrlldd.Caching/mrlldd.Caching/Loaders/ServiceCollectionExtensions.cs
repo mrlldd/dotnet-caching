@@ -9,6 +9,7 @@ namespace mrlldd.Caching.Loaders
         public static IServiceCollection AddLoaders(this IServiceCollection services, Assembly assembly)
             => services
                 .AddScoped<ILoaderProvider, LoaderProvider>()
+                .AddScoped<CachingLoader>()
                 .WithCollectedServices(assembly, typeof(CachingLoader<,>), typeof(ICachingLoader<,>));
     }
 }
