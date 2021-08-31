@@ -13,10 +13,12 @@ namespace mrlldd.Caching.Caches
     {
         private readonly ICacheProvider cacheProvider;
 
-        internal Cache(ICacheProvider cacheProvider)
-        {
-            this.cacheProvider = cacheProvider;
-        }
+        /// <summary>
+        /// The constructor for cache.
+        /// </summary>
+        /// <param name="cacheProvider"> The cache provider.</param>
+        public Cache(ICacheProvider cacheProvider) 
+            => this.cacheProvider = cacheProvider;
 
         /// <summary>
         /// The method used for performing a caching.

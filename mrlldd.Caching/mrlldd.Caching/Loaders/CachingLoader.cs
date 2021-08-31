@@ -13,7 +13,11 @@ namespace mrlldd.Caching.Loaders
     {
         private readonly ILoaderProvider loaderProvider;
 
-        internal CachingLoader(ILoaderProvider loaderProvider)
+        /// <summary>
+        /// The constructor for caching loader.
+        /// </summary>
+        /// <param name="loaderProvider">The loader provider.</param>
+        public CachingLoader(ILoaderProvider loaderProvider)
             => this.loaderProvider = loaderProvider;
 
         /// <summary>
