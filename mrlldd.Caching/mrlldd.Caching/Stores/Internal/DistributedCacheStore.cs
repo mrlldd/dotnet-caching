@@ -15,13 +15,13 @@ namespace mrlldd.Caching.Stores.Internal
             => this.distributedCache = distributedCache;
 
         public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => distributedCache.Get(key).Map(Deserialize<T>));
+            => Result.Of(() => distributedCache.GetString(key).Map(Deserialize<T>));
 
         public Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => Result.Of(async () =>
             {
-                var fromCache = await distributedCache.GetAsync(key, token);
+                var fromCache = await distributedCache.GetStringAsync(key, token);
                 return fromCache != null && fromCache.Any()
                     ? Deserialize<T>(fromCache)
                     : default;
@@ -30,12 +30,12 @@ namespace mrlldd.Caching.Stores.Internal
         public Result Set<T>(string key, T value,
             DistributedCacheEntryOptions options, 
             ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => distributedCache.Set(key, Serialize(value), options));
+            => Result.Of(() => distributedCache.SetString(key, Serialize(value), options));
 
         public Task<Result> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options,
             ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Result.Of(() => distributedCache.SetAsync(key, Serialize(value), options, token));
+            => Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value), options, token));
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() => distributedCache.Refresh(key));

@@ -5,6 +5,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using mrlldd.Caching.Caches;
+using mrlldd.Caching.Caches.Internal;
 using mrlldd.Caching.Decoration.Internal.Logging.Actions;
 using mrlldd.Caching.Decoration.Internal.Logging.Performance;
 using mrlldd.Caching.Logging;
@@ -36,6 +38,7 @@ namespace mrlldd.Caching.Tests
                 .AddCachingStores()
                 .AddSingleton<ICachingPerformanceLoggingOptions>(new CachingPerformanceLoggingOptions(LogLevel.Information))
                 .AddSingleton<ICachingActionsLoggingOptions>(new CachingActionsLoggingOptions(LogLevel.Information, LogLevel.Error))
+                .AddSingleton<ICacheOptions>(new NullDefaultCacheOptions())
                 .Effect(x => Container.Populate(x));
             Container.Register<ICacheStoreDecorator, PerformanceLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);
             Container.Register<ICacheStoreDecorator, ActionsLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);

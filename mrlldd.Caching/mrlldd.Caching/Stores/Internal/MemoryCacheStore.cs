@@ -18,7 +18,7 @@ namespace mrlldd.Caching.Stores.Internal
         public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() =>
             {
-                var fromCache = memoryCache.Get<byte[]>(key);
+                var fromCache = memoryCache.Get<string>(key);
                 return fromCache != null && fromCache.Any() ? Deserialize<T>(fromCache) : default;
             });
 
