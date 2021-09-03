@@ -5,6 +5,76 @@ using mrlldd.Caching.Stores;
 namespace mrlldd.Caching.Caches
 {
     /// <summary>
+    /// The interface that represents cache service-wrapper
+    /// that provides generic access to generic caches.
+    /// </summary>
+    public interface ICache
+    {
+        /// <summary>
+        /// The method used for performing a caching.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        /// <returns>The <see cref="Task"/>.</returns>
+        Task SetAsync<T>(T value, CancellationToken token = default);
+        
+        /// <summary>
+        /// The method used for performing a caching.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        void Set<T>(T value, CancellationToken token = default);
+        
+        /// <summary>
+        /// The method used for retrieving data from cache.
+        /// </summary>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        /// <returns>The <see cref="Task{TResult}"/> that returns <typeparamref name="T"/>.</returns>
+        Task<T?> GetAsync<T>(CancellationToken token = default);
+        
+        /// <summary>
+        /// The method used for retrieving data from cache.
+        /// </summary>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        /// <returns>The value of type <typeparamref name="T"/>.</returns>
+        T? Get<T>(CancellationToken token = default);
+
+        /// <summary>
+        /// The method used for refreshing data expiration in cache.
+        /// </summary>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        /// <returns>The <see cref="Task"/>.</returns>
+        Task RefreshAsync<T>(CancellationToken token = default);
+
+        /// <summary>
+        /// The method used for refreshing data expiration in cache.
+        /// </summary>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        void Refresh<T>(CancellationToken token = default);
+
+        /// <summary>
+        /// The method used for removing data from cache.
+        /// </summary>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        /// <returns>The <see cref="Task"/>.</returns>
+        Task RemoveAsync<T>(CancellationToken token = default);
+
+        /// <summary>
+        /// The method used for removing data from cache.
+        /// </summary>
+        /// <param name="token">The cancellation token.</param>
+        /// <typeparam name="T">The type of value.</typeparam>
+        void Remove<T>(CancellationToken token = default);
+    }
+    
+    /// <summary>
     /// The base interface for implementing caches.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>

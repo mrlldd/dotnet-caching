@@ -6,88 +6,35 @@ using Functional.Result.Extensions;
 
 namespace mrlldd.Caching.Caches
 {
-    /// <summary>
-    /// The cache service-wrapper that provides generic access to generic caches.
-    /// </summary>
-    public sealed class Cache
+    /// <inheritdoc />
+    internal sealed class Cache : ICache
     {
         private readonly ICacheProvider cacheProvider;
 
-        /// <summary>
-        /// The constructor for cache.
-        /// </summary>
-        /// <param name="cacheProvider"> The cache provider.</param>
         public Cache(ICacheProvider cacheProvider) 
             => this.cacheProvider = cacheProvider;
 
-        /// <summary>
-        /// The method used for performing a caching.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
-        /// <returns>The <see cref="Task"/>.</returns>
         public Task SetAsync<T>(T value, CancellationToken token = default)
             => GetCache<T>().SetAsync(value, token);
 
-        /// <summary>
-        /// The method used for performing a caching.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
         public void Set<T>(T value, CancellationToken token = default)
             => GetCache<T>().SetAsync(value, token);
 
-        /// <summary>
-        /// The method used for retrieving data from cache.
-        /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
-        /// <returns>The <see cref="Task{TResult}"/> that returns <typeparamref name="T"/>.</returns>
         public Task<T?> GetAsync<T>(CancellationToken token = default)
             => GetCache<T>().GetAsync(token);
 
-        /// <summary>
-        /// The method used for retrieving data from cache.
-        /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
-        /// <returns>The value of type <typeparamref name="T"/>.</returns>
         public T? Get<T>(CancellationToken token = default)
             => GetCache<T>().Get(token);
 
-        /// <summary>
-        /// The method used for refreshing data expiration in cache.
-        /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
-        /// <returns>The <see cref="Task"/>.</returns>
         public Task RefreshAsync<T>(CancellationToken token = default)
             => GetCache<T>().RefreshAsync(token);
 
-        /// <summary>
-        /// The method used for refreshing data expiration in cache.
-        /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
         public void Refresh<T>(CancellationToken token = default)
             => GetCache<T>().Refresh(token);
 
-        /// <summary>
-        /// The method used for removing data from cache.
-        /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
-        /// <returns>The <see cref="Task"/>.</returns>
         public Task RemoveAsync<T>(CancellationToken token = default)
             => GetCache<T>().RemoveAsync(token);
 
-        /// <summary>
-        /// The method used for removing data from cache.
-        /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        /// <typeparam name="T">The type of value.</typeparam>
         public void Remove<T>(CancellationToken token = default)
             => GetCache<T>().Remove(token);
 
