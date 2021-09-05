@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Functional.Object.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using mrlldd.Caching.Caches.Internal;
@@ -15,7 +16,7 @@ namespace mrlldd.Caching.Caches
                 .AddMemoryCache()
                 .Effect(x => x.TryAddSingleton<IDistributedCache, NoOpDistributedCache>())
                 .AddScoped<ICacheProvider, CacheProvider>()
-                .AddScoped<Cache>()
+                .AddScoped<ICache, Cache>()
                 .AddSingleton<ICacheOptions>(new NullDefaultCacheOptions())
                 .WithCollectedServices(assembly, typeof(Cache<>), typeof(ICache<>));
     }
