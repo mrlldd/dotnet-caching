@@ -23,6 +23,7 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
         public static ICachingServiceCollection WithActionsLogging(this ICachingServiceCollection cachingServiceCollection,
             LogLevel logLevel = LogLevel.Debug, LogLevel errorsLogLevel = LogLevel.Error)
         {
+            cachingServiceCollection.AddLogging();
             cachingServiceCollection.AddScoped<ICacheStoreDecorator, ActionsLoggingCacheStoreDecorator>();
             cachingServiceCollection.AddSingleton<ICachingActionsLoggingOptions>(new CachingActionsLoggingOptions(logLevel, errorsLogLevel));
             return cachingServiceCollection;
@@ -37,6 +38,7 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
         public static ICachingServiceCollection WithPerformanceLogging(this ICachingServiceCollection cachingServiceCollection,
             LogLevel logLevel = LogLevel.Debug)
         {
+            cachingServiceCollection.AddLogging();
             cachingServiceCollection.AddScoped<ICacheStoreDecorator, PerformanceLoggingCacheStoreDecorator>();
             cachingServiceCollection.AddSingleton<ICachingPerformanceLoggingOptions>(new CachingPerformanceLoggingOptions(logLevel));
             return cachingServiceCollection;
