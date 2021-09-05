@@ -18,8 +18,8 @@ namespace mrlldd.Caching.Tests.Loaders.TestUtilities
         public TestLoader(ITestClient client) 
             => this.client = client;
 
-        protected override Task<TestUnit> LoadAsync(TestArgument args, CancellationToken token = default)
-            => client.LoadAsync(args);
+        protected override Task<TestUnit?> LoadAsync(TestArgument args, CancellationToken token = default)
+            => client.LoadAsync(args)!;
         protected override string CacheKeySuffixFactory(TestArgument args) 
             => args.Id.ToString();
     }

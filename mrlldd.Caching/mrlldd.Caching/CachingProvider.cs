@@ -5,7 +5,6 @@ using Functional.Object.Extensions;
 using Functional.Result;
 using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using mrlldd.Caching.Caches;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Decoration;
 
@@ -57,6 +56,13 @@ namespace mrlldd.Caching
                     .GetRequiredService<T>()
                     .Effect(Populate)
                     .Effect(x => scopedServicesCache[typeof(T)] = x));
+
+        protected Result<object> InternalRequiredGet(Type type)
+            => scopedServicesCache.TryGetValue(type, out var raw) && raw is ICaching
+                ? raw.AsSuccess()
+                : Result.Of(() => serviceProvider.GetRequiredService(type)
+                    .Effect(x => Populate((ICaching) x))
+                    .Effect(x => scopedServicesCache[type] = x));
 
         protected T? InternalGet<T>() where T : ICaching
             => scopedServicesCache.TryGetValue(typeof(T), out var raw)

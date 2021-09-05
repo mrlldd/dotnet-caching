@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
 using Functional.Result.Extensions;
+using mrlldd.Caching.Internal;
 
 namespace mrlldd.Caching.Loaders
 {
@@ -60,7 +61,7 @@ namespace mrlldd.Caching.Loaders
     /// </summary>
     /// <typeparam name="TArgs">Loading argument type.</typeparam>
     /// <typeparam name="TResult">Loading result type.</typeparam>
-    public abstract class CachingLoader<TArgs, TResult> : Caching<TResult>, ICachingLoader<TArgs, TResult>
+    public abstract class CachingLoader<TArgs, TResult> : Caching<TResult>, ICachingLoader<TArgs, TResult>, IInternalLoaderService<TArgs, TResult>
         where TResult : class
     {
         internal const string CacheKeyPrefix = "loader";

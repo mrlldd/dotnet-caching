@@ -9,6 +9,7 @@ using mrlldd.Caching.Caches;
 using mrlldd.Caching.Caches.Internal;
 using mrlldd.Caching.Decoration.Internal.Logging.Actions;
 using mrlldd.Caching.Decoration.Internal.Logging.Performance;
+using mrlldd.Caching.Extensions.DependencyInjection;
 using mrlldd.Caching.Logging;
 using mrlldd.Caching.Logging.Internal;
 using mrlldd.Caching.Stores;
@@ -20,7 +21,7 @@ namespace mrlldd.Caching.Tests
 {
     public class Test
     {
-        protected IContainer Container { get; private set; }
+        protected IContainer Container { get; private set; } = null!;
 
         protected MockRepository MockRepository { get; } = new(MockBehavior.Loose);
 
@@ -33,12 +34,10 @@ namespace mrlldd.Caching.Tests
                     .WithTrackingDisposableTransients()
                     .With(FactoryMethod.ConstructorWithResolvableArguments));
             new ServiceCollection()
+                .AddCaching(typeof(Test).Assembly)
+                .WithActionsLogging(LogLevel.Information)
+                .WithPerformanceLogging(LogLevel.Information)
                 .AddLogging(x => x.AddConsole().AddFilter(level => level >= LogLevel.Debug))
-                .AddMemoryCache()
-                .AddCachingStores()
-                .AddSingleton<ICachingPerformanceLoggingOptions>(new CachingPerformanceLoggingOptions(LogLevel.Information))
-                .AddSingleton<ICachingActionsLoggingOptions>(new CachingActionsLoggingOptions(LogLevel.Information, LogLevel.Error))
-                .AddSingleton<ICacheOptions>(new NullDefaultCacheOptions())
                 .Effect(x => Container.Populate(x));
             Container.Register<ICacheStoreDecorator, PerformanceLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);
             Container.Register<ICacheStoreDecorator, ActionsLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);
