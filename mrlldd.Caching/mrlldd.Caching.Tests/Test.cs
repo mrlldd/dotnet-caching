@@ -39,8 +39,6 @@ namespace mrlldd.Caching.Tests
                 .WithPerformanceLogging(LogLevel.Information)
                 .AddLogging(x => x.AddConsole().AddFilter(level => level >= LogLevel.Debug))
                 .Effect(x => Container.Populate(x));
-            Container.Register<ICacheStoreDecorator, PerformanceLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);
-            Container.Register<ICacheStoreDecorator, ActionsLoggingCacheStoreDecorator>(ifAlreadyRegistered: IfAlreadyRegistered.AppendNewImplementation);
             Container.Register<IDistributedCache, NoOpDistributedCache>();
             Container.Register<IStoreOperationProvider, StoreOperationProvider>();
             FillContainer(Container);
