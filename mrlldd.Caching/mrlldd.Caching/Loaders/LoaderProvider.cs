@@ -26,5 +26,8 @@ namespace mrlldd.Caching.Loaders
         public Result<ICachingLoader<TArgs, TResult>> GetRequired<TArgs, TResult>()
             where TResult : class
             => InternalRequiredGet<ICachingLoader<TArgs, TResult>>();
+
+        public Result<object> GetRequired(Type type)
+            => InternalRequiredGet(type);
     }
 }

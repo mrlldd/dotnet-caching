@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
 using Functional.Result.Extensions;
+using mrlldd.Caching.Internal;
 
 namespace mrlldd.Caching.Caches
 {
@@ -46,7 +47,7 @@ namespace mrlldd.Caching.Caches
     /// The base class for implementing caches.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
-    public abstract class Cache<T> : Caching<T>, ICache<T>
+    public abstract class Cache<T> : Caching<T>, ICache<T>, IInternalCacheService<T>
     {
         /// <inheritdoc />
         protected sealed override IEnumerable<string> CacheKeyPrefixesFactory()

@@ -1,4 +1,5 @@
 
+using System;
 using Functional.Result;
 
 namespace mrlldd.Caching.Caches
@@ -14,6 +15,13 @@ namespace mrlldd.Caching.Caches
         /// <typeparam name="T">The type of stored object in cache.</typeparam>
         /// <returns>The result of getting the cache.</returns>
         Result<ICache<T>> GetRequired<T>();
+
+        /// <summary>
+        /// The non-generic method used to get a cache.
+        /// </summary>
+        /// <param name="type">The interface type of cache (<see cref="ICache{T}"/>)</param>
+        /// <returns>The cache.</returns>
+        Result<object> GetRequired(Type type);
 
         /// <summary>
         /// The method used to get a cache (if exists) or default cache.

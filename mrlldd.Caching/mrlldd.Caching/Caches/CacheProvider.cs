@@ -29,6 +29,9 @@ namespace mrlldd.Caching.Caches
         public Result<ICache<T>> GetRequired<T>()
             => InternalRequiredGet<ICache<T>>();
 
+        public Result<object> GetRequired(Type type)
+            => InternalRequiredGet(type);
+        
         public ICache<T> GetOrDefault<T>()
             => InternalGet<ICache<T>>()
                 .Map(x => x ?? new DefaultCache<T>(defaultCacheOptions));

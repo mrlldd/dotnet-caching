@@ -33,7 +33,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
         {
             LogGetTry<T>(key, metadata);
             return sourceCacheStore.Get<T>(key, metadata)
-                .Effect(result => { LogGetResult(result, key, metadata); });
+                .Effect(result => LogGetResult(result, key, metadata));
         }
 
         public async Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,

@@ -1,3 +1,4 @@
+using System;
 using Functional.Result;
 
 namespace mrlldd.Caching.Loaders
@@ -16,5 +17,11 @@ namespace mrlldd.Caching.Loaders
         /// <returns>The result of getting the caching loader.</returns>
         Result<ICachingLoader<TArgs, TResult>> GetRequired<TArgs, TResult>()
             where TResult : class;
+        
+        /// <summary>
+        /// The non-generic method used to get a caching loader.
+        /// </summary>
+        /// <returns>The result of getting the caching loader.</returns>
+        Result<object> GetRequired(Type type);
     }
 }
