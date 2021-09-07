@@ -6,13 +6,11 @@ using mrlldd.Caching.Extensions.DependencyInjection;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
-    [MemoryDiagnoser]
-    [ThreadingDiagnoser]
-    public class ActionsLoggingCacheBenchmarks
+    public class ActionsLoggingCacheBenchmarks : Benchmark
     {
         private readonly ICache<int> actionsLoggingMemoryCacheImplementation;
         private readonly ICache<byte> actionsLoggingDistributedCacheImplementation;
-        private readonly ICache<string> actionsLoggingMemoryAndDistributedCacheImplementation;
+        private readonly ICache<short> actionsLoggingMemoryAndDistributedCacheImplementation;
 
         public ActionsLoggingCacheBenchmarks()
         {
@@ -26,7 +24,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             actionsLoggingMemoryCacheImplementation = actionsLoggingSp.GetRequiredService<ICache<int>>();
             actionsLoggingDistributedCacheImplementation = actionsLoggingSp.GetRequiredService<ICache<byte>>();
             actionsLoggingMemoryAndDistributedCacheImplementation =
-                actionsLoggingSp.GetRequiredService<ICache<string>>();
+                actionsLoggingSp.GetRequiredService<ICache<short>>();
         }
 
 
@@ -96,11 +94,11 @@ namespace mrlldd.Caching.Benchmarks.Cache
 
         [Benchmark]
         public void Cache_Caching_ActionsLoggingMemoryAndDistributedCacheImplementation_Set_Sync() =>
-            actionsLoggingMemoryAndDistributedCacheImplementation.Set("3");
+            actionsLoggingMemoryAndDistributedCacheImplementation.Set(3);
 
         [Benchmark]
         public Task Cache_Caching_ActionsLoggingMemoryAndDistributedCacheImplementation_Set_Async() =>
-            actionsLoggingMemoryAndDistributedCacheImplementation.SetAsync("3");
+            actionsLoggingMemoryAndDistributedCacheImplementation.SetAsync(3);
 
         [Benchmark]
         public void Cache_Caching_ActionsLoggingMemoryAndDistributedCacheImplementation_Get_Sync() =>

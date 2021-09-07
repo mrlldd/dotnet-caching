@@ -1,4 +1,12 @@
-﻿using System.Reflection;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
-BenchmarkRunner.Run(Assembly.GetExecutingAssembly());
+namespace mrlldd.Caching.Benchmarks
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            BenchmarkSwitcher.FromAssembly(typeof(Benchmark).Assembly).Run(args);
+        }
+    }
+}

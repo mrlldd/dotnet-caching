@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  dependency_resolving:
+    build: .
+    command: --filter *DependencyResolvingBenchmarks*
+    privileged: true
+  clean_cache:
+    build: .
+    command: --filter *CleanCacheBenchmarks*
+    privileged: true
+  actionslogging_cache:
+    build: .
+    command: --filter *ActionsLoggingCacheBenchmarks*
+    privileged: true
+  perflogging_cache:
+    build: .
+    command: --filter *PerformanceLoggingCacheBenchmarks*
+    privileged: true
+  actionsandperflogging_cache:
+    build: .
+    command: --filter *ActionsAndPerformanceLoggingCacheBenchmarks*
+    privileged: true
+  microsoft_cache:
+    build: .
+    command: --filter *MicrosoftCacheBenchmarks*
+    privileged: true
+  clean_cachingloader:
+    build: .
+    command: --filter *CleanCachingLoaderBenchmarks*
+    privileged: true

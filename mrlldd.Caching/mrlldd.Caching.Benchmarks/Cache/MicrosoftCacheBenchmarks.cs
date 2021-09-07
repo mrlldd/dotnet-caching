@@ -7,9 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
-    [MemoryDiagnoser]
-    [ThreadingDiagnoser]
-    public class MicrosoftCacheBenchmarks
+    public class MicrosoftCacheBenchmarks : Benchmark
     {
         private readonly IMemoryCache microsoftMemoryCache;
         private readonly MemoryCacheEntryOptions microsoftMemoryEntryOptions;
@@ -35,6 +33,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
                 SlidingExpiration = TimeSpan.FromMinutes(5)
             };
         }
+        
         [Benchmark]
         public void Cache_Microsoft_Memory_Set_Sync() => microsoftMemoryCache.Set("key", 3, microsoftMemoryEntryOptions);
 

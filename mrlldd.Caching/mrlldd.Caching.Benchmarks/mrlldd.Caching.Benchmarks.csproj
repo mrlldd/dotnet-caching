@@ -4,14 +4,16 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\mrlldd.Caching.Tests\mrlldd.Caching.Tests.csproj" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+      <ProjectReference Include="..\mrlldd.Caching.Logging\mrlldd.Caching.Logging.csproj" />
+      <ProjectReference Include="..\mrlldd.Caching\mrlldd.Caching.csproj" />
     </ItemGroup>
 
 </Project>

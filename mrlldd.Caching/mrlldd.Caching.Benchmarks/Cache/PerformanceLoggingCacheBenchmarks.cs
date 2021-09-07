@@ -6,13 +6,11 @@ using mrlldd.Caching.Extensions.DependencyInjection;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
-    [MemoryDiagnoser]
-    [ThreadingDiagnoser]
-    public class PerformanceLoggingCacheBenchmarks
+    public class PerformanceLoggingCacheBenchmarks : Benchmark
     {
         private readonly ICache<int> perfLoggingMemoryCacheImplementation;
         private readonly ICache<byte> perfLoggingDistributedCacheImplementation;
-        private readonly ICache<string> perfLoggingMemoryAndDistributedCacheImplementation;
+        private readonly ICache<short> perfLoggingMemoryAndDistributedCacheImplementation;
 
         public PerformanceLoggingCacheBenchmarks()
         {
@@ -26,7 +24,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             perfLoggingMemoryCacheImplementation = perfLoggingSp.GetRequiredService<ICache<int>>();
             perfLoggingDistributedCacheImplementation = perfLoggingSp.GetRequiredService<ICache<byte>>();
             perfLoggingMemoryAndDistributedCacheImplementation =
-                perfLoggingSp.GetRequiredService<ICache<string>>();
+                perfLoggingSp.GetRequiredService<ICache<short>>();
         }
 
 
@@ -96,11 +94,11 @@ namespace mrlldd.Caching.Benchmarks.Cache
 
         [Benchmark]
         public void Cache_Caching_PerfLoggingMemoryAndDistributedCacheImplementation_Set_Sync() =>
-            perfLoggingMemoryAndDistributedCacheImplementation.Set("3");
+            perfLoggingMemoryAndDistributedCacheImplementation.Set(3);
 
         [Benchmark]
         public Task Cache_Caching_PerfLoggingMemoryAndDistributedCacheImplementation_Set_Async() =>
-            perfLoggingMemoryAndDistributedCacheImplementation.SetAsync("3");
+            perfLoggingMemoryAndDistributedCacheImplementation.SetAsync(3);
 
         [Benchmark]
         public void Cache_Caching_PerfLoggingMemoryAndDistributedCacheImplementation_Get_Sync() =>

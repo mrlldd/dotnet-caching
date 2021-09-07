@@ -6,13 +6,11 @@ using mrlldd.Caching.Extensions.DependencyInjection;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
-    [MemoryDiagnoser]
-    [ThreadingDiagnoser]
-    public class ActionsAndPerformanceLoggingCacheBenchmarks
+    public class ActionsAndPerformanceLoggingCacheBenchmarks : Benchmark
     {
         private readonly ICache<int> actionsAndPerfLoggingMemoryCacheImplementation;
         private readonly ICache<byte> actionsAndPerfLoggingDistributedCacheImplementation;
-        private readonly ICache<string> actionsAndPerfLoggingMemoryAndDistributedCacheImplementation;
+        private readonly ICache<short> actionsAndPerfLoggingMemoryAndDistributedCacheImplementation;
 
         public ActionsAndPerformanceLoggingCacheBenchmarks()
         {
@@ -27,7 +25,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             actionsAndPerfLoggingMemoryCacheImplementation = actionsLoggingSp.GetRequiredService<ICache<int>>();
             actionsAndPerfLoggingDistributedCacheImplementation = actionsLoggingSp.GetRequiredService<ICache<byte>>();
             actionsAndPerfLoggingMemoryAndDistributedCacheImplementation =
-                actionsLoggingSp.GetRequiredService<ICache<string>>();
+                actionsLoggingSp.GetRequiredService<ICache<short>>();
         }
 
 
@@ -97,11 +95,11 @@ namespace mrlldd.Caching.Benchmarks.Cache
 
         [Benchmark]
         public void Cache_Caching_ActionsAndPerfLoggingMemoryAndDistributedCacheImplementation_Set_Sync() =>
-            actionsAndPerfLoggingMemoryAndDistributedCacheImplementation.Set("3");
+            actionsAndPerfLoggingMemoryAndDistributedCacheImplementation.Set(3);
 
         [Benchmark]
         public Task Cache_Caching_ActionsAndPerfLoggingMemoryAndDistributedCacheImplementation_Set_Async() =>
-            actionsAndPerfLoggingMemoryAndDistributedCacheImplementation.SetAsync("3");
+            actionsAndPerfLoggingMemoryAndDistributedCacheImplementation.SetAsync(3);
 
         [Benchmark]
         public void Cache_Caching_ActionsAndPerfLoggingMemoryAndDistributedCacheImplementation_Get_Sync() =>

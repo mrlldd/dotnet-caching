@@ -6,13 +6,11 @@ using mrlldd.Caching.Extensions.DependencyInjection;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
-    [MemoryDiagnoser]
-    [ThreadingDiagnoser]
-    public class CleanCacheBenchmarks
+    public class CleanCacheBenchmarks : Benchmark
     {
         private readonly ICache<int> cleanMemoryCacheImplementation;
         private readonly ICache<byte> cleanDistributedCacheImplementation;
-        private readonly ICache<string> cleanMemoryAndDistributedCacheImplementation;
+        private readonly ICache<short> cleanMemoryAndDistributedCacheImplementation;
 
 
         public CleanCacheBenchmarks()
@@ -24,7 +22,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
                 .CreateScope().ServiceProvider;
             cleanMemoryCacheImplementation = cleanSp.GetRequiredService<ICache<int>>();
             cleanDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<byte>>();
-            cleanMemoryAndDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<string>>();
+            cleanMemoryAndDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<short>>();
         }
 
         [Benchmark]
@@ -91,11 +89,11 @@ namespace mrlldd.Caching.Benchmarks.Cache
 
         [Benchmark]
         public void Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Set_Sync() =>
-            cleanMemoryAndDistributedCacheImplementation.Set("3");
+            cleanMemoryAndDistributedCacheImplementation.Set(3);
 
         [Benchmark]
         public Task Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Set_Async() =>
-            cleanMemoryAndDistributedCacheImplementation.SetAsync("3");
+            cleanMemoryAndDistributedCacheImplementation.SetAsync(3);
 
         [Benchmark]
         public void Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Get_Sync() =>

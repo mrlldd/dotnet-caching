@@ -17,7 +17,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
         protected override string CacheKey => nameof(Byte);
     }
         
-    public class ImplementedMemoryAndDistributedCache : Cache<string>
+    public class ImplementedMemoryAndDistributedCache : Cache<short>
     {
         protected override CachingOptions MemoryCacheOptions => CachingOptions.Enabled(TimeSpan.FromMinutes(5));
 
