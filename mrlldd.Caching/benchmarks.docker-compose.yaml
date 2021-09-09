@@ -28,3 +28,15 @@ services:
     build: .
     command: --filter *CleanCachingLoaderBenchmarks*
     privileged: true
+  actionslogging_cachingloader:
+    build: .
+    command: --filter *ActionsLoggingCachingLoaderBenchmarks*
+    privileged: true
+  perflogging_cachingloader:
+    build: .
+    command: --filter *PerformanceLoggingCachingLoaderBenchmarks*
+    privileged: true
+  actionsandperflogging_cachingloader:
+    build: .
+    command: --filter *ActionsAndPerformanceLoggingCachingLoaderBenchmarks*
+    privileged: true
