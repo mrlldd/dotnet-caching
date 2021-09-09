@@ -11,9 +11,7 @@ using mrlldd.Caching.Loaders;
 
 namespace mrlldd.Caching.Benchmarks
 {
-    [MemoryDiagnoser]
-    [ThreadingDiagnoser]
-    public class DependencyResolvingBenchmarks
+    public class DependencyResolvingBenchmarks : Benchmark
     {
         private readonly IServiceProvider noDecoratorsCachingServiceProvider;
         private readonly IServiceProvider perfLoggingDecoratedServiceProvider;
