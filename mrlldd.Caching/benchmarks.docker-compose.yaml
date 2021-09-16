@@ -8,18 +8,6 @@ services:
     build: .
     command: --filter *CleanCacheBenchmarks*
     privileged: true
-  actionslogging_cache:
-    build: .
-    command: --filter *ActionsLoggingCacheBenchmarks*
-    privileged: true
-  perflogging_cache:
-    build: .
-    command: --filter *PerformanceLoggingCacheBenchmarks*
-    privileged: true
-  actionsandperflogging_cache:
-    build: .
-    command: --filter *ActionsAndPerformanceLoggingCacheBenchmarks*
-    privileged: true
   microsoft_cache:
     build: .
     command: --filter *MicrosoftCacheBenchmarks*
@@ -27,16 +15,4 @@ services:
   clean_cachingloader:
     build: .
     command: --filter *CleanCachingLoaderBenchmarks*
-    privileged: true
-  actionslogging_cachingloader:
-    build: .
-    command: --filter *ActionsLoggingCachingLoaderBenchmarks*
-    privileged: true
-  perflogging_cachingloader:
-    build: .
-    command: --filter *PerformanceLoggingCachingLoaderBenchmarks*
-    privileged: true
-  actionsandperflogging_cachingloader:
-    build: .
-    command: --filter *ActionsAndPerformanceLoggingCachingLoaderBenchmarks*
     privileged: true
