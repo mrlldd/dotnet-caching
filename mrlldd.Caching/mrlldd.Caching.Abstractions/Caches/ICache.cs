@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
-using mrlldd.Caching.Stores;
+using Functional.Result;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Caches
 {
@@ -17,7 +18,7 @@ namespace mrlldd.Caching.Caches
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
         /// <returns>The <see cref="Task"/>.</returns>
-        Task SetAsync<T>(T value, CancellationToken token = default);
+        Task<Result> SetAsync<T>(T value, CancellationToken token = default);
         
         /// <summary>
         /// The method used for performing a caching.
@@ -25,7 +26,7 @@ namespace mrlldd.Caching.Caches
         /// <param name="value">The value.</param>
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
-        void Set<T>(T value, CancellationToken token = default);
+        Result Set<T>(T value);
         
         /// <summary>
         /// The method used for retrieving data from cache.
@@ -33,7 +34,7 @@ namespace mrlldd.Caching.Caches
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
         /// <returns>The <see cref="Task{TResult}"/> that returns <typeparamref name="T"/>.</returns>
-        Task<T?> GetAsync<T>(CancellationToken token = default);
+        Task<Result<T?>> GetAsync<T>(CancellationToken token = default);
         
         /// <summary>
         /// The method used for retrieving data from cache.
@@ -41,7 +42,7 @@ namespace mrlldd.Caching.Caches
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
         /// <returns>The value of type <typeparamref name="T"/>.</returns>
-        T? Get<T>(CancellationToken token = default);
+        Result<T?> Get<T>();
 
         /// <summary>
         /// The method used for refreshing data expiration in cache.
@@ -49,14 +50,14 @@ namespace mrlldd.Caching.Caches
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
         /// <returns>The <see cref="Task"/>.</returns>
-        Task RefreshAsync<T>(CancellationToken token = default);
+        Task<Result> RefreshAsync<T>(CancellationToken token = default);
 
         /// <summary>
         /// The method used for refreshing data expiration in cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
-        void Refresh<T>(CancellationToken token = default);
+        Result Refresh<T>();
 
         /// <summary>
         /// The method used for removing data from cache.
@@ -64,14 +65,14 @@ namespace mrlldd.Caching.Caches
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
         /// <returns>The <see cref="Task"/>.</returns>
-        Task RemoveAsync<T>(CancellationToken token = default);
+        Task<Result> RemoveAsync<T>(CancellationToken token = default);
 
         /// <summary>
         /// The method used for removing data from cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
-        void Remove<T>(CancellationToken token = default);
+        Result Remove<T>();
     }
     
     /// <summary>
@@ -80,56 +81,60 @@ namespace mrlldd.Caching.Caches
     /// <typeparam name="T">The cached objects type.</typeparam>
     public interface ICache<T> : ICaching
     {
+        //todo fix xml comments
+        
         /// <summary>
         /// The method used for performing a caching.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="token">The cancellation token.</param>
-        Task SetAsync(T value, CancellationToken token = default);
+        Task<Result> SetAsync(T value, CancellationToken token = default);
 
         /// <summary>
         /// The method used for performing a caching.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="token">The cancellation token.</param>
-        public void Set(T value, CancellationToken token = default);
+        public Result Set(T value);
 
         /// <summary>
         /// The method used for retrieving data from cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        Task<T?> GetAsync(CancellationToken token = default);
+        Task<Result<T?>> GetAsync(CancellationToken token = default);
         
         /// <summary>
         /// The method used for retrieving data from cache.
         /// </summary>
-        /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        public T? Get(CancellationToken token = default);
+        public Result<T?> Get();
 
         /// <summary>
         /// The method used for refreshing data expiration in cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
-        Task RefreshAsync(CancellationToken token = default);
+        Task<Result> RefreshAsync(CancellationToken token = default);
 
         /// <summary>
         /// The method used for refreshing data expiration in cache.
         /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        void Refresh(CancellationToken token = default);
+        Result Refresh();
 
         /// <summary>
         /// The method used for removing data from cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
-        Task RemoveAsync(CancellationToken token = default);
+        Task<Result> RemoveAsync(CancellationToken token = default);
 
         /// <summary>
         /// The method used for removing data from cache.
         /// </summary>
-        /// <param name="token">The cancellation token.</param>
-        void Remove(CancellationToken token = default);
+        Result Remove();
+    }
+    
+    // ReSharper disable once UnusedTypeParameter
+    public interface ICache<T, TFlag> : ICache<T> where TFlag : CachingFlag
+    {
+        
     }
 } 

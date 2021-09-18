@@ -1,30 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Logging;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
 {
-    internal sealed class PerformanceLoggingCacheStoreDecorator : LoggingCacheStoreDecorator 
+    internal sealed class PerformanceLoggingCacheStoreDecorator<TFlag> : LoggingCacheStoreDecorator<TFlag>
+        where TFlag : CachingFlag
     {
-        private readonly ILogger<PerformanceLoggingMemoryCacheStore> memoryCacheLogger;
-        private readonly ILogger<PerformanceLoggingDistributedCacheStore> distributedStoreLogger;
         private readonly ICachingPerformanceLoggingOptions options;
+        private readonly ILogger<ICacheStore<TFlag>> logger;
 
-        public PerformanceLoggingCacheStoreDecorator(ILogger<PerformanceLoggingMemoryCacheStore> memoryCacheLogger,
-            ILogger<PerformanceLoggingDistributedCacheStore> distributedStoreLogger,
+        public PerformanceLoggingCacheStoreDecorator(ILogger<ICacheStore<TFlag>> logger,
             ICachingPerformanceLoggingOptions options)
         {
-            this.memoryCacheLogger = memoryCacheLogger;
-            this.distributedStoreLogger = distributedStoreLogger;
+            this.logger = logger;
             this.options = options;
         }
 
-        public override IMemoryCacheStore Decorate(IMemoryCacheStore memoryCacheStore)
-            => new PerformanceLoggingMemoryCacheStore(memoryCacheStore, memoryCacheLogger, options, MemoryStoreLogPrefix);
-
-        public override IDistributedCacheStore Decorate(IDistributedCacheStore distributedCacheStore)
-            => new PerformanceLoggingDistributedCacheStore(distributedCacheStore, distributedStoreLogger, options,
-                DistributedStoreLogPrefix);
+        public override ICacheStore<TFlag> Decorate(ICacheStore<TFlag> cacheStore)
+            => new PerformanceLoggingCacheStore<TFlag>(cacheStore, logger, options, LogPrefix);
 
         public override int Order => int.MinValue;
     }

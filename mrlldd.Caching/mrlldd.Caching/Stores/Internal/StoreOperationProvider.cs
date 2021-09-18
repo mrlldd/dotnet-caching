@@ -6,7 +6,7 @@ namespace mrlldd.Caching.Stores.Internal
     {
         private int currentId = 1;
 
-        public ICacheStoreOperationMetadata Next() 
-            => new CacheStoreOperationMetadata(Interlocked.Increment(ref currentId));
+        public ICacheStoreOperationMetadata Next(string cacheKeyDelimiter) 
+            => new CacheStoreOperationMetadata(Interlocked.Increment(ref currentId), cacheKeyDelimiter);
     }
 }

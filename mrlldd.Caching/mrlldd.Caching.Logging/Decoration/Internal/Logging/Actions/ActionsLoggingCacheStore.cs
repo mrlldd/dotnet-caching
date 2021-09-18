@@ -1,25 +1,24 @@
-﻿using System.Diagnostics;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
 using Functional.Result;
 using Functional.Result.Extensions;
 using Microsoft.Extensions.Logging;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Logging;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
 {
-    internal class ActionsLoggingCacheStore<TCachingStore, TOptions> : ICacheStore<TOptions>
-        where TCachingStore : ICacheStore<TOptions>
+    internal class ActionsLoggingCacheStore<TFlag> : ICacheStore<TFlag> where TFlag : CachingFlag
     {
-        private readonly TCachingStore sourceCacheStore;
-        private readonly ILogger<ActionsLoggingCacheStore<TCachingStore, TOptions>> logger;
+        private readonly ICacheStore<TFlag> sourceCacheStore;
+        private readonly ILogger<ICacheStore<TFlag>> logger;
         private readonly ICachingActionsLoggingOptions loggingOptions;
         private readonly string storeLogPrefix;
 
-        protected ActionsLoggingCacheStore(TCachingStore sourceCacheStore,
-            ILogger<ActionsLoggingCacheStore<TCachingStore, TOptions>> logger,
+        public ActionsLoggingCacheStore(ICacheStore<TFlag> sourceCacheStore,
+            ILogger<ICacheStore<TFlag>> logger,
             ICachingActionsLoggingOptions loggingOptions,
             string storeLogPrefix)
         {
@@ -45,7 +44,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public Result Set<T>(string key, T value, TOptions options, ICacheStoreOperationMetadata metadata)
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
         {
             LogSetTry<T>(key, metadata);
             var result = sourceCacheStore.Set(key, value, options, metadata);
@@ -53,7 +52,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async Task<Result> SetAsync<T>(string key, T value, TOptions options,
+        public async Task<Result> SetAsync<T>(string key, T value, CachingOptions options,
             ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {

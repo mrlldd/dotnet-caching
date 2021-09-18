@@ -8,7 +8,6 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
 {
     public class CleanCachingLoaderBenchmarks : Benchmark
     {
-        private readonly ICachingLoader<short, string> cleanMemoryAndDistributedCachingLoader;
         private readonly ICachingLoader<byte, string> cleanDistributedCachingLoader;
         private readonly ICachingLoader<int, string> cleanMemoryCachingLoader;
 
@@ -21,7 +20,6 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
                 .CreateScope().ServiceProvider;
             cleanMemoryCachingLoader = cleanSp.GetRequiredService<ICachingLoader<int, string>>();
             cleanDistributedCachingLoader = cleanSp.GetRequiredService<ICachingLoader<byte, string>>();
-            cleanMemoryAndDistributedCachingLoader = cleanSp.GetRequiredService<ICachingLoader<short, string>>();
         }
 
         [Benchmark]
@@ -97,43 +95,5 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
 
         [Benchmark]
         public Task Loader_Clean_Distributed_Remove_Async() => cleanDistributedCachingLoader.RemoveAsync(3);
-        
-        [Benchmark]
-        public void Loader_Clean_MemoryAndDistributed_GetOrLoad_Sync() => cleanMemoryAndDistributedCachingLoader.GetOrLoad(3);
-
-        [Benchmark]
-        public void Loader_Clean_MemoryAndDistributed_GetOrLoad_OmitCache_Sync() =>
-            cleanMemoryAndDistributedCachingLoader.GetOrLoadAsync(3, true);
-
-        [Benchmark]
-        public Task Loader_Clean_MemoryAndDistributed_GetOrLoad_Async() => cleanMemoryAndDistributedCachingLoader.GetOrLoadAsync(3);
-
-        [Benchmark]
-        public Task Loader_Clean_MemoryAndDistributed_GetOrLoad_OmitCache_Async() =>
-            cleanMemoryAndDistributedCachingLoader.GetOrLoadAsync(3, true);
-
-        [Benchmark]
-        public void Loader_Clean_MemoryAndDistributed_Get_Sync() => cleanMemoryAndDistributedCachingLoader.Get(3);
-
-        [Benchmark]
-        public Task Loader_Clean_MemoryAndDistributed_Get_Async() => cleanMemoryAndDistributedCachingLoader.GetAsync(3);
-
-        [Benchmark]
-        public void Loader_Clean_MemoryAndDistributed_Set_Sync() => cleanMemoryAndDistributedCachingLoader.Set(3, "3");
-
-        [Benchmark]
-        public Task Loader_Clean_MemoryAndDistributed_Set_Async() => cleanMemoryAndDistributedCachingLoader.SetAsync(3, "3");
-
-        [Benchmark]
-        public void Loader_Clean_MemoryAndDistributed_Refresh_Sync() => cleanMemoryAndDistributedCachingLoader.Refresh(3);
-
-        [Benchmark]
-        public Task Loader_Clean_MemoryAndDistributed_Refresh_Async() => cleanMemoryAndDistributedCachingLoader.RefreshAsync(3);
-
-        [Benchmark]
-        public void Loader_Clean_MemoryAndDistributed_Remove_Sync() => cleanMemoryAndDistributedCachingLoader.Remove(3);
-
-        [Benchmark]
-        public Task Loader_Clean_MemoryAndDistributed_Remove_Async() => cleanMemoryAndDistributedCachingLoader.RemoveAsync(3);
     }
 }

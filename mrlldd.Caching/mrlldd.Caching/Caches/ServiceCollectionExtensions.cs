@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using Functional.Object.Extensions;
 using Functional.Result.Extensions;
@@ -12,7 +13,7 @@ namespace mrlldd.Caching.Caches
 {
     internal static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCaches(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection AddCaches(this IServiceCollection services, params Assembly[] assemblies)
             => services
                 .AddMemoryCache()
                 .Effect(x => x.TryAddSingleton<IDistributedCache, NoOpDistributedCache>())
@@ -20,9 +21,24 @@ namespace mrlldd.Caching.Caches
                 .AddScoped<ICache, Cache>()
                 .Map(sc =>
                 {
-                    var cacheTypes = assembly
-                        .CollectServices(typeof(ICache<>), typeof(Cache<,>),
-                            typeof(IInternalCacheService<>));
+                    var cacheTypes = assemblies
+                        .SelectMany(x => x.CollectServices(typeof(ICache<,>), typeof(Cache<,>),
+                            typeof(IInternalCacheService<,>), t => t)
+                        )
+                        .ToArray();
+                    foreach (var r in cacheTypes
+                        .Select(x => x.Service.GetGenericArguments().First())
+                        .Distinct()
+                        .Select(x => new
+                        {
+                            Service = typeof(ICaches<>).MakeGenericType(x),
+                            Implementation = typeof(Caches<>).MakeGenericType(x)
+                        }))
+                    {
+                        sc.AddScoped(r.Service, r.Implementation);
+                    }
+                    
+                    // todo improve caches collection service registration and use
                     return cacheTypes
                         .Aggregate(sc, (prev, next) =>
                         {

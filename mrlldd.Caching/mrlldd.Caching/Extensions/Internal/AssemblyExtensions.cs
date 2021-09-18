@@ -8,7 +8,11 @@ namespace mrlldd.Caching.Extensions.Internal
     internal static class AssemblyExtensions
     {
         public static IEnumerable<(Type Implementation, Type Service, Type MarkerInterface)> CollectServices(
-            this Assembly assembly, Type baseServiceType, Type baseImplementationType, Type markerInterfaceType)
+            this Assembly assembly,
+            Type baseServiceType,
+            Type baseImplementationType,
+            Type markerInterfaceType,
+            Func<Type[], Type[]> typesSelector)
         {
             var enumerable = assembly
                 .GetTypes()
@@ -18,7 +22,11 @@ namespace mrlldd.Caching.Extensions.Internal
             return enumerable
                 .Select(x => (
                     x,
-                    baseServiceType.MakeGenericType(GetRequiredBaseGenericImplementationType(x, baseImplementationType).GetGenericArguments()),
+                    baseServiceType.MakeGenericType(
+                        typesSelector(
+                            GetRequiredBaseGenericImplementationType(x, baseImplementationType).GetGenericArguments()
+                        )
+                    ),
                     x.GetInterfaces()
                         .First(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == markerInterfaceType)
                 ));

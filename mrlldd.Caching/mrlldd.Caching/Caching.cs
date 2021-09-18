@@ -34,7 +34,8 @@ namespace mrlldd.Caching
         /// <summary>
         /// Delimiter used in cache key formatting.
         /// </summary>
-        protected virtual string KeyPartsDelimiter => ":";
+        // ReSharper disable once VirtualMemberNeverOverridden.Global
+        protected virtual string CacheKeyDelimiter => ":";
 
         /// <inheritdoc />
         public void Populate(IServiceProvider serviceProvider,
@@ -47,7 +48,7 @@ namespace mrlldd.Caching
         }
 
         private string CacheKeyFactory(string suffix)
-            => string.Join(KeyPartsDelimiter, CacheKeyPrefix, CacheKey, suffix);
+            => string.Join(CacheKeyDelimiter, CacheKeyPrefix, CacheKey, suffix);
 
         // ReSharper disable once MemberCanBeProtected.Global
         /// <summary>
@@ -62,7 +63,7 @@ namespace mrlldd.Caching
                 return new DisabledCachingException();
             }
 
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.Set(key, data, Options, operation);
         }
@@ -82,7 +83,7 @@ namespace mrlldd.Caching
                 return Task.FromResult<Result>(new DisabledCachingException());
             }
 
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.SetAsync(key, data, Options, operation, token);
         }
@@ -91,7 +92,6 @@ namespace mrlldd.Caching
         /// A method for retrieving cached data entry.
         /// </summary>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
-        /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
         protected Result<T?> TryGetFromCache(string keySuffix)
         {
@@ -100,7 +100,7 @@ namespace mrlldd.Caching
                 return new DisabledCachingException();
             }
 
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.Get<T>(key, operation);
         }
@@ -118,7 +118,7 @@ namespace mrlldd.Caching
                 return Task.FromResult<Result<T?>>(new DisabledCachingException());
             }
 
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.GetAsync<T>(key, operation, token);
         }
@@ -129,7 +129,7 @@ namespace mrlldd.Caching
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         protected Result Refresh(string keySuffix)
         {
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
 
             return Store.Refresh(key, operation);
@@ -142,7 +142,7 @@ namespace mrlldd.Caching
         /// <param name="token">The cancellation token.</param>
         protected Task<Result> RefreshAsync(string keySuffix, CancellationToken token)
         {
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.RefreshAsync(key, operation, token);
         }
@@ -153,7 +153,7 @@ namespace mrlldd.Caching
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         protected Result Remove(string keySuffix)
         {
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
 
             return Store.Remove(key, operation);
@@ -166,7 +166,7 @@ namespace mrlldd.Caching
         /// <param name="token">The cancellation token.</param>
         protected Task<Result> RemoveAsync(string keySuffix, CancellationToken token)
         {
-            var operation = StoreOperationProvider.Next();
+            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.RemoveAsync(key, operation, token);
         }

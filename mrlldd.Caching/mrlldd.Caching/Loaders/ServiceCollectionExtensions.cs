@@ -10,15 +10,15 @@ namespace mrlldd.Caching.Loaders
 {
     internal static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLoaders(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection AddLoaders(this IServiceCollection services, params Assembly[] assemblies)
             => services
                 .AddScoped<ILoaderProvider, LoaderProvider>()
                 .AddScoped<ICachingLoader, CachingLoader>()
                 .Map(sc =>
                 {
-                    var loaderTypes = assembly
-                        .CollectServices(typeof(ICachingLoader<,>), typeof(CachingLoader<,,>),
-                            typeof(IInternalLoaderService<,>));
+                    var loaderTypes = assemblies
+                        .SelectMany(x => x.CollectServices(typeof(ICachingLoader<,>), typeof(CachingLoader<,,>),
+                            typeof(IInternalLoaderService<,>), x => new[]{x[0], x[1]}));
                     return loaderTypes
                         .Aggregate(sc, (prev, next) =>
                         {

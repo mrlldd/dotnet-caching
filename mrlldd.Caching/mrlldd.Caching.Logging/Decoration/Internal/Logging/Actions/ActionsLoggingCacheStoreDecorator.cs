@@ -1,29 +1,24 @@
 ﻿using Microsoft.Extensions.Logging;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Logging;
 using mrlldd.Caching.Stores;
-using mrlldd.Caching.Stores.Decoration;
 
 namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
 {
-    internal sealed class ActionsLoggingCacheStoreDecorator : LoggingCacheStoreDecorator
+    internal sealed class ActionsLoggingCacheStoreDecorator<TFlag> : LoggingCacheStoreDecorator<TFlag> where TFlag : CachingFlag
     {
-        private readonly ILogger<ActionsLoggingMemoryCacheStore> memoryCacheLogger;
-        private readonly ILogger<ActionsLoggingDistributedCacheStore> distributedStoreLogger;
         private readonly ICachingActionsLoggingOptions options;
-        public ActionsLoggingCacheStoreDecorator(ILogger<ActionsLoggingMemoryCacheStore> memoryCacheLogger,
-            ILogger<ActionsLoggingDistributedCacheStore> distributedStoreLogger,
+        private readonly ILogger<ICacheStore<TFlag>> logger;
+
+        public ActionsLoggingCacheStoreDecorator(ILogger<ICacheStore<TFlag>> logger,
             ICachingActionsLoggingOptions options)
         {
-            this.memoryCacheLogger = memoryCacheLogger;
-            this.distributedStoreLogger = distributedStoreLogger;
+            this.logger = logger;
             this.options = options;
         }
 
-        public override IMemoryCacheStore Decorate(IMemoryCacheStore memoryCacheStore) 
-            => new ActionsLoggingMemoryCacheStore(memoryCacheStore, memoryCacheLogger, options, MemoryStoreLogPrefix);
-
-        public override IDistributedCacheStore Decorate(IDistributedCacheStore distributedCacheStore) 
-            => new ActionsLoggingDistributedCacheStore(distributedCacheStore, distributedStoreLogger, options, DistributedStoreLogPrefix);
+        public override ICacheStore<TFlag> Decorate(ICacheStore<TFlag> cacheStore)
+            => new ActionsLoggingCacheStore<TFlag>(cacheStore, logger, options, LogPrefix);
 
         public override int Order => int.MaxValue;
     }

@@ -1,29 +1,18 @@
 ﻿using System;
 using mrlldd.Caching.Caches;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
-    public class ImplementedMemoryCache : Cache<int>
+    public class ImplementedMemoryCache : Cache<int, InMemory>
     {
-        protected override CachingOptions MemoryCacheOptions => CachingOptions.Enabled(TimeSpan.FromMinutes(5));
-        protected override CachingOptions DistributedCacheOptions => CachingOptions.Disabled;
+        protected override CachingOptions Options => CachingOptions.Enabled(TimeSpan.MaxValue);
         protected override string CacheKey => nameof(Int32);
     }
         
-    public class ImplementedDistributedCache : Cache<byte>
+    public class ImplementedDistributedCache : Cache<byte, InDistributed>
     {
-        protected override CachingOptions MemoryCacheOptions => CachingOptions.Disabled;
-        protected override CachingOptions DistributedCacheOptions => CachingOptions.Enabled(TimeSpan.FromMinutes(5));
+        protected override CachingOptions Options => CachingOptions.Enabled(TimeSpan.MaxValue);
         protected override string CacheKey => nameof(Byte);
-    }
-        
-    public class ImplementedMemoryAndDistributedCache : Cache<short>
-    {
-        protected override CachingOptions MemoryCacheOptions => CachingOptions.Enabled(TimeSpan.FromMinutes(5));
-
-        protected override CachingOptions DistributedCacheOptions =>
-            CachingOptions.Enabled(TimeSpan.FromMinutes(5));
-
-        protected override string CacheKey => nameof(String);
     }
 }

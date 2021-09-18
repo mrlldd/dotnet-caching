@@ -52,7 +52,7 @@ namespace mrlldd.Caching.Caches
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
     /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
-    public abstract class Cache<T, TStoreFlag> : Caching<T, TStoreFlag>, ICache<T>, IInternalCacheService<T> 
+    public abstract class Cache<T, TStoreFlag> : Caching<T, TStoreFlag>, ICache<T, TStoreFlag>, IInternalCacheService<T, TStoreFlag> 
         where TStoreFlag : CachingFlag
     {
         /// <inheritdoc />

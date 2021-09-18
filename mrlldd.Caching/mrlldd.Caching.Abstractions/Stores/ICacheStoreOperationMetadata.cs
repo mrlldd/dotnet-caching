@@ -9,5 +9,10 @@
         /// The store operation id.
         /// </summary>
         int OperationId { get; }
+        
+        /// <summary>
+        /// The cache key delimiter 
+        /// </summary>
+        public string Delimiter { get; }
     }
 }
