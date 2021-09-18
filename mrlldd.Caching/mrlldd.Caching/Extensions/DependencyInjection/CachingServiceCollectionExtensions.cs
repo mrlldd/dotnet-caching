@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using mrlldd.Caching.Caches;
+﻿using Microsoft.Extensions.DependencyInjection;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores.Decoration;
 
 namespace mrlldd.Caching.Extensions.DependencyInjection
@@ -15,24 +14,13 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
         /// </summary>
         /// <param name="cachingServiceCollection">The caching service collection.</param>
         /// <typeparam name="T">The type of decorator class that implements <see cref="ICacheStoreDecorator"/>.</typeparam>
+        /// <typeparam name="TFlag">The ty</typeparam>
         /// <returns>The caching service collection.</returns>
-        public static ICachingServiceCollection Decorate<T>(this ICachingServiceCollection cachingServiceCollection) where T : class, ICacheStoreDecorator
+        public static ICachingServiceCollection Decorate<TFlag, T>(this ICachingServiceCollection cachingServiceCollection) 
+            where T : class, ICacheStoreDecorator<TFlag>
+            where TFlag : CachingFlag
         {
-            cachingServiceCollection.AddScoped<ICacheStoreDecorator, T>();
-            return cachingServiceCollection;
-        }
-
-        /// <summary>
-        /// The method used for registering custom options for default caches.
-        /// </summary>
-        /// <param name="cachingServiceCollection">The caching service collection.</param>
-        /// <param name="cacheOptions">The cache options.</param>
-        /// <returns>The caching service collection.</returns>
-        public static ICachingServiceCollection WithDefaultCacheOptions(this ICachingServiceCollection cachingServiceCollection, ICacheOptions cacheOptions)
-        {
-            var toRemove = cachingServiceCollection.First(x => x.ServiceType == typeof(ICacheOptions));
-            cachingServiceCollection.Remove(toRemove);
-            cachingServiceCollection.AddSingleton(cacheOptions);
+            cachingServiceCollection.AddScoped<ICacheStoreDecorator<TFlag>, T>();
             return cachingServiceCollection;
         }
     }

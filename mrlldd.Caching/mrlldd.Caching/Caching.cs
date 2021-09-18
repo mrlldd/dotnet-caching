@@ -1,11 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Functional.Result.Extensions;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
+using Functional.Result;
+using Microsoft.Extensions.DependencyInjection;
+using mrlldd.Caching.Exceptions;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores;
+using mrlldd.Caching.Stores.Internal;
 
 namespace mrlldd.Caching
 {
@@ -13,21 +14,17 @@ namespace mrlldd.Caching
     /// The base class for implementing caching utilities.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
-    public abstract class Caching<T> : ICaching
+    /// <typeparam name="TStoreFlag">The caching store flag.</typeparam>
+    public abstract class Caching<T, TStoreFlag> : ICaching where TStoreFlag : CachingFlag
     {
         private IStoreOperationProvider StoreOperationProvider { get; set; } = null!;
-        private IMemoryCacheStore MemoryCacheStore { get; set; } = null!;
-        private IDistributedCacheStore DistributedCacheStore { get; set; } = null!;
+
+        private ICacheStore<TStoreFlag> Store { get; set; } = null!;
 
         /// <summary>
-        /// The options used to set up the memory cache for given object type.
+        /// The options used to set up the cache for given object type.
         /// </summary>
-        protected abstract CachingOptions MemoryCacheOptions { get; }
-
-        /// <summary>
-        /// The options used to set up the distributed cache for given object type.
-        /// </summary>
-        protected abstract CachingOptions DistributedCacheOptions { get; }
+        protected abstract CachingOptions Options { get; }
 
         /// <summary>
         /// The global cache key for given object type.
@@ -40,30 +37,17 @@ namespace mrlldd.Caching
         protected virtual string KeyPartsDelimiter => ":";
 
         /// <inheritdoc />
-        public void Populate(IMemoryCacheStore memoryCacheStore,
-            IDistributedCacheStore distributedCacheStore,
+        public void Populate(IServiceProvider serviceProvider,
             IStoreOperationProvider storeOperationProvider)
         {
-            MemoryCacheStore = memoryCacheStore;
-            DistributedCacheStore = distributedCacheStore;
+            Store = serviceProvider
+                .GetRequiredService<ICacheStoreProvider<TStoreFlag>>()
+                .CacheStore;
             StoreOperationProvider = storeOperationProvider;
         }
 
-        /// <inheritdoc />
-        public bool IsUsingMemory => MemoryCacheOptions.IsCaching;
-
-        /// <inheritdoc />
-        public bool IsUsingDistributed => DistributedCacheOptions.IsCaching;
-
         private string CacheKeyFactory(string suffix)
-            => string.Join(KeyPartsDelimiter,
-                CacheKeyPrefixesFactory()
-                    .Concat(new[]
-                    {
-                        CacheKey,
-                        suffix
-                    })
-            );
+            => string.Join(KeyPartsDelimiter, CacheKeyPrefix, CacheKey, suffix);
 
         // ReSharper disable once MemberCanBeProtected.Global
         /// <summary>
@@ -71,32 +55,16 @@ namespace mrlldd.Caching
         /// </summary>
         /// <param name="data">The data to be stored in cache.</param>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
-        /// <param name="token">The cancellation token.</param>
-        protected internal void PerformCaching(T? data, string keySuffix, CancellationToken token = default)
+        protected internal Result PerformCaching(T? data, string keySuffix)
         {
-            if (data == null)
+            if (!Options.IsCaching)
             {
-                return;
-            }
-
-            if (!(IsUsingDistributed || IsUsingMemory))
-            {
-                return;
+                return new DisabledCachingException();
             }
 
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
-            MemoryCacheStore.Set(key, data, new MemoryCacheEntryOptions
-            {
-                SlidingExpiration = MemoryCacheOptions.SlidingExpiration
-            }, operation);
-
-            token.ThrowIfCancellationRequested();
-
-            DistributedCacheStore.Set(key, data, new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = DistributedCacheOptions.SlidingExpiration
-            }, operation);
+            return Store.Set(key, data, Options, operation);
         }
 
         // ReSharper disable once MemberCanBeProtected.Global
@@ -106,31 +74,17 @@ namespace mrlldd.Caching
         /// <param name="data">The data to be stored in cache.</param>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <param name="token">The cancellation token.</param>
-        protected internal async Task PerformCachingAsync(T? data, string keySuffix, CancellationToken token = default)
+        protected internal Task<Result> PerformCachingAsync(T? data, string keySuffix,
+            CancellationToken token = default)
         {
-            if (data == null)
+            if (!Options.IsCaching)
             {
-                return;
-            }
-            
-            if (!(IsUsingDistributed || IsUsingMemory))
-            {
-                return;
+                return Task.FromResult<Result>(new DisabledCachingException());
             }
 
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
-            await MemoryCacheStore.SetAsync(key, data, new MemoryCacheEntryOptions
-            {
-                SlidingExpiration = MemoryCacheOptions.SlidingExpiration
-            }, operation, token);
-
-            token.ThrowIfCancellationRequested();
-
-            await DistributedCacheStore.SetAsync(key, data, new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = DistributedCacheOptions.SlidingExpiration
-            }, operation, token);
+            return Store.SetAsync(key, data, Options, operation, token);
         }
 
         /// <summary>
@@ -139,53 +93,16 @@ namespace mrlldd.Caching
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
-        protected T? TryGetFromCache(string keySuffix, CancellationToken token = default)
+        protected Result<T?> TryGetFromCache(string keySuffix)
         {
-            if (!(IsUsingDistributed || IsUsingMemory))
+            if (!Options.IsCaching)
             {
-                return default;
+                return new DisabledCachingException();
             }
-            
+
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
-            var fromMemory = MemoryCacheStore.Get<T>(key, operation);
-            if (fromMemory.Successful)
-            {
-                var unwrapped = fromMemory.UnwrapAsSuccess();
-                if (unwrapped != null)
-                {
-                    return fromMemory;
-                }
-            }
-
-            token.ThrowIfCancellationRequested();
-
-            var fromDistributed = DistributedCacheStore.Get<T>(key, operation);
-
-            token.ThrowIfCancellationRequested();
-
-            if (!fromDistributed.Successful)
-            {
-                MemoryCacheStore.Remove(key, operation);
-                return default;
-            }
-
-            token.ThrowIfCancellationRequested();
-
-            var fromDistributedUnwrapped = fromDistributed.UnwrapAsSuccess();
-
-            if (fromDistributedUnwrapped == null)
-            {
-                return default;
-            }
-
-            MemoryCacheStore.Set(key, fromDistributedUnwrapped,
-                new MemoryCacheEntryOptions
-                {
-                    SlidingExpiration = MemoryCacheOptions.SlidingExpiration
-                }, operation);
-
-            return fromDistributedUnwrapped;
+            return Store.Get<T>(key, operation);
         }
 
         /// <summary>
@@ -194,53 +111,28 @@ namespace mrlldd.Caching
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
-        protected async Task<T?> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
+        protected Task<Result<T?>> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
         {
-            if (!(IsUsingDistributed || IsUsingMemory))
+            if (!Options.IsCaching)
             {
-                return default;
+                return Task.FromResult<Result<T?>>(new DisabledCachingException());
             }
-            
+
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
-            var fromMemory = await MemoryCacheStore.GetAsync<T>(key, operation, token);
-            if (fromMemory.Successful)
-            {
-                var unwrapped = fromMemory.UnwrapAsSuccess();
-                if (unwrapped != null)
-                {
-                    return fromMemory;
-                }
-            }
+            return Store.GetAsync<T>(key, operation, token);
+        }
 
-            token.ThrowIfCancellationRequested();
+        /// <summary>
+        /// A method for refreshing cached data entry expiration. 
+        /// </summary>
+        /// <param name="keySuffix">The suffix extension to generated cache key.</param>
+        protected Result Refresh(string keySuffix)
+        {
+            var operation = StoreOperationProvider.Next();
+            var key = CacheKeyFactory(keySuffix);
 
-            var fromDistributed = await DistributedCacheStore.GetAsync<T>(key,operation, token);
-
-            token.ThrowIfCancellationRequested();
-
-            if (!fromDistributed.Successful)
-            {
-                await MemoryCacheStore.RemoveAsync(key, operation, token);
-                return default;
-            }
-
-            token.ThrowIfCancellationRequested();
-
-            var fromDistributedUnwrapped = fromDistributed.UnwrapAsSuccess();
-
-            if (fromDistributedUnwrapped == null)
-            {
-                return default;
-            }
-
-            await MemoryCacheStore.SetAsync(key, fromDistributedUnwrapped,
-                new MemoryCacheEntryOptions
-                {
-                    SlidingExpiration = MemoryCacheOptions.SlidingExpiration
-                }, operation,token);
-
-            return fromDistributedUnwrapped;
+            return Store.Refresh(key, operation);
         }
 
         /// <summary>
@@ -248,33 +140,23 @@ namespace mrlldd.Caching
         /// </summary>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <param name="token">The cancellation token.</param>
-        protected void Refresh(string keySuffix, CancellationToken token)
+        protected Task<Result> RefreshAsync(string keySuffix, CancellationToken token)
         {
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
-
-            MemoryCacheStore.Refresh(key, operation);
-
-            token.ThrowIfCancellationRequested();
-
-            DistributedCacheStore.Refresh(key, operation);
+            return Store.RefreshAsync(key, operation, token);
         }
 
         /// <summary>
-        /// A method for refreshing cached data entry expiration. 
+        /// A method for removing cached data entry expiration. 
         /// </summary>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
-        /// <param name="token">The cancellation token.</param>
-        protected async Task RefreshAsync(string keySuffix, CancellationToken token)
+        protected Result Remove(string keySuffix)
         {
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
 
-            await MemoryCacheStore.RefreshAsync(key, operation, token);
-
-            token.ThrowIfCancellationRequested();
-
-            await DistributedCacheStore.RefreshAsync(key, operation, token);
+            return Store.Remove(key, operation);
         }
 
         /// <summary>
@@ -282,39 +164,17 @@ namespace mrlldd.Caching
         /// </summary>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <param name="token">The cancellation token.</param>
-        protected void Remove(string keySuffix, CancellationToken token)
+        protected Task<Result> RemoveAsync(string keySuffix, CancellationToken token)
         {
             var operation = StoreOperationProvider.Next();
             var key = CacheKeyFactory(keySuffix);
-
-            MemoryCacheStore.Remove(key, operation);
-
-            token.ThrowIfCancellationRequested();
-
-            DistributedCacheStore.Remove(key, operation);
+            return Store.RemoveAsync(key, operation, token);
         }
 
         /// <summary>
-        /// A method for removing cached data entry expiration. 
+        /// Global cache key prefix.
         /// </summary>
-        /// <param name="keySuffix">The suffix extension to generated cache key.</param>
-        /// <param name="token">The cancellation token.</param>
-        protected async Task RemoveAsync(string keySuffix, CancellationToken token)
-        {
-            var operation = StoreOperationProvider.Next();
-            var key = CacheKeyFactory(keySuffix);
-
-            await MemoryCacheStore.RemoveAsync(key, operation, token);
-
-            token.ThrowIfCancellationRequested();
-
-            await DistributedCacheStore.RemoveAsync(key, operation, token);
-        }
-
-        /// <summary>
-        /// The method used for creating additional global cache keys prefixes in order to make them more unique.
-        /// </summary>
-        /// <returns>The <see cref="IEnumerable{T}"/> of prefixes.</returns>
-        protected abstract IEnumerable<string> CacheKeyPrefixesFactory();
+        /// <returns>The string.</returns>
+        protected abstract string CacheKeyPrefix { get; }
     }
 }

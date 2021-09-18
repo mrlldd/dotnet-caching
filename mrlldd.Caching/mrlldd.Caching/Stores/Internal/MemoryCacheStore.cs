@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Functional.Object.Extensions;
 using Functional.Result;
 using Microsoft.Extensions.Caching.Memory;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Stores.Internal
 {
-    internal class MemoryCacheStore : CachingStore, IMemoryCacheStore
+    internal class MemoryCacheStore : CachingStore, ICacheStore<InMemory>
     {
         private readonly IMemoryCache memoryCache;
 
@@ -25,14 +26,20 @@ namespace mrlldd.Caching.Stores.Internal
         public Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
             => Get<T>(key, metadata).Map(Task.FromResult);
 
-        public Result Set<T>(string key, T value, MemoryCacheEntryOptions options, ICacheStoreOperationMetadata metadata)
-            => Result.Of(new Action(() => memoryCache.Set(key, Serialize(value), options)));
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
+            => Result.Of(new Action(() => memoryCache.Set(key, Serialize(value), new MemoryCacheEntryOptions
+            {
+                SlidingExpiration = options.SlidingExpiration
+            })));
 
-        public Task<Result> SetAsync<T>(string key, T value, MemoryCacheEntryOptions options, ICacheStoreOperationMetadata metadata,
+        public Task<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => Result.Of(() =>
             {
-                memoryCache.Set(key, Serialize(value), options);
+                memoryCache.Set(key, Serialize(value), new MemoryCacheEntryOptions
+                {
+                    SlidingExpiration = options.SlidingExpiration
+                });
                 return Task.CompletedTask;
             });
 

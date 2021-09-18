@@ -1,8 +1,9 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
+using Functional.Result;
 using Functional.Result.Extensions;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Internal;
 
 namespace mrlldd.Caching.Caches
@@ -15,45 +16,47 @@ namespace mrlldd.Caching.Caches
         public Cache(ICacheProvider cacheProvider) 
             => this.cacheProvider = cacheProvider;
 
-        public Task SetAsync<T>(T value, CancellationToken token = default)
+        public Task<Result> SetAsync<T>(T value, CancellationToken token = default)
             => GetCache<T>().SetAsync(value, token);
 
-        public void Set<T>(T value, CancellationToken token = default)
-            => GetCache<T>().SetAsync(value, token);
+        public Result Set<T>(T value)
+            => GetCache<T>().Set(value);
 
-        public Task<T?> GetAsync<T>(CancellationToken token = default)
+        public Task<Result<T?>> GetAsync<T>(CancellationToken token = default)
             => GetCache<T>().GetAsync(token);
 
-        public T? Get<T>(CancellationToken token = default)
-            => GetCache<T>().Get(token);
+        public Result<T?> Get<T>()
+            => GetCache<T>().Get();
 
-        public Task RefreshAsync<T>(CancellationToken token = default)
+        public Task<Result> RefreshAsync<T>(CancellationToken token = default)
             => GetCache<T>().RefreshAsync(token);
 
-        public void Refresh<T>(CancellationToken token = default)
-            => GetCache<T>().Refresh(token);
+        public Result Refresh<T>()
+            => GetCache<T>().Refresh();
 
-        public Task RemoveAsync<T>(CancellationToken token = default)
+        public Task<Result> RemoveAsync<T>(CancellationToken token = default)
             => GetCache<T>().RemoveAsync(token);
 
-        public void Remove<T>(CancellationToken token = default)
-            => GetCache<T>().Remove(token);
+        public Result Remove<T>()
+            => GetCache<T>().Remove();
 
         private ICache<T> GetCache<T>()
-            => cacheProvider.GetOrDefault<T>();
+            => cacheProvider.GetRequired<T>()
+                .Map(x => x.Successful 
+                    ? x.UnwrapAsSuccess() 
+                    : throw x);
     }
 
     /// <summary>
     /// The base class for implementing caches.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
-    public abstract class Cache<T> : Caching<T>, ICache<T>, IInternalCacheService<T>
+    /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
+    public abstract class Cache<T, TStoreFlag> : Caching<T, TStoreFlag>, ICache<T>, IInternalCacheService<T> 
+        where TStoreFlag : CachingFlag
     {
         /// <inheritdoc />
-        protected sealed override IEnumerable<string> CacheKeyPrefixesFactory()
-        {
-            yield break;
-        }
+        protected sealed override string CacheKeyPrefix => "cache";
 
         // ReSharper disable once VirtualMemberNeverOverridden.Global
         /// <summary>
@@ -62,35 +65,35 @@ namespace mrlldd.Caching.Caches
         protected virtual string DefaultKeySuffix { get; } = typeof(T).Map(x => $"{x.Namespace}.{x.Name}");
 
         /// <inheritdoc />
-        public Task SetAsync(T value, CancellationToken token = default)
+        public Task<Result> SetAsync(T value, CancellationToken token = default)
             => PerformCachingAsync(value, DefaultKeySuffix, token);
 
         /// <inheritdoc />
-        public void Set(T value, CancellationToken token = default)
-            => PerformCaching(value, DefaultKeySuffix, token);
+        public Result Set(T value)
+            => PerformCaching(value, DefaultKeySuffix);
 
         /// <inheritdoc />
-        public Task<T?> GetAsync(CancellationToken token = default)
+        public Task<Result<T?>> GetAsync(CancellationToken token = default)
             => TryGetFromCacheAsync(DefaultKeySuffix, token);
 
         /// <inheritdoc />
-        public T? Get(CancellationToken token = default)
-            => TryGetFromCache(DefaultKeySuffix, token);
+        public Result<T?> Get()
+            => TryGetFromCache(DefaultKeySuffix);
 
         /// <inheritdoc />
-        public Task RefreshAsync(CancellationToken token = default)
+        public Task<Result> RefreshAsync(CancellationToken token = default)
             => RefreshAsync(DefaultKeySuffix, token);
 
         /// <inheritdoc />
-        public void Refresh(CancellationToken token = default)
-            => Refresh(DefaultKeySuffix, token);
+        public Result Refresh()
+            => Refresh(DefaultKeySuffix);
 
         /// <inheritdoc />
-        public Task RemoveAsync(CancellationToken token = default)
+        public Task<Result> RemoveAsync(CancellationToken token = default)
             => RemoveAsync(DefaultKeySuffix, token);
 
         /// <inheritdoc />
-        public void Remove(CancellationToken token = default)
-            => Remove(DefaultKeySuffix, token);
+        public Result Remove()
+            => Remove(DefaultKeySuffix);
     }
 }

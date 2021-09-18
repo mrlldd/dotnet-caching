@@ -1,13 +1,12 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Functional.Object.Extensions;
 using Functional.Result;
 using Microsoft.Extensions.Caching.Distributed;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Stores.Internal
 {
-    internal class DistributedCacheStore : CachingStore, IDistributedCacheStore
+    internal class DistributedCacheStore : CachingStore, ICacheStore<InDistributed>
     {
         private readonly IDistributedCache distributedCache;
 
@@ -33,15 +32,18 @@ namespace mrlldd.Caching.Stores.Internal
                     : Deserialize<T>(fromCache);
             });
 
-        public Result Set<T>(string key, T value,
-            DistributedCacheEntryOptions options,
-            ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => distributedCache.SetString(key, Serialize(value), options));
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
+            => Result.Of(() => distributedCache.SetString(key, Serialize(value), new DistributedCacheEntryOptions
+            {
+                SlidingExpiration = options.SlidingExpiration
+            }));
 
-        public Task<Result> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options,
-            ICacheStoreOperationMetadata metadata,
-            CancellationToken token = default)
-            => Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value), options, token));
+        public Task<Result> SetAsync<T>(string key, T value, CachingOptions options,
+            ICacheStoreOperationMetadata metadata, CancellationToken token = default)
+            => Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value), new DistributedCacheEntryOptions
+            {
+                SlidingExpiration = options.SlidingExpiration
+            }, token));
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() => distributedCache.Refresh(key));

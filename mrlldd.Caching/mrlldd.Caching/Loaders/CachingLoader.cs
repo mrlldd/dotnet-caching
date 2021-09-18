@@ -1,8 +1,9 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
+using Functional.Result;
 using Functional.Result.Extensions;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Internal;
 
 namespace mrlldd.Caching.Loaders
@@ -14,46 +15,63 @@ namespace mrlldd.Caching.Loaders
         public CachingLoader(ILoaderProvider loaderProvider)
             => this.loaderProvider = loaderProvider;
 
-        public Task<TResult?> GetOrLoadAsync<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
-            CancellationToken token = default) where TResult : class => GetLoader<TArgs, TResult>()
-            .GetOrLoadAsync(args, omitCacheOnLoad, token);
+        public Task<Result<TResult?>> GetOrLoadAsync<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
+            CancellationToken token = default) 
+            where TResult : class
+            => GetLoader<TArgs, TResult>()
+                .GetOrLoadAsync(args, omitCacheOnLoad, token);
 
-        public TResult? GetOrLoad<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
-            CancellationToken token = default) where TResult : class => GetLoader<TArgs, TResult>()
+        public Result<TResult?> GetOrLoad<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
+            CancellationToken token = default) 
+            where TResult : class 
+            => GetLoader<TArgs, TResult>()
             .GetOrLoad(args, omitCacheOnLoad, token);
 
-        public Task SetAsync<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
+        public Task<Result> SetAsync<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
             where TResult : class
-            => GetLoader<TArgs, TResult>().SetAsync(args, result, token);
+            => GetLoader<TArgs, TResult>()
+                .SetAsync(args, result, token);
 
-        public void Set<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
+        public Result Set<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
             where TResult : class
-            => GetLoader<TArgs, TResult>().Set(args, result, token);
+            => GetLoader<TArgs, TResult>()
+                .Set(args, result);
 
-        public Task<TResult?> GetAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
+        public Task<Result<TResult?>> GetAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
             where TResult : class
-            => GetLoader<TArgs, TResult>().GetAsync(args, token);
+            => GetLoader<TArgs, TResult>()
+                .GetAsync(args, token);
 
-        public TResult? Get<TArgs, TResult>(TArgs args, CancellationToken token = default)
+        public Result<TResult?> Get<TArgs, TResult>(TArgs args, CancellationToken token = default)
             where TResult : class
-            => GetLoader<TArgs, TResult>().Get(args, token);
+            => GetLoader<TArgs, TResult>()
+                .Get(args);
 
-        public Task RefreshAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
+        public Task<Result> RefreshAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
             where TResult : class
-            => GetLoader<TArgs, TResult>().RefreshAsync(args, token);
+            => GetLoader<TArgs, TResult>()
+                .RefreshAsync(args, token);
 
-        public void Refresh<TArgs, TResult>(TArgs args, CancellationToken token = default)
+        public Result Refresh<TArgs, TResult>(TArgs args, CancellationToken token = default)
             where TResult : class
-            => GetLoader<TArgs, TResult>().Refresh(args, token);
+            => GetLoader<TArgs, TResult>()
+                .Refresh(args);
 
-        public Task RemoveAsync<TArgs, TResult>(TArgs args, CancellationToken token = default) where TResult : class => GetLoader<TArgs, TResult>().RemoveAsync(args, token);
+        public Task<Result> RemoveAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>()
+                .RemoveAsync(args, token);
 
-        public void Remove<TArgs, TResult>(TArgs args, CancellationToken token = default) where TResult : class => GetLoader<TArgs, TResult>().Remove(args, token);
+        public Result Remove<TArgs, TResult>(TArgs args, CancellationToken token = default)
+            where TResult : class
+            => GetLoader<TArgs, TResult>().Remove(args);
 
-        private ICachingLoader<TArgs, TResult> GetLoader<TArgs, TResult>() where TResult : class => loaderProvider.GetRequired<TArgs, TResult>()
-                .Map(x => x.Successful
-                    ? x.UnwrapAsSuccess()
-                    : throw x);
+        private ICachingLoader<TArgs, TResult> GetLoader<TArgs, TResult>()
+            where TResult : class => loaderProvider
+            .GetRequired<TArgs, TResult>()
+            .Map(x => x.Successful
+                ? x.UnwrapAsSuccess()
+                : throw x);
     }
 
     /// <summary>
@@ -61,22 +79,23 @@ namespace mrlldd.Caching.Loaders
     /// </summary>
     /// <typeparam name="TArgs">Loading argument type.</typeparam>
     /// <typeparam name="TResult">Loading result type.</typeparam>
-    public abstract class CachingLoader<TArgs, TResult> : Caching<TResult>, ICachingLoader<TArgs, TResult>, IInternalLoaderService<TArgs, TResult>
+    /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
+    public abstract class CachingLoader<TArgs, TResult, TStoreFlag> : Caching<TResult, TStoreFlag>,
+        ICachingLoader<TArgs, TResult>, IInternalLoaderService<TArgs, TResult>
         where TResult : class
+        where TStoreFlag : CachingFlag
     {
-        internal const string CacheKeyPrefix = "loader";
-
         /// <inheritdoc />
-        public async Task<TResult?> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
+        public async Task<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
             CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
             {
                 var inCache = await TryGetFromCacheAsync(keySuffix, token);
-                if (inCache != null)
+                if (inCache.Successful)
                 {
-                    return inCache;
+                    return inCache.UnwrapAsSuccess();
                 }
             }
 
@@ -85,12 +104,12 @@ namespace mrlldd.Caching.Loaders
         }
 
         /// <inheritdoc />
-        public TResult? GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
+        public Result<TResult?> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
             {
-                var inCache = TryGetFromCache(keySuffix, token);
+                var inCache = TryGetFromCache(keySuffix);
                 if (inCache != null)
                 {
                     return inCache;
@@ -98,49 +117,48 @@ namespace mrlldd.Caching.Loaders
             }
 
             var loaded = LoadAsync(args, token).GetAwaiter().GetResult();
-            return loaded.Effect(x => PerformCaching(x, keySuffix, token));
+            PerformCaching(loaded, keySuffix);
+            return loaded;
         }
 
         /// <inheritdoc />
-        public Task SetAsync(TArgs args, TResult result, CancellationToken token = default)
+        public Task<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default)
             => PerformCachingAsync(result, CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
-        public void Set(TArgs args, TResult result, CancellationToken token = default)
-            => PerformCaching(result, CacheKeySuffixFactory(args), token);
+        public Result Set(TArgs args, TResult result)
+            => PerformCaching(result, CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
-        public Task<TResult?> GetAsync(TArgs args, CancellationToken token = default)
+        public Task<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default)
             => TryGetFromCacheAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
-        public TResult? Get(TArgs args, CancellationToken token = default)
-            => TryGetFromCache(CacheKeySuffixFactory(args), token);
+        public Result<TResult?> Get(TArgs args)
+            => TryGetFromCache(CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
-        public Task RefreshAsync(TArgs args, CancellationToken token = default)
+        public Task<Result> RefreshAsync(TArgs args, CancellationToken token = default)
             => RefreshAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
-        public void Refresh(TArgs args, CancellationToken token = default)
-            => Refresh(CacheKeySuffixFactory(args), token);
+        public Result Refresh(TArgs args)
+            => Refresh(CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
-        public Task RemoveAsync(TArgs args, CancellationToken token = default)
+        public Task<Result> RemoveAsync(TArgs args, CancellationToken token = default)
             => RemoveAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
-        public void Remove(TArgs args, CancellationToken token = default)
-            => Remove(CacheKeySuffixFactory(args), token);
+        public Result Remove(TArgs args)
+            => Remove(CacheKeySuffixFactory(args));
 
         /// <summary>
         /// The sealed factory method used for creating the global cache key prefixes.
         /// </summary>
         /// <returns>The collection of prefixes.</returns>
-        protected sealed override IEnumerable<string> CacheKeyPrefixesFactory()
-        {
-            yield return CacheKeyPrefix;
-        }
+        protected sealed override string CacheKeyPrefix
+            => "loader";
 
         /// <summary>
         /// The abstract method for loading of objects of result type.

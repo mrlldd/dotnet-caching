@@ -3,8 +3,6 @@ using System.Reflection;
 using Functional.Object.Extensions;
 using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using mrlldd.Caching.Caches;
-using mrlldd.Caching.Extensions.DependencyInjection.Internal;
 using mrlldd.Caching.Extensions.Internal;
 using mrlldd.Caching.Internal;
 
@@ -19,7 +17,7 @@ namespace mrlldd.Caching.Loaders
                 .Map(sc =>
                 {
                     var loaderTypes = assembly
-                        .CollectServices(typeof(ICachingLoader<,>), typeof(CachingLoader<,>),
+                        .CollectServices(typeof(ICachingLoader<,>), typeof(CachingLoader<,,>),
                             typeof(IInternalLoaderService<,>));
                     return loaderTypes
                         .Aggregate(sc, (prev, next) =>
