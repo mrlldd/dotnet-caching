@@ -3,13 +3,14 @@ using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Extensions.DependencyInjection;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
     public class CleanCacheBenchmarks : Benchmark
     {
-        private readonly ICache<int> cleanMemoryCacheImplementation;
-        private readonly ICache<byte> cleanDistributedCacheImplementation;
+        private readonly ICache<int, InMemory> cleanMemoryCacheImplementation;
+        private readonly ICache<byte,  InDistributed> cleanDistributedCacheImplementation;
 
         public CleanCacheBenchmarks()
         {
@@ -18,8 +19,8 @@ namespace mrlldd.Caching.Benchmarks.Cache
                 .AddCaching(typeof(CleanCacheBenchmarks).Assembly)
                 .BuildServiceProvider()
                 .CreateScope().ServiceProvider;
-            cleanMemoryCacheImplementation = cleanSp.GetRequiredService<ICache<int>>();
-            cleanDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<byte>>();
+            cleanMemoryCacheImplementation = cleanSp.GetRequiredService<ICache<int, InMemory>>();
+            cleanDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<byte, InDistributed>>();
         }
 
         [Benchmark]

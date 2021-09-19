@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Functional.Object.Extensions;
@@ -6,8 +7,8 @@ using Functional.Result.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using mrlldd.Caching.Caches.Internal;
 using mrlldd.Caching.Extensions.Internal;
-using mrlldd.Caching.Internal;
 
 namespace mrlldd.Caching.Caches
 {
@@ -26,18 +27,39 @@ namespace mrlldd.Caching.Caches
                             typeof(IInternalCacheService<,>), t => t)
                         )
                         .ToArray();
-                    foreach (var r in cacheTypes
-                        .Select(x => x.Service.GetGenericArguments().First())
-                        .Distinct()
-                        .Select(x => new
+                    var noflagTypes = cacheTypes
+                        .Select(x => x.Service.GetGenericArguments()[0].Map(t => new
                         {
-                            Service = typeof(ICaches<>).MakeGenericType(x),
-                            Implementation = typeof(Caches<>).MakeGenericType(x)
+                            NoflagService = typeof(ICache<>).MakeGenericType(t),
+                            Marker = x.MarkerInterface,
+                            GenericArgument = t
                         }))
+                        .ToArray();
+
+                    foreach (var type in noflagTypes.Select(x => x.GenericArgument).Distinct())
                     {
-                        sc.AddScoped(r.Service, r.Implementation);
+                        sc.AddScoped(typeof(ICaches<>).MakeGenericType(type), typeof(Caches<>).MakeGenericType(type));
                     }
-                    
+
+                    foreach (var item in noflagTypes)
+                    {
+                        sc.AddScoped(item.NoflagService, sp => sp.GetRequiredService(item.Marker));
+                    }
+
+                    var toArrayMethod = typeof(Enumerable)
+                        .GetMethod(nameof(Enumerable.ToArray))!;
+                    foreach (var type in noflagTypes.Select(x => x.NoflagService).Distinct())
+                    {
+                        var method = toArrayMethod.MakeGenericMethod(type);
+                        var genericEnumerable = typeof(IEnumerable<>).MakeGenericType(type);
+                        sc.AddScoped(typeof(ICollection<>).MakeGenericType(type),
+                            sp =>
+                            {
+                                var enumerable = sp.GetRequiredService(genericEnumerable);
+                                return method.Invoke(enumerable, new[] { enumerable });
+                            });
+                    }
+
                     // todo improve caches collection service registration and use
                     return cacheTypes
                         .Aggregate(sc, (prev, next) =>

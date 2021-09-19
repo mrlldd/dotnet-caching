@@ -73,28 +73,28 @@ namespace mrlldd.Caching.Benchmarks
             => noDecoratorsCachingServiceProvider.GetRequiredService<ICachingLoader>();
 
         [Benchmark]
-        public void Resolve_Clean_GenericCache() => noDecoratorsCachingServiceProvider.GetRequiredService<ICache<long>>();
+        public void Resolve_Clean_GenericCache() => noDecoratorsCachingServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]
         public void Resolve_Clean_GenericLoader() =>
             noDecoratorsCachingServiceProvider.GetRequiredService<ICachingLoader<long, string>>();
 
         [Benchmark]
-        public void Resolve_PerfLog_DecoratedGenericCache() => perfLoggingDecoratedServiceProvider.GetRequiredService<ICache<long>>();
+        public void Resolve_PerfLog_DecoratedGenericCache() => perfLoggingDecoratedServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]
         public void Resolve_PerfLog_DecoratedGenericLoader() =>
             perfLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string>>();
 
         [Benchmark]
-        public void Resolve_ActionsLog_DecoratedGenericCache() => actionsLoggingDecoratedServiceProvider.GetRequiredService<ICache<long>>();
+        public void Resolve_ActionsLog_DecoratedGenericCache() => actionsLoggingDecoratedServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]
         public void Resolve_ActionsLog_DecoratedGenericLoader() =>
             actionsLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string>>();
         
         [Benchmark]
-        public void Resolve_ActionsAndPerfLog_DecoratedGenericCache() => actionsAndPerfLoggingDecoratedServiceProvider.GetRequiredService<ICache<long>>();
+        public void Resolve_ActionsAndPerfLog_DecoratedGenericCache() => actionsAndPerfLoggingDecoratedServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]
         public void Resolve_ActionsAndPerfLog_DecoratedGenericLoader() =>

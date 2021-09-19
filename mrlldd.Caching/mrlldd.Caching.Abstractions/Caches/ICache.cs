@@ -70,16 +70,18 @@ namespace mrlldd.Caching.Caches
         /// <summary>
         /// The method used for removing data from cache.
         /// </summary>
-        /// <param name="token">The cancellation token.</param>
         /// <typeparam name="T">The type of value.</typeparam>
         Result Remove<T>();
     }
+    
+    
     
     /// <summary>
     /// The base interface for implementing caches.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
-    public interface ICache<T> : ICaching
+    public interface ICache<T, TFlag>  : ICaching
+        where TFlag : CachingFlag
     {
         //todo fix xml comments
         
@@ -130,11 +132,5 @@ namespace mrlldd.Caching.Caches
         /// The method used for removing data from cache.
         /// </summary>
         Result Remove();
-    }
-    
-    // ReSharper disable once UnusedTypeParameter
-    public interface ICache<T, TFlag> : ICache<T> where TFlag : CachingFlag
-    {
-        
     }
 } 

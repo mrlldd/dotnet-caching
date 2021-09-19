@@ -1,13 +1,12 @@
-
 using System;
 using Functional.Result;
 
-namespace mrlldd.Caching.Caches
+namespace mrlldd.Caching.Caches.Internal
 {
     /// <summary>
     /// The service used for providing caches.
     /// </summary>
-    public interface ICacheProvider
+    internal interface ICacheProvider
     {
         /// <summary>
         /// The method used to get a cache.
