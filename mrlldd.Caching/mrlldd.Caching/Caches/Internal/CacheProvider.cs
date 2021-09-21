@@ -1,9 +1,8 @@
 using System;
 using Functional.Result;
-using mrlldd.Caching.Caches.Internal;
 using mrlldd.Caching.Stores;
 
-namespace mrlldd.Caching.Caches
+namespace mrlldd.Caching.Caches.Internal
 {
     internal sealed class CacheProvider : CachingProvider, ICacheProvider
     {

@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
+using mrlldd.Caching.Caches.Internal;
 using mrlldd.Caching.Extensions.DependencyInjection;
 using mrlldd.Caching.Flags;
 using mrlldd.Caching.Tests.TestImplementations.Caches;
@@ -28,28 +29,44 @@ namespace mrlldd.Caching.Tests
             var sp = new ServiceCollection()
                 .AddCaching(typeof(DependencyResolvingTests).Assembly)
                 .BuildServiceProvider();
-            var caches = sp.GetRequiredService<ICaches<VoidUnit>>();
-            caches.Should()
+            var unified = sp.GetRequiredService<ICache<DependencyResolvingUnit>>();
+            unified.Should()
                 .NotBeNull()
-                .And.BeOfType<Caches<VoidUnit>>();
+                .And.BeOfType<Cache<DependencyResolvingUnit>>();
+            unified.Caches
+                .Should()
+                .NotBeNull()
+                .And.BeOfType<ReadOnlyCachesCollection<DependencyResolvingUnit>>();
+            unified.Caches.Count
+                .Should()
+                .Be(2);
+
+            var vc = sp.GetRequiredService<ICache<DependencyResolvingUnit, InVoid>>();
+            var mc = sp.GetRequiredService<ICache<DependencyResolvingUnit, InMemory>>();
+            unified.Caches.Should()
+                .Contain(vc)
+                .And.Contain(mc);
         }
 
+
+        private static object[] resolvingCases =
+        {
+            new object[] { typeof(ICache<DependencyResolvingUnit, InVoid>), typeof(DependencyResolvingVoidCache) },
+            new object[] { typeof(ICache<DependencyResolvingUnit, InMemory>), typeof(DependencyResolvingMemoryCache) }
+        };
+
         [Test]
-        public void ResolvesSeparateCaches()
+        [TestCaseSource(nameof(resolvingCases))]
+        public void ResolvesSeparateCaches(Type interfaceType, Type implementationType)
         {
             var sp = new ServiceCollection()
                 .AddCaching(typeof(DependencyResolvingTests).Assembly)
                 .BuildServiceProvider();
-            var voidCache = sp.GetRequiredService<ICache<VoidUnit, InVoid>>();
-            var memoryCache = sp.GetRequiredService<ICache<VoidUnit, InMemory>>();
-            voidCache
+            var service = sp.GetRequiredService(interfaceType);
+            service
                 .Should()
                 .NotBeNull()
-                .And.BeOfType<VoidCache>();
-            memoryCache
-                .Should()
-                .NotBeNull()
-                .And.BeOfType<MemoryCache>();
+                .And.BeOfType(implementationType);
         }
     }
 }

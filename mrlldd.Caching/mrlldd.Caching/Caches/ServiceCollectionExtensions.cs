@@ -46,17 +46,17 @@ namespace mrlldd.Caching.Caches
                         sc.AddScoped(item.NoflagService, sp => sp.GetRequiredService(item.Marker));
                     }
 
-                    var toArrayMethod = typeof(Enumerable)
-                        .GetMethod(nameof(Enumerable.ToArray))!;
-                    foreach (var type in noflagTypes.Select(x => x.NoflagService).Distinct())
+                    var toReadonlyCachesCollectionMethod = typeof(EnumerableExtensions)
+                        .GetMethod(nameof(EnumerableExtensions.ToCachesCollection))!;
+                    foreach (var item in noflagTypes.DistinctBy(x => x.NoflagService))
                     {
-                        var method = toArrayMethod.MakeGenericMethod(type);
-                        var genericEnumerable = typeof(IEnumerable<>).MakeGenericType(type);
-                        sc.AddScoped(typeof(IReadOnlyCollection<>).MakeGenericType(type),
+                        var finalToReadonlyCachesCollection = toReadonlyCachesCollectionMethod.MakeGenericMethod(item.GenericArgument);
+                        var genericEnumerable = typeof(IEnumerable<>).MakeGenericType(item.NoflagService);
+                        sc.AddScoped(typeof(IReadOnlyCachesCollection<>).MakeGenericType(item.GenericArgument),
                             sp =>
                             {
                                 var enumerable = sp.GetRequiredService(genericEnumerable);
-                                return method.Invoke(enumerable, new[] { enumerable });
+                                return finalToReadonlyCachesCollection.Invoke(enumerable, new[] { enumerable });
                             });
                     }
 

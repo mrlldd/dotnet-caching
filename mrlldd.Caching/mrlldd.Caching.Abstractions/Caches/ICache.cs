@@ -77,7 +77,7 @@ namespace mrlldd.Caching.Caches
     
     public interface ICache<T>
     {
-        IReadOnlyCollection<IUnknownStoreCache<T>> Caches { get; }
+        IReadOnlyCachesCollection<T> Caches { get; }
     }
 
 
