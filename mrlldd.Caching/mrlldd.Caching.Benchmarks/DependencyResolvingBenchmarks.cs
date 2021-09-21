@@ -66,13 +66,6 @@ namespace mrlldd.Caching.Benchmarks
             distributedMemoryCacheServiceProvider.GetRequiredService<IDistributedCache>();
 
         [Benchmark]
-        public void Resolve_NonGenericCache() => noDecoratorsCachingServiceProvider.GetRequiredService<ICache>();
-        
-        [Benchmark]
-        public void Resolve_NonGenericCachingLoader()
-            => noDecoratorsCachingServiceProvider.GetRequiredService<ICachingLoader>();
-
-        [Benchmark]
         public void Resolve_Clean_GenericCache() => noDecoratorsCachingServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]

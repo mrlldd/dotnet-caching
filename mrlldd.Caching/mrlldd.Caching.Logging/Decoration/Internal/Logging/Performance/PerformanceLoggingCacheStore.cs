@@ -31,28 +31,28 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
         public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             => ThroughStopwatch((s, m) => s.Get<T>(key, m), metadata);
 
-        public Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => ThroughStopwatchAsync((s, m) => s.GetAsync<T>(key, m, token), metadata);
 
         public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
             => ThroughStopwatch((s, m) => s.Set(key, value, options, m), metadata);
 
-        public Task<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => ThroughStopwatchAsync((s, m) => s.SetAsync(key, value, options, m, token), metadata);
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
             => ThroughStopwatch((s, m) => s.Refresh(key, m), metadata);
 
-        public Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => ThroughStopwatchAsync((s, m) => s.RefreshAsync(key, m, token), metadata);
 
         public Result Remove(string key, ICacheStoreOperationMetadata metadata)
             => ThroughStopwatch((s, m) => s.Remove(key, m), metadata);
 
-        public Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => ThroughStopwatchAsync((s, m) => s.RemoveAsync(key, m, token), metadata);
 
@@ -67,13 +67,16 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
             return result;
         }
 
-        private async Task<T> ThroughStopwatchAsync<T>(
-            Func<ICacheStore<TFlag>, ICacheStoreOperationMetadata, Task<T>> asyncFunc,
+        private async ValueTask<T> ThroughStopwatchAsync<T>(
+            Func<ICacheStore<TFlag>, ICacheStoreOperationMetadata, ValueTask<T>> asyncFunc,
             ICacheStoreOperationMetadata metadata)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var result = await asyncFunc(sourceCacheStore, metadata);
+            var task = asyncFunc(sourceCacheStore, metadata);
+            var result = task.IsCompletedSuccessfully 
+                ? task.Result
+                : await task;
             stopwatch.Stop();
             LogElapsedTime(stopwatch, metadata);
             return result;

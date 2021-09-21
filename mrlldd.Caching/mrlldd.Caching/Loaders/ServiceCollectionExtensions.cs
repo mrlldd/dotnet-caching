@@ -13,7 +13,6 @@ namespace mrlldd.Caching.Loaders
         public static IServiceCollection AddLoaders(this IServiceCollection services, params Assembly[] assemblies)
             => services
                 .AddScoped<ILoaderProvider, LoaderProvider>()
-                .AddScoped<ICachingLoader, CachingLoader>()
                 .Map(sc =>
                 {
                     var loaderTypes = assemblies

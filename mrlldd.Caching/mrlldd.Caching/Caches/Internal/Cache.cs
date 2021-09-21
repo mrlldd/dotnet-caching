@@ -1,57 +1,62 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Functional.Object.Extensions;
 using Functional.Result;
-using Functional.Result.Extensions;
+using mrlldd.Caching.Strategies;
 
 namespace mrlldd.Caching.Caches.Internal
 {
     internal class Cache<T> : ICache<T>
     {
-        public IReadOnlyCachesCollection<T> Caches { get; }
+        public IReadOnlyCachesCollection<T> Instances { get; }
 
-        public Cache(IReadOnlyCachesCollection<T> caches)
-            => Caches = caches;
+        public Cache(IReadOnlyCachesCollection<T> instances)
+            => Instances = instances;
 
-    }
-    
-    /// <inheritdoc />
-    internal sealed class Cache : ICache
-    {
-        private readonly ICacheProvider cacheProvider;
+        public Task<Result<T?>> GetAsync(CancellationToken token = default)
+            => GetAsync(GetFirstSuccessfulStrategy.Instance, token);
 
-        public Cache(ICacheProvider cacheProvider) 
-            => this.cacheProvider = cacheProvider;
+        public Result<T?> Get() => Get(GetFirstSuccessfulStrategy.Instance);
 
-        public Task<Result> SetAsync<T>(T value, CancellationToken token = default)
-            => GetCache<T>().SetAsync(value, token);
+        public Task<Result<T?>> GetAsync(ICachingGetStrategy strategy, CancellationToken token = default)
+            => strategy.GetAsync(Instances, token);
 
-        public Result Set<T>(T value)
-            => GetCache<T>().Set(value);
+        public Result<T?> Get(ICachingGetStrategy strategy)
+            => strategy.Get(Instances);
 
-        public Task<Result<T?>> GetAsync<T>(CancellationToken token = default)
-            => GetCache<T>().GetAsync(token);
+        public Task<Result> SetAsync(T value, CancellationToken token = default)
+            => SetAsync(value, ParallelStrategy.Instance, token);
 
-        public Result<T?> Get<T>()
-            => GetCache<T>().Get();
+        public Result Set(T value)
+            => Set(value, SequenceStrategy.Instance);
 
-        public Task<Result> RefreshAsync<T>(CancellationToken token = default)
-            => GetCache<T>().RefreshAsync(token);
+        public Task<Result> SetAsync(T value, ICachingSetStrategy strategy, CancellationToken token = default) 
+            => strategy.SetAsync(Instances, value, token);
 
-        public Result Refresh<T>()
-            => GetCache<T>().Refresh();
+        public Result Set(T value, ICachingSetStrategy strategy)
+            => strategy.Set(Instances, value);
 
-        public Task<Result> RemoveAsync<T>(CancellationToken token = default)
-            => GetCache<T>().RemoveAsync(token);
+        public Task<Result> RefreshAsync(CancellationToken token = default)
+            => RefreshAsync(ParallelStrategy.Instance, token);
 
-        public Result Remove<T>()
-            => GetCache<T>().Remove();
+        public Result Refresh()
+            => Refresh(SequenceStrategy.Instance);
 
-        private IInternalCache<T> GetCache<T>()
-            => cacheProvider.GetRequired<T>()
-                .Map(x => x.Successful 
-                    ? x.UnwrapAsSuccess() 
-                    : throw x);
+        public Task<Result> RefreshAsync(ICachingRefreshStrategy strategy, CancellationToken token = default)
+            => strategy.RefreshAsync(Instances, token);
+
+        public Result Refresh(ICachingRefreshStrategy strategy)
+            => strategy.Refresh(Instances);
+
+        public Task<Result> RemoveAsync(CancellationToken token = default)
+            => RemoveAsync(ParallelStrategy.Instance, token);
+
+        public Result Remove()
+            => Remove(SequenceStrategy.Instance);
+
+        public Task<Result> RemoveAsync(ICachingRemoveStrategy strategy, CancellationToken token = default)
+            => strategy.RemoveAsync(Instances, token);
+
+        public Result Remove(ICachingRemoveStrategy strategy)
+            => strategy.Remove(Instances);
     }
 }

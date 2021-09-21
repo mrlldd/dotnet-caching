@@ -35,7 +35,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
                 .Effect(result => LogGetResult(result, key, metadata));
         }
 
-        public async Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
             LogGetTry<T>(key, metadata);
@@ -52,7 +52,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async Task<Result> SetAsync<T>(string key, T value, CachingOptions options,
+        public async ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
             ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
@@ -70,7 +70,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
             LogRefreshTry(key, metadata);
@@ -87,7 +87,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
             LogRemoveTry(key, metadata);

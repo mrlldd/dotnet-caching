@@ -113,7 +113,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="omitCacheOnLoad">The boolean that indicates if cache should be omitted on getting (means there should be only load and caching).</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}"/> that returns the object of result type.</returns>
-        Task<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
+        ValueTask<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
 
         /// <summary>
         /// The method used for getting (if cached) or loading the object of result type.
@@ -131,7 +131,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="result">The data.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The task.</returns>
-        Task<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default);
+        ValueTask<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default);
 
         /// <summary>
         /// The method used for setting the object entry of result type in cache.
@@ -147,7 +147,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The argument.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}"/> that returns the object of result type.</returns>
-        Task<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default);
+        ValueTask<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>
         /// The method used for getting the object entry of result type from cache.
@@ -163,7 +163,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The argument.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The task.</returns>
-        Task<Result> RefreshAsync(TArgs args, CancellationToken token = default);
+        ValueTask<Result> RefreshAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>
         /// The method used for refreshing the object entry of result type in cache.
@@ -178,7 +178,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The argument.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The task.</returns>
-        Task<Result> RemoveAsync(TArgs args, CancellationToken token = default);
+        ValueTask<Result> RemoveAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>
         /// The method used for removing the object entry of result type in cache.

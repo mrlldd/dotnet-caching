@@ -8,72 +8,6 @@ using mrlldd.Caching.Internal;
 
 namespace mrlldd.Caching.Loaders
 {
-    internal sealed class CachingLoader : ICachingLoader
-    {
-        private readonly ILoaderProvider loaderProvider;
-
-        public CachingLoader(ILoaderProvider loaderProvider)
-            => this.loaderProvider = loaderProvider;
-
-        public Task<Result<TResult?>> GetOrLoadAsync<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
-            CancellationToken token = default) 
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .GetOrLoadAsync(args, omitCacheOnLoad, token);
-
-        public Result<TResult?> GetOrLoad<TArgs, TResult>(TArgs args, bool omitCacheOnLoad = false,
-            CancellationToken token = default) 
-            where TResult : class 
-            => GetLoader<TArgs, TResult>()
-            .GetOrLoad(args, omitCacheOnLoad, token);
-
-        public Task<Result> SetAsync<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .SetAsync(args, result, token);
-
-        public Result Set<TArgs, TResult>(TArgs args, TResult result, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .Set(args, result);
-
-        public Task<Result<TResult?>> GetAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .GetAsync(args, token);
-
-        public Result<TResult?> Get<TArgs, TResult>(TArgs args, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .Get(args);
-
-        public Task<Result> RefreshAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .RefreshAsync(args, token);
-
-        public Result Refresh<TArgs, TResult>(TArgs args, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .Refresh(args);
-
-        public Task<Result> RemoveAsync<TArgs, TResult>(TArgs args, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>()
-                .RemoveAsync(args, token);
-
-        public Result Remove<TArgs, TResult>(TArgs args, CancellationToken token = default)
-            where TResult : class
-            => GetLoader<TArgs, TResult>().Remove(args);
-
-        private ICachingLoader<TArgs, TResult> GetLoader<TArgs, TResult>()
-            where TResult : class => loaderProvider
-            .GetRequired<TArgs, TResult>()
-            .Map(x => x.Successful
-                ? x.UnwrapAsSuccess()
-                : throw x);
-    }
-
     /// <summary>
     /// The base class for implemented caching loaders
     /// </summary>
@@ -86,13 +20,16 @@ namespace mrlldd.Caching.Loaders
         where TStoreFlag : CachingFlag
     {
         /// <inheritdoc />
-        public async Task<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
+        public async ValueTask<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
             CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
             {
-                var inCache = await TryGetFromCacheAsync(keySuffix, token);
+                var gettingTask = TryGetFromCacheAsync(keySuffix, token);
+                var inCache = gettingTask.IsCompletedSuccessfully 
+                    ? gettingTask.Result
+                    : await gettingTask;
                 if (inCache.Successful)
                 {
                     return inCache.UnwrapAsSuccess();
@@ -100,7 +37,13 @@ namespace mrlldd.Caching.Loaders
             }
 
             var loaded = await LoadAsync(args, token);
-            return await loaded.EffectAsync(x => PerformCachingAsync(x, keySuffix, token));
+            var cachingTask = PerformCachingAsync(loaded, keySuffix, token);
+            if (!cachingTask.IsCompletedSuccessfully)
+            {
+                await cachingTask;
+            }
+
+            return loaded;
         }
 
         /// <inheritdoc />
@@ -122,7 +65,7 @@ namespace mrlldd.Caching.Loaders
         }
 
         /// <inheritdoc />
-        public Task<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default)
+        public ValueTask<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default)
             => PerformCachingAsync(result, CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
@@ -130,7 +73,7 @@ namespace mrlldd.Caching.Loaders
             => PerformCaching(result, CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
-        public Task<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default)
+        public ValueTask<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default)
             => TryGetFromCacheAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
@@ -138,7 +81,7 @@ namespace mrlldd.Caching.Loaders
             => TryGetFromCache(CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
-        public Task<Result> RefreshAsync(TArgs args, CancellationToken token = default)
+        public ValueTask<Result> RefreshAsync(TArgs args, CancellationToken token = default)
             => RefreshAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
@@ -146,7 +89,7 @@ namespace mrlldd.Caching.Loaders
             => Refresh(CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
-        public Task<Result> RemoveAsync(TArgs args, CancellationToken token = default)
+        public ValueTask<Result> RemoveAsync(TArgs args, CancellationToken token = default)
             => RemoveAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />

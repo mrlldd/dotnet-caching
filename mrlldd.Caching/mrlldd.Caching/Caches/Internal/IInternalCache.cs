@@ -18,7 +18,7 @@ namespace mrlldd.Caching.Caches.Internal
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="token">The cancellation token.</param>
-        Task<Result> SetAsync(T value, CancellationToken token = default);
+        ValueTask<Result> SetAsync(T value, CancellationToken token = default);
 
         /// <summary>
         /// The method used for performing a caching.
@@ -31,7 +31,7 @@ namespace mrlldd.Caching.Caches.Internal
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        Task<Result<T?>> GetAsync(CancellationToken token = default);
+        ValueTask<Result<T?>> GetAsync(CancellationToken token = default);
 
         /// <summary>
         /// The method used for retrieving data from cache.
@@ -43,7 +43,7 @@ namespace mrlldd.Caching.Caches.Internal
         /// The method used for refreshing data expiration in cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
-        Task<Result> RefreshAsync(CancellationToken token = default);
+        ValueTask<Result> RefreshAsync(CancellationToken token = default);
 
         /// <summary>
         /// The method used for refreshing data expiration in cache.
@@ -54,7 +54,7 @@ namespace mrlldd.Caching.Caches.Internal
         /// The method used for removing data from cache.
         /// </summary>
         /// <param name="token">The cancellation token.</param>
-        Task<Result> RemoveAsync(CancellationToken token = default);
+        ValueTask<Result> RemoveAsync(CancellationToken token = default);
 
         /// <summary>
         /// The method used for removing data from cache.

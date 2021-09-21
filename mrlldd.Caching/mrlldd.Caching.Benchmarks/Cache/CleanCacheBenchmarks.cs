@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Functional.Result;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Extensions.DependencyInjection;
@@ -27,14 +28,14 @@ namespace mrlldd.Caching.Benchmarks.Cache
         public void Cache_Caching_CleanMemoryCacheImplementation_Set_Sync() => cleanMemoryCacheImplementation.Set(3);
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Set_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanMemoryCacheImplementation_Set_Async() =>
             cleanMemoryCacheImplementation.SetAsync(3);
 
         [Benchmark]
         public void Cache_Caching_CleanMemoryCacheImplementation_Get_Sync() => cleanMemoryCacheImplementation.Get();
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Get_Async() =>
+        public ValueTask<Result<int>> Cache_Caching_CleanMemoryCacheImplementation_Get_Async() =>
             cleanMemoryCacheImplementation.GetAsync();
 
         [Benchmark]
@@ -42,7 +43,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanMemoryCacheImplementation.Refresh();
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Refresh_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanMemoryCacheImplementation_Refresh_Async() =>
             cleanMemoryCacheImplementation.RefreshAsync();
 
         [Benchmark]
@@ -50,7 +51,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanMemoryCacheImplementation.Remove();
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Remove_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanMemoryCacheImplementation_Remove_Async() =>
             cleanMemoryCacheImplementation.RemoveAsync();
 
         [Benchmark]
@@ -58,7 +59,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Set(3);
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Set_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanDistributedCacheImplementation_Set_Async() =>
             cleanDistributedCacheImplementation.SetAsync(3);
 
         [Benchmark]
@@ -66,7 +67,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Get();
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Get_Async() =>
+        public ValueTask<Result<byte>> Cache_Caching_CleanDistributedCacheImplementation_Get_Async() =>
             cleanDistributedCacheImplementation.GetAsync();
 
         [Benchmark]
@@ -74,7 +75,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Refresh();
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Refresh_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanDistributedCacheImplementation_Refresh_Async() =>
             cleanDistributedCacheImplementation.RefreshAsync();
 
         [Benchmark]
@@ -82,7 +83,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Remove();
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Remove_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanDistributedCacheImplementation_Remove_Async() =>
             cleanDistributedCacheImplementation.RemoveAsync();
     }
 }

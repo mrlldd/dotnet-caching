@@ -23,8 +23,9 @@ namespace mrlldd.Caching.Stores.Internal
                 return fromCache != null && fromCache.Any() ? Deserialize<T>(fromCache) : default;
             });
 
-        public Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
-            => Get<T>(key, metadata).Map(Task.FromResult);
+        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+            CancellationToken token = default)
+            => new(Get<T>(key, metadata));
 
         public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
             => Result.Of(new Action(() => memoryCache.Set(key, Serialize(value), new MemoryCacheEntryOptions
@@ -32,35 +33,44 @@ namespace mrlldd.Caching.Stores.Internal
                 SlidingExpiration = options.SlidingExpiration
             })));
 
-        public Task<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
+            ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Result.Of(() =>
+        {
+            var result = Result.Of(() =>
             {
                 memoryCache.Set(key, Serialize(value), new MemoryCacheEntryOptions
                 {
                     SlidingExpiration = options.SlidingExpiration
                 });
-                return Task.CompletedTask;
             });
+            return new ValueTask<Result>(result);
+        }
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(new Action(() => memoryCache.Get<byte[]>(key)));
 
-        public Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
-            => Result.Of(() =>
+        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+            CancellationToken token = default)
+        {
+            var result = Result.Of(() =>
             {
                 memoryCache.Get<byte[]>(key);
-                return Task.CompletedTask;
-            });
+            }); 
+            return new ValueTask<Result>(result);
+        }
 
         public Result Remove(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() => memoryCache.Remove(key));
 
-        public Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default) 
-            => Result.Of(() =>
+        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+            CancellationToken token = default)
+        {
+            var result = Result.Of(() =>
             {
                 memoryCache.Remove(key);
-                return Task.CompletedTask;
-            });
+            }); 
+            return new ValueTask<Result>(result);
+        }
     }
 }

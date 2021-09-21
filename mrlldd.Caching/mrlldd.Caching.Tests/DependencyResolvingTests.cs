@@ -33,17 +33,17 @@ namespace mrlldd.Caching.Tests
             unified.Should()
                 .NotBeNull()
                 .And.BeOfType<Cache<DependencyResolvingUnit>>();
-            unified.Caches
+            unified.Instances
                 .Should()
                 .NotBeNull()
                 .And.BeOfType<ReadOnlyCachesCollection<DependencyResolvingUnit>>();
-            unified.Caches.Count
+            unified.Instances.Count
                 .Should()
                 .Be(2);
 
             var vc = sp.GetRequiredService<ICache<DependencyResolvingUnit, InVoid>>();
             var mc = sp.GetRequiredService<ICache<DependencyResolvingUnit, InMemory>>();
-            unified.Caches.Should()
+            unified.Instances.Should()
                 .Contain(vc)
                 .And.Contain(mc);
         }

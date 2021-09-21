@@ -28,7 +28,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result{T}"/> with value of type <typeparamref name="T"/>.</returns>
-        Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
+        ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
 
         /// <summary>
         /// The method for setting cache entry.
@@ -51,7 +51,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result"/>.</returns>
-        Task<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
+        ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default);
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="token">The cancellation token.</param>
         /// <param name="metadata">The store operation metadata.</param>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result"/>.</returns>
-        Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
+        ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
 
         /// <summary>
         /// The method for removing cache entry expiration.
@@ -86,6 +86,6 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result"/>.</returns>
-        Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
+        ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
     }
 }

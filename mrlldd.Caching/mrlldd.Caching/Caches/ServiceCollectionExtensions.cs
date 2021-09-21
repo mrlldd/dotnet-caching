@@ -19,7 +19,6 @@ namespace mrlldd.Caching.Caches
                 .AddMemoryCache()
                 .Effect(x => x.TryAddSingleton<IDistributedCache, NoOpDistributedCache>())
                 .AddScoped<ICacheProvider, CacheProvider>()
-                .AddScoped<ICache, Cache>()
                 .Map(sc =>
                 {
                     var cacheTypes = assemblies

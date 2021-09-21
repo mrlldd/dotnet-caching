@@ -27,7 +27,7 @@ namespace mrlldd.Caching.Caches
         protected virtual string DefaultKeySuffix { get; } = typeof(T).Map(x => $"{x.Namespace}.{x.Name}");
 
         /// <inheritdoc />
-        public Task<Result> SetAsync(T value, CancellationToken token = default)
+        public ValueTask<Result> SetAsync(T value, CancellationToken token = default)
             => PerformCachingAsync(value, DefaultKeySuffix, token);
 
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace mrlldd.Caching.Caches
             => PerformCaching(value, DefaultKeySuffix);
 
         /// <inheritdoc />
-        public Task<Result<T?>> GetAsync(CancellationToken token = default)
+        public ValueTask<Result<T?>> GetAsync(CancellationToken token = default)
             => TryGetFromCacheAsync(DefaultKeySuffix, token);
 
         /// <inheritdoc />
@@ -43,7 +43,7 @@ namespace mrlldd.Caching.Caches
             => TryGetFromCache(DefaultKeySuffix);
 
         /// <inheritdoc />
-        public Task<Result> RefreshAsync(CancellationToken token = default)
+        public ValueTask<Result> RefreshAsync(CancellationToken token = default)
             => RefreshAsync(DefaultKeySuffix, token);
 
         /// <inheritdoc />
@@ -51,7 +51,7 @@ namespace mrlldd.Caching.Caches
             => Refresh(DefaultKeySuffix);
 
         /// <inheritdoc />
-        public Task<Result> RemoveAsync(CancellationToken token = default)
+        public ValueTask<Result> RemoveAsync(CancellationToken token = default)
             => RemoveAsync(DefaultKeySuffix, token);
 
         /// <inheritdoc />

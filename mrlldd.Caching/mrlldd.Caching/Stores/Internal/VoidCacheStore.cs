@@ -11,29 +11,29 @@ namespace mrlldd.Caching.Stores.Internal
         public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             => new CacheMissException(key);
 
-        public Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Task.FromResult<Result<T?>>(new CacheMissException(key));
+            => new(new CacheMissException(key));
 
         public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
             => Result.Success;
 
-        public Task<Result> SetAsync<T>(string key, T value, CachingOptions options,
+        public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
             ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Task.FromResult(Result.Success);
+            => new(Result.Success);
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
             => Result.Success;
 
-        public Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Task.FromResult(Result.Success);
+            => new(Result.Success);
 
         public Result Remove(string key, ICacheStoreOperationMetadata metadata)
             => Result.Success;
 
-        public Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
-            => Task.FromResult(Result.Success);
+        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
+            => new(Result.Success);
     }
 }
