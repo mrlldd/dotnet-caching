@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Caches.Internal
 {
@@ -8,7 +9,7 @@ namespace mrlldd.Caching.Caches.Internal
     /// The base interface for implementing caches.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
-    internal interface ICache<T> : ICaching
+    internal interface IInternalCache<T> : ICaching
     {
         //todo fix xml comments
 
@@ -59,5 +60,9 @@ namespace mrlldd.Caching.Caches.Internal
         /// The method used for removing data from cache.
         /// </summary>
         Result Remove();
+    }
+    
+    internal interface IInternalCache<T, TFlag> : IInternalCache<T> where TFlag : CachingFlag
+    {
     }
 }

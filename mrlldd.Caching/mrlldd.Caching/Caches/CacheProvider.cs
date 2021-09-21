@@ -13,8 +13,8 @@ namespace mrlldd.Caching.Caches
         {
         }
 
-        public Result<ICache<T>> GetRequired<T>()
-            => InternalRequiredGet<ICache<T>>();
+        public Result<IInternalCache<T>> GetRequired<T>()
+            => InternalRequiredGet<IInternalCache<T>>();
 
         public Result<object> GetRequired(Type type)
             => InternalRequiredGet(type);

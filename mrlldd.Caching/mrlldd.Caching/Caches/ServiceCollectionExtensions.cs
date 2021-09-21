@@ -24,13 +24,13 @@ namespace mrlldd.Caching.Caches
                 {
                     var cacheTypes = assemblies
                         .SelectMany(x => x.CollectServices(typeof(ICache<,>), typeof(Cache<,>),
-                            typeof(IInternalCacheService<,>), t => t)
+                            typeof(IInternalCache<,>), t => t)
                         )
                         .ToArray();
                     var noflagTypes = cacheTypes
                         .Select(x => x.Service.GetGenericArguments()[0].Map(t => new
                         {
-                            NoflagService = typeof(ICache<>).MakeGenericType(t),
+                            NoflagService = typeof(IUnknownStoreCache<>).MakeGenericType(t),
                             Marker = x.MarkerInterface,
                             GenericArgument = t
                         }))
@@ -38,7 +38,7 @@ namespace mrlldd.Caching.Caches
 
                     foreach (var type in noflagTypes.Select(x => x.GenericArgument).Distinct())
                     {
-                        sc.AddScoped(typeof(ICaches<>).MakeGenericType(type), typeof(Caches<>).MakeGenericType(type));
+                        sc.AddScoped(typeof(ICache<>).MakeGenericType(type), typeof(Cache<>).MakeGenericType(type));
                     }
 
                     foreach (var item in noflagTypes)
@@ -52,7 +52,7 @@ namespace mrlldd.Caching.Caches
                     {
                         var method = toArrayMethod.MakeGenericMethod(type);
                         var genericEnumerable = typeof(IEnumerable<>).MakeGenericType(type);
-                        sc.AddScoped(typeof(ICollection<>).MakeGenericType(type),
+                        sc.AddScoped(typeof(IReadOnlyCollection<>).MakeGenericType(type),
                             sp =>
                             {
                                 var enumerable = sp.GetRequiredService(genericEnumerable);

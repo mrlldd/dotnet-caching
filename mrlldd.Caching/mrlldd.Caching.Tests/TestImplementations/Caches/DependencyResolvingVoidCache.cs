@@ -4,9 +4,11 @@ using mrlldd.Caching.Tests.TestUtilities;
 
 namespace mrlldd.Caching.Tests.TestImplementations.Caches
 {
-    public class VoidCache : Cache<VoidUnit, InVoid>
+    public class DependencyResolvingVoidCache : Cache<DependencyResolvingUnit, InVoid>
     {
         protected override CachingOptions Options => CachingOptions.Disabled;
         protected override string CacheKey => "void";
     }
+    
+    
 }

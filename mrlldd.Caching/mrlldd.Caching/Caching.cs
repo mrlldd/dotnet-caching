@@ -15,7 +15,8 @@ namespace mrlldd.Caching
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
     /// <typeparam name="TStoreFlag">The caching store flag.</typeparam>
-    public abstract class Caching<T, TStoreFlag> : ICaching where TStoreFlag : CachingFlag
+    public abstract class Caching<T, TStoreFlag> : ICaching 
+        where TStoreFlag : CachingFlag
     {
         private IStoreOperationProvider StoreOperationProvider { get; set; } = null!;
 

@@ -1,14 +1,25 @@
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Object.Extensions;
 using Functional.Result;
 using Functional.Result.Extensions;
 using mrlldd.Caching.Caches.Internal;
+using mrlldd.Caching.Extensions;
 using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Caches
 {
-    /// <inheritdoc />
+    internal class Cache<T> : ICache<T>
+    {
+        public IReadOnlyCollection<IUnknownStoreCache<T>> Caches { get; }
+
+        public Cache(IReadOnlyCollection<IUnknownStoreCache<T>> caches)
+            => Caches = caches;
+
+    }
+    
+     /// <inheritdoc />
     internal sealed class Cache : ICache
     {
         private readonly ICacheProvider cacheProvider;
@@ -40,7 +51,7 @@ namespace mrlldd.Caching.Caches
         public Result Remove<T>()
             => GetCache<T>().Remove();
 
-        private ICache<T> GetCache<T>()
+        private IInternalCache<T> GetCache<T>()
             => cacheProvider.GetRequired<T>()
                 .Map(x => x.Successful 
                     ? x.UnwrapAsSuccess() 
@@ -54,7 +65,7 @@ namespace mrlldd.Caching.Caches
     /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
     public abstract class Cache<T, TStoreFlag> : Caching<T, TStoreFlag>,
      ICache<T, TStoreFlag>,
-     IInternalCacheService<T, TStoreFlag> 
+     IInternalCache<T, TStoreFlag> 
         where TStoreFlag : CachingFlag
     {
         /// <inheritdoc />
