@@ -42,9 +42,13 @@ namespace mrlldd.Caching
         public void Populate(IServiceProvider serviceProvider,
             IStoreOperationProvider storeOperationProvider)
         {
-            Store = serviceProvider
-                .GetRequiredService<ICacheStoreProvider<TStoreFlag>>()
-                .CacheStore;
+            var storeProvider = serviceProvider.GetService<ICacheStoreProvider<TStoreFlag>>();
+            if (storeProvider == null)
+            {
+                throw new StoreNotFoundException<TStoreFlag>();
+            }
+            
+            Store = storeProvider.CacheStore;
             StoreOperationProvider = storeOperationProvider;
         }
 

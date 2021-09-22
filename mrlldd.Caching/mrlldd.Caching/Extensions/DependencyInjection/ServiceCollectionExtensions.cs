@@ -13,7 +13,7 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
     /// <summary>
     /// The class that contains extensions methods for dependency injection of caching utilities.
     /// </summary>
-    public static class ServiceCollectionExtensions
+    public static class  ServiceCollectionExtensions
     {
         /// <summary>
         /// The method used for adding the caching utilities to service container.
