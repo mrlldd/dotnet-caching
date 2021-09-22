@@ -9,7 +9,7 @@ using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Stores.Internal
 {
-    internal class MemoryCacheStore : CachingStore, ICacheStore<InMemory>
+    internal class MemoryCacheStore : ICacheStore<InMemory>
     {
         private readonly IMemoryCache memoryCache;
 
@@ -19,8 +19,8 @@ namespace mrlldd.Caching.Stores.Internal
         public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() =>
             {
-                var fromCache = memoryCache.Get<string>(key);
-                return fromCache != null && fromCache.Any() ? Deserialize<T>(fromCache) : default;
+                var fromCache = memoryCache.Get<T>(key);
+                return fromCache != null ? fromCache : default;
             });
 
         public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
@@ -28,7 +28,7 @@ namespace mrlldd.Caching.Stores.Internal
             => new(Get<T>(key, metadata));
 
         public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
-            => Result.Of(new Action(() => memoryCache.Set(key, Serialize(value), new MemoryCacheEntryOptions
+            => Result.Of(new Action(() => memoryCache.Set(key, value, new MemoryCacheEntryOptions
             {
                 SlidingExpiration = options.SlidingExpiration
             })));
@@ -39,7 +39,7 @@ namespace mrlldd.Caching.Stores.Internal
         {
             var result = Result.Of(() =>
             {
-                memoryCache.Set(key, Serialize(value), new MemoryCacheEntryOptions
+                memoryCache.Set(key, value, new MemoryCacheEntryOptions
                 {
                     SlidingExpiration = options.SlidingExpiration
                 });
@@ -55,7 +55,7 @@ namespace mrlldd.Caching.Stores.Internal
         {
             var result = Result.Of(() =>
             {
-                memoryCache.Get<byte[]>(key);
+                memoryCache.Get(key);
             }); 
             return new ValueTask<Result>(result);
         }

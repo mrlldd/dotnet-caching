@@ -7,9 +7,7 @@ namespace mrlldd.Caching.Stores.Internal
     {
         public ICacheStore<TStoreFlag> CacheStore { get; }
 
-        public CacheStoreProvider(ICacheStore<TStoreFlag> cacheStore)
-        {
-            CacheStore = cacheStore;
-        }
+        public CacheStoreProvider(ICacheStore<TStoreFlag> cacheStore) 
+            => CacheStore = cacheStore;
     }
 }

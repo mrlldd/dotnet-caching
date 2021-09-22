@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Functional.Result;
 using Microsoft.Extensions.Caching.Distributed;
 using mrlldd.Caching.Flags;
+using Newtonsoft.Json;
 
 namespace mrlldd.Caching.Stores.Internal
 {
-    internal class DistributedCacheStore : CachingStore, ICacheStore<InDistributed>
+    internal class DistributedCacheStore : ICacheStore<InDistributed>
     {
         private readonly IDistributedCache distributedCache;
 
@@ -71,5 +72,11 @@ namespace mrlldd.Caching.Stores.Internal
             var task = Result.Of(() => distributedCache.RemoveAsync(key, token));
             return new ValueTask<Result>(task);
         }
+
+        private static string Serialize<T>(T data)
+            => JsonConvert.SerializeObject(data);
+
+        private static T? Deserialize<T>(string raw)
+            => JsonConvert.DeserializeObject<T>(raw);
     }
 }
