@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Moq;
 
-namespace mrlldd.Caching.Tests.Store
+namespace mrlldd.Caching.Tests.Store.Base
 {
     public class StoreRelatedTestBase : TestBase
     {

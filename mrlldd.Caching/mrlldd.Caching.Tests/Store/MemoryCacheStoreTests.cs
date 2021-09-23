@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores;
+using mrlldd.Caching.Tests.Store.Base;
 using mrlldd.Caching.Tests.TestUtilities;
 using mrlldd.Caching.Tests.TestUtilities.Extensions;
 using NUnit.Framework;
