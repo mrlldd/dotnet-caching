@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests
 {
-    public class Test
+    public class TestBase
     {
         protected IContainer Container { get; private set; } = null!;
 
@@ -25,14 +25,18 @@ namespace mrlldd.Caching.Tests
                 .WithTrackingDisposableTransients()
                 .With(FactoryMethod.ConstructorWithResolvableArguments)
             );
-
+            
             new ServiceCollection()
-                .AddCaching(typeof(Test).Assembly)
-                .WithActionsLogging<InVoid>(LogLevel.Information)
-                .WithPerformanceLogging<InVoid>(LogLevel.Information)
                 .AddLogging(x => x.AddConsole().AddFilter(f => f >= LogLevel.Debug))
+                .AddCaching(typeof(TestBase).Assembly)
+                .Effect(FillCachingServiceCollection)
                 .Effect(x => Container.Populate(x));
             FillContainer(Container);
+        }
+
+        protected virtual void FillCachingServiceCollection(ICachingServiceCollection services)
+        {
+            
         }
 
         protected virtual void FillContainer(IContainer container)

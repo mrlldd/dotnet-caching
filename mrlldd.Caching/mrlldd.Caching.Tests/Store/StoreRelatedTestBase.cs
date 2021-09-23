@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Moq;
 
 namespace mrlldd.Caching.Tests.Store
 {
-    public class StoreRelatedTest : Test
+    public class StoreRelatedTestBase : TestBase
     {
         protected const string Key = "key";
 
@@ -21,19 +20,22 @@ namespace mrlldd.Caching.Tests.Store
         }
 
         protected static void CallsSpecific<T, TResult>(Mock<T> mock,
-            Expression<Func<T, TResult>> setup, Action action)
+            Expression<Func<T, TResult>> setup, Action action, TResult result = default!)
             where T : class
         {
             mock.Setup(setup)
+                .Returns(result)
                 .Verifiable();
             action();
             mock.Verify(setup, Times.Once);
         }
 
         protected static async Task CallsSpecificAsync<T, TResult>(Mock<T> mock,
-            Expression<Func<T, TResult>> setup, Func<Task> asyncAction) where T : class
+            Expression<Func<T, TResult>> setup, Func<Task> asyncAction, TResult result = default!) where T : class
         {
-            mock.Setup(setup).Verifiable();
+            mock.Setup(setup)
+                .Returns(result)
+                .Verifiable();
             await asyncAction();
             mock.Verify(setup, Times.Once);
         }

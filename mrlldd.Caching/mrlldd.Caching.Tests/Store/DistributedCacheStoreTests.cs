@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests.Store
 {
-    public class DistributedCacheStoreTests : StoreRelatedTest
+    public class DistributedCacheStoreTests : StoreRelatedTestBase
     {
         [Test]
         public void CallsGet() => Container
@@ -22,7 +22,7 @@ namespace mrlldd.Caching.Tests.Store
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.Get(It.Is<string>(s => s.Equals(Key))),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Get<VoidUnit>(Key, NullOperationCacheStoreMetadata.Instance)
+                        .Get<VoidUnit>(Key, NullMetadata.Instance)
                 )
             );
 
@@ -33,7 +33,7 @@ namespace mrlldd.Caching.Tests.Store
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.GetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .GetAsync<VoidUnit>(Key, NullOperationCacheStoreMetadata.Instance)
+                        .GetAsync<VoidUnit>(Key, NullMetadata.Instance)
                         .AsTask()
                 )
             );
@@ -46,7 +46,7 @@ namespace mrlldd.Caching.Tests.Store
                     x => x.Set(It.Is<string>(s => s.Equals(Key)), It.IsAny<byte[]>(),
                         It.IsAny<DistributedCacheEntryOptions>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Set(Key, new VoidUnit(), CachingOptions.Disabled, NullOperationCacheStoreMetadata.Instance)
+                        .Set(Key, new VoidUnit(), CachingOptions.Disabled, NullMetadata.Instance)
                 )
             );
 
@@ -57,7 +57,7 @@ namespace mrlldd.Caching.Tests.Store
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.SetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .SetAsync(Key, new VoidUnit(), CachingOptions.Disabled,  NullOperationCacheStoreMetadata.Instance)
+                        .SetAsync(Key, new VoidUnit(), CachingOptions.Disabled,  NullMetadata.Instance)
                         .AsTask()
                 )
             );
@@ -71,7 +71,7 @@ namespace mrlldd.Caching.Tests.Store
                         It.Is<string>(s => s.Equals(Key))
                     ),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Refresh(Key, NullOperationCacheStoreMetadata.Instance)
+                        .Refresh(Key, NullMetadata.Instance)
                 )
             );
 
@@ -82,7 +82,7 @@ namespace mrlldd.Caching.Tests.Store
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.RefreshAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RefreshAsync(Key, NullOperationCacheStoreMetadata.Instance)
+                        .RefreshAsync(Key, NullMetadata.Instance)
                         .AsTask()
                 )
             );
@@ -94,7 +94,7 @@ namespace mrlldd.Caching.Tests.Store
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.Remove(It.Is<string>(s => s.Equals(Key))),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Remove(Key, NullOperationCacheStoreMetadata.Instance)
+                        .Remove(Key, NullMetadata.Instance)
                 )
             );
 
@@ -105,7 +105,7 @@ namespace mrlldd.Caching.Tests.Store
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.RemoveAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RemoveAsync(Key, NullOperationCacheStoreMetadata.Instance)
+                        .RemoveAsync(Key, NullMetadata.Instance)
                         .AsTask()
                 )
             );

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DryIoc;
 using Functional.Object.Extensions;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,9 +13,8 @@ using NUnit.Framework;
 namespace mrlldd.Caching.Tests.Store
 {
     [TestFixture]
-    public class MemoryCacheStoreTests : StoreRelatedTest
+    public class MemoryCacheStoreTests : StoreRelatedTestBase
     {
-
         [Test]
         public void CallsGet() => Container
             .Effect(c =>
@@ -26,7 +23,7 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                     x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
-                        .Get<VoidUnit>(Key, NullOperationCacheStoreMetadata.Instance)
+                        .Get<VoidUnit>(Key, NullMetadata.Instance)
                 );
             });
 
@@ -38,7 +35,7 @@ namespace mrlldd.Caching.Tests.Store
                 return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
                     x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
-                        .GetAsync<VoidUnit>(Key, NullOperationCacheStoreMetadata.Instance).AsTask());
+                        .GetAsync<VoidUnit>(Key, NullMetadata.Instance).AsTask());
             });
 
         [Test]
@@ -47,7 +44,7 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                     x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
-                        .Set(Key, new VoidUnit(), CachingOptions.Disabled, NullOperationCacheStoreMetadata.Instance)
+                        .Set(Key, new VoidUnit(), CachingOptions.Disabled, NullMetadata.Instance)
                 ));
 
         [Test]
@@ -57,7 +54,7 @@ namespace mrlldd.Caching.Tests.Store
                     x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
                         .SetAsync(Key, new VoidUnit(), CachingOptions.Disabled,
-                            NullOperationCacheStoreMetadata.Instance)
+                            NullMetadata.Instance)
                         .AsTask()
                 ));
 
@@ -69,7 +66,7 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                     x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
-                        .Refresh(Key, NullOperationCacheStoreMetadata.Instance)
+                        .Refresh(Key, NullMetadata.Instance)
                 );
             });
 
@@ -81,7 +78,7 @@ namespace mrlldd.Caching.Tests.Store
                 return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
                     x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
-                        .RefreshAsync(Key, NullOperationCacheStoreMetadata.Instance)
+                        .RefreshAsync(Key, NullMetadata.Instance)
                         .AsTask()
                 );
             });
@@ -92,7 +89,7 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                     x => x.Remove(It.Is<string>(s => s.Equals(Key))),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
-                        .Remove(Key, NullOperationCacheStoreMetadata.Instance)
+                        .Remove(Key, NullMetadata.Instance)
                 ));
 
         [Test]
@@ -101,7 +98,7 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
                     x => x.Remove(It.Is<string>(s => s.Equals(Key))),
                     () => c.GetRequiredService<ICacheStore<InMemory>>()
-                        .RemoveAsync(Key, NullOperationCacheStoreMetadata.Instance)
+                        .RemoveAsync(Key, NullMetadata.Instance)
                         .AsTask()
                 ));
 
