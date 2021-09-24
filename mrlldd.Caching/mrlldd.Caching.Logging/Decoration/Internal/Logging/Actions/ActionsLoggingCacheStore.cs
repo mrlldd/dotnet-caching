@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Functional.Object.Extensions;
 using Functional.Result;
 using Functional.Result.Extensions;
 using Microsoft.Extensions.Logging;
@@ -31,8 +30,9 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
         public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
         {
             LogGetTry<T>(key, metadata);
-            return sourceCacheStore.Get<T>(key, metadata)
-                .Effect(result => LogGetResult(result, key, metadata));
+            var result = sourceCacheStore.Get<T>(key, metadata);
+            LogGetResult(result, key, metadata);
+            return result;
         }
 
         public async ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,

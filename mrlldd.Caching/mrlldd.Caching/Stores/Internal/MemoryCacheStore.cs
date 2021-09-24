@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Functional.Object.Extensions;
 using Functional.Result;
 using Microsoft.Extensions.Caching.Memory;
 using mrlldd.Caching.Flags;

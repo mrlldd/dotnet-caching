@@ -36,7 +36,6 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-      <PackageReference Include="mrlldd.Functional.Object" Version="0.2.0" />
     </ItemGroup>
 
 </Project>

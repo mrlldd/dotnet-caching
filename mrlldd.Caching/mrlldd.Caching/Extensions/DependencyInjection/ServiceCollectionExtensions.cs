@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using Functional.Object.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Extensions.DependencyInjection.Internal;
@@ -13,7 +12,7 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
     /// <summary>
     /// The class that contains extensions methods for dependency injection of caching utilities.
     /// </summary>
-    public static class  ServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// The method used for adding the caching utilities to service container.
@@ -29,12 +28,13 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
                 throw new InvalidOperationException(
                     "Can't find any caching implementations in empty assemblies array.");
             }
-            return services
+
+            services
                 .AddScoped<IStoreOperationProvider, StoreOperationProvider>()
                 .AddCaches(assemblies)
                 .AddLoaders(assemblies)
-                .AddCachingStores()
-                .Map(x => new CachingServiceCollection(x));
+                .AddCachingStores();
+            return new CachingServiceCollection(services);
         }
     }
 }

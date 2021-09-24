@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Functional.Object.Extensions;
 using Functional.Result;
 using mrlldd.Caching.Caches.Internal;
 using mrlldd.Caching.Flags;
@@ -13,8 +12,8 @@ namespace mrlldd.Caching.Caches
     /// <typeparam name="T">The cached objects type.</typeparam>
     /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
     public abstract class Cache<T, TStoreFlag> : Caching<T, TStoreFlag>,
-     ICache<T, TStoreFlag>,
-     IInternalCache<T, TStoreFlag> 
+        ICache<T, TStoreFlag>,
+        IInternalCache<T, TStoreFlag>
         where TStoreFlag : CachingFlag
     {
         /// <inheritdoc />
@@ -24,7 +23,14 @@ namespace mrlldd.Caching.Caches
         /// <summary>
         /// The default key suffix for given cache type.
         /// </summary>
-        protected virtual string DefaultKeySuffix { get; } = typeof(T).Map(x => $"{x.Namespace}.{x.Name}");
+        protected virtual string DefaultKeySuffix
+        {
+            get
+            {
+                var type = typeof(T);
+                return $"{type.Namespace}.{type.Name}";
+            }
+        }
 
         /// <inheritdoc />
         public ValueTask<Result> SetAsync(T value, CancellationToken token = default)
