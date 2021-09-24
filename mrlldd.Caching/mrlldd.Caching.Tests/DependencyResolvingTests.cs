@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using FluentAssertions;
@@ -34,8 +35,9 @@ namespace mrlldd.Caching.Tests
         [Test]
         public void ResolvesCachesCollection()
         {
+            var assembly = typeof(DependencyResolvingTests).Assembly;
             var sp = new ServiceCollection()
-                .AddCaching(typeof(DependencyResolvingTests).Assembly)
+                .AddCaching(assembly)
                 .BuildServiceProvider();
             var unified = sp.GetRequiredService<ICache<DependencyResolvingUnit>>();
             unified.Should()
@@ -45,9 +47,12 @@ namespace mrlldd.Caching.Tests
                 .Should()
                 .NotBeNull()
                 .And.BeOfType<ReadOnlyCachesCollection<DependencyResolvingUnit>>();
+            var count = assembly
+                .GetTypes()
+                .Count(t => !string.IsNullOrEmpty(t.Namespace) && t.Namespace.EndsWith("TestImplementations.Caches.DependencyResolving"));
             unified.Instances.Count
                 .Should()
-                .Be(2);
+                .Be(count);
 
             var vc = sp.GetRequiredService<ICache<DependencyResolvingUnit, InVoid>>();
             var mc = sp.GetRequiredService<ICache<DependencyResolvingUnit, InMemory>>();

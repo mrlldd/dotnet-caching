@@ -26,7 +26,9 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
             where TFlag : CachingFlag
         {
             cachingServiceCollection.AddLogging();
-            cachingServiceCollection.AddScoped<ICacheStoreDecorator<TFlag>, ActionsLoggingCacheStoreDecorator<TFlag>>();
+            cachingServiceCollection
+                .Decorators<TFlag>()
+                .Add<ActionsLoggingCacheStoreDecorator<TFlag>>();
             cachingServiceCollection.AddSingleton<ICachingActionsLoggingOptions>(new CachingActionsLoggingOptions(logLevel, errorsLogLevel));
             return cachingServiceCollection;
         }
@@ -42,7 +44,9 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
             where TFlag : CachingFlag
         {
             cachingServiceCollection.AddLogging();
-            cachingServiceCollection.AddScoped<ICacheStoreDecorator<TFlag>, PerformanceLoggingCacheStoreDecorator<TFlag>>();
+            cachingServiceCollection
+                .Decorators<TFlag>()
+                .Add<PerformanceLoggingCacheStoreDecorator<TFlag>>();
             cachingServiceCollection.AddSingleton<ICachingPerformanceLoggingOptions>(new CachingPerformanceLoggingOptions(logLevel));
             return cachingServiceCollection;
         }

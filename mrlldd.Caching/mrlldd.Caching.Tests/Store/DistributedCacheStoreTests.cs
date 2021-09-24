@@ -35,7 +35,8 @@ namespace mrlldd.Caching.Tests.Store
                     x => x.GetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
                         .GetAsync<VoidUnit>(Key, NullMetadata.Instance)
-                        .AsTask()
+                        .AsTask(),
+                    Task.CompletedTask
                 )
             );
 
@@ -59,7 +60,8 @@ namespace mrlldd.Caching.Tests.Store
                     x => x.SetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
                         .SetAsync(Key, new VoidUnit(), CachingOptions.Disabled,  NullMetadata.Instance)
-                        .AsTask()
+                        .AsTask(),
+                    Task.CompletedTask
                 )
             );
 
@@ -84,7 +86,8 @@ namespace mrlldd.Caching.Tests.Store
                     x => x.RefreshAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
                         .RefreshAsync(Key, NullMetadata.Instance)
-                        .AsTask()
+                        .AsTask(),
+                    Task.CompletedTask
                 )
             );
 
@@ -107,7 +110,8 @@ namespace mrlldd.Caching.Tests.Store
                     x => x.RemoveAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                     () => c.GetRequiredService<ICacheStore<InDistributed>>()
                         .RemoveAsync(Key, NullMetadata.Instance)
-                        .AsTask()
+                        .AsTask(),
+                    Task.CompletedTask
                 )
             );
 

@@ -13,8 +13,8 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
         /// The method used for registering custom decorators of caching stores.
         /// </summary>
         /// <param name="cachingServiceCollection">The caching service collection.</param>
-        /// <typeparam name="T">The type of decorator class that implements <see cref="ICacheStoreDecorator"/>.</typeparam>
-        /// <typeparam name="TFlag">The ty</typeparam>
+        /// <typeparam name="T">The type of decorator class that implements <see cref="ICacheStoreDecorator{T}"/>.</typeparam>
+        /// <typeparam name="TFlag">The caching flag type.</typeparam>
         /// <returns>The caching service collection.</returns>
         public static ICachingServiceCollection Decorate<TFlag, T>(this ICachingServiceCollection cachingServiceCollection) 
             where T : class, ICacheStoreDecorator<TFlag>
