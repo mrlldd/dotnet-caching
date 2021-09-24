@@ -113,7 +113,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="omitCacheOnLoad">The boolean that indicates if cache should be omitted on getting (means there should be only load and caching).</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}"/> that returns the object of result type.</returns>
-        ValueTask<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
+        ValueTask<Result<TResult>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
 
         /// <summary>
         /// The method used for getting (if cached) or loading the object of result type.
@@ -122,7 +122,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="omitCacheOnLoad">The boolean that indicates if cache should be omitted on getting (means there should be only load and caching).</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The object of result <typeparamref name="TResult"/> type.</returns>
-        Result<TResult?> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
+        Result<TResult> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
 
         /// <summary>
         /// The method used for setting the object entry of result type in cache.
@@ -147,7 +147,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The argument.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}"/> that returns the object of result type.</returns>
-        ValueTask<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default);
+        ValueTask<Result<TResult>> GetAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>
         /// The method used for getting the object entry of result type from cache.
@@ -155,7 +155,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The argument.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The object of result <typeparamref name="TResult"/> type.</returns>
-        Result<TResult?> Get(TArgs args);
+        Result<TResult> Get(TArgs args);
 
         /// <summary>
         /// The method used for refreshing the object entry of result type in cache.

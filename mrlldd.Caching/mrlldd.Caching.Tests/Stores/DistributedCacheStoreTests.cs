@@ -5,14 +5,13 @@ using Functional.Object.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using mrlldd.Caching.Flags;
-using mrlldd.Caching.Stores;
-using mrlldd.Caching.Tests.Store.Base;
+using mrlldd.Caching.Stores.Internal;
+using mrlldd.Caching.Tests.Stores.Base;
 using mrlldd.Caching.Tests.TestUtilities;
 using mrlldd.Caching.Tests.TestUtilities.Extensions;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Store
+namespace mrlldd.Caching.Tests.Stores
 {
     public class DistributedCacheStoreTests : StoreRelatedTestBase
     {
@@ -22,8 +21,8 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecific(
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.Get(It.Is<string>(s => s.Equals(Key))),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Get<VoidUnit>(Key, NullMetadata.Instance)
+                    d => new DistributedCacheStore(d)
+                        .Get<VoidUnit>(Key, DefaultMetadata)
                 )
             );
 
@@ -33,8 +32,8 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecificAsync(
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.GetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .GetAsync<VoidUnit>(Key, NullMetadata.Instance)
+                    d => new DistributedCacheStore(d)
+                        .GetAsync<VoidUnit>(Key, DefaultMetadata)
                         .AsTask(),
                     Task.CompletedTask
                 )
@@ -46,9 +45,9 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecific(
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.Set(It.Is<string>(s => s.Equals(Key)), It.IsAny<byte[]>(),
-                        It.IsAny<DistributedCacheEntryOptions>()),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Set(Key, new VoidUnit(), CachingOptions.Disabled, NullMetadata.Instance)
+                        It.Is<DistributedCacheEntryOptions>(o => o.SlidingExpiration == CachingOptions.SlidingExpiration)),
+                    d => new DistributedCacheStore(d)
+                        .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
                 )
             );
 
@@ -57,9 +56,9 @@ namespace mrlldd.Caching.Tests.Store
             .EffectAsync(c =>
                 CallsSpecificAsync(
                     c.GetRequiredService<Mock<IDistributedCache>>(),
-                    x => x.SetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .SetAsync(Key, new VoidUnit(), CachingOptions.Disabled,  NullMetadata.Instance)
+                    x => x.SetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<byte[]>(), It.Is<DistributedCacheEntryOptions>(o => o.SlidingExpiration == CachingOptions.SlidingExpiration), It.IsAny<CancellationToken>()),
+                    d => new DistributedCacheStore(d)
+                        .SetAsync(Key, new VoidUnit(), CachingOptions,  DefaultMetadata)
                         .AsTask(),
                     Task.CompletedTask
                 )
@@ -73,8 +72,8 @@ namespace mrlldd.Caching.Tests.Store
                     x => x.Refresh(
                         It.Is<string>(s => s.Equals(Key))
                     ),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Refresh(Key, NullMetadata.Instance)
+                    d => new DistributedCacheStore(d)
+                        .Refresh(Key, DefaultMetadata)
                 )
             );
 
@@ -84,8 +83,8 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecificAsync(
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.RefreshAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RefreshAsync(Key, NullMetadata.Instance)
+                    d => new DistributedCacheStore(d)
+                        .RefreshAsync(Key, DefaultMetadata)
                         .AsTask(),
                     Task.CompletedTask
                 )
@@ -97,8 +96,8 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecific(
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.Remove(It.Is<string>(s => s.Equals(Key))),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Remove(Key, NullMetadata.Instance)
+                    d => new DistributedCacheStore(d)
+                        .Remove(Key, DefaultMetadata)
                 )
             );
 
@@ -108,8 +107,8 @@ namespace mrlldd.Caching.Tests.Store
                 CallsSpecificAsync(
                     c.GetRequiredService<Mock<IDistributedCache>>(),
                     x => x.RemoveAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RemoveAsync(Key, NullMetadata.Instance)
+                    d => new DistributedCacheStore(d)
+                        .RemoveAsync(Key, DefaultMetadata)
                         .AsTask(),
                     Task.CompletedTask
                 )

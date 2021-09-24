@@ -18,7 +18,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Result{T}"/> with value of type <typeparamref name="T"/>.</returns>
-        Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata);
+        Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata);
 
         /// <summary>
         /// The method for getting cache entry.
@@ -28,7 +28,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result{T}"/> with value of type <typeparamref name="T"/>.</returns>
-        ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
+        ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
 
         /// <summary>
         /// The method for setting cache entry.

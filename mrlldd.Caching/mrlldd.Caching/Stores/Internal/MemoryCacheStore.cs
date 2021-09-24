@@ -2,7 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
+using Functional.Result.Extensions;
 using Microsoft.Extensions.Caching.Memory;
+using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Stores.Internal
@@ -14,14 +16,11 @@ namespace mrlldd.Caching.Stores.Internal
         public MemoryCacheStore(IMemoryCache memoryCache)
             => this.memoryCache = memoryCache;
 
-        public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(() =>
-            {
-                var fromCache = memoryCache.Get<T>(key);
-                return fromCache != null ? fromCache : default;
-            });
+        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata) 
+            => Result.Of(() => memoryCache.Get<T>(key))
+                .Bind(t => t != null ? t : throw new CacheMissException(key));
 
-        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => new(Get<T>(key, metadata));
 
@@ -46,15 +45,12 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(new Action(() => memoryCache.Get<byte[]>(key)));
+            => Result.Of(new Action(() => memoryCache.Get(key)));
 
         public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
-            var result = Result.Of(() =>
-            {
-                memoryCache.Get(key);
-            }); 
+            var result = Result.Of(new Action(() => memoryCache.Get(key))); 
             return new ValueTask<Result>(result);
         }
 

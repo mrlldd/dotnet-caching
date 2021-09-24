@@ -6,10 +6,10 @@ using mrlldd.Caching.Decoration.Internal.Logging.Actions;
 using mrlldd.Caching.Extensions.DependencyInjection;
 using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores.Internal;
-using mrlldd.Caching.Tests.Store.Base;
+using mrlldd.Caching.Tests.Stores.Base;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Store
+namespace mrlldd.Caching.Tests.Stores
 {
     [TestFixture]
     public class ActionsLoggingVoidCacheStoreTests : LoggingStoreDecoratorTests

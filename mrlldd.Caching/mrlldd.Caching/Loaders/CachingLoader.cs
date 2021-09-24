@@ -19,7 +19,7 @@ namespace mrlldd.Caching.Loaders
         where TStoreFlag : CachingFlag
     {
         /// <inheritdoc />
-        public async ValueTask<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
+        public async ValueTask<Result<TResult>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
             CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
@@ -46,15 +46,15 @@ namespace mrlldd.Caching.Loaders
         }
 
         /// <inheritdoc />
-        public Result<TResult?> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
+        public Result<TResult> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
             {
-                var inCache = TryGetFromCache(keySuffix);
-                if (inCache != null)
+                var fromCache = TryGetFromCache(keySuffix);
+                if (fromCache.Successful)
                 {
-                    return inCache;
+                    return fromCache;
                 }
             }
 
@@ -72,11 +72,11 @@ namespace mrlldd.Caching.Loaders
             => PerformCaching(result, CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
-        public ValueTask<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default)
+        public ValueTask<Result<TResult>> GetAsync(TArgs args, CancellationToken token = default)
             => TryGetFromCacheAsync(CacheKeySuffixFactory(args), token);
 
         /// <inheritdoc />
-        public Result<TResult?> Get(TArgs args)
+        public Result<TResult> Get(TArgs args)
             => TryGetFromCache(CacheKeySuffixFactory(args));
 
         /// <inheritdoc />
@@ -108,7 +108,7 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The arguments.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}"/> that returns object of result type.</returns>
-        protected abstract Task<TResult?> LoadAsync(TArgs args, CancellationToken token = default);
+        protected abstract Task<TResult> LoadAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>
         /// The abstract method for creating cache key suffix in order to make stored items keys really unique,

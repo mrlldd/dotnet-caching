@@ -32,6 +32,8 @@ namespace mrlldd.Caching.Tests
                 .Effect(FillCachingServiceCollection)
                 .Effect(x => Container.Populate(x));
             FillContainer(Container);
+            
+            AfterContainerEnriching();
         }
 
         protected virtual void FillCachingServiceCollection(ICachingServiceCollection services)
@@ -40,6 +42,10 @@ namespace mrlldd.Caching.Tests
         }
 
         protected virtual void FillContainer(IContainer container)
+        {
+        }
+
+        protected virtual void AfterContainerEnriching()
         {
         }
     }

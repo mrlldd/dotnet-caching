@@ -13,7 +13,7 @@ using mrlldd.Caching.Tests.TestUtilities;
 using mrlldd.Caching.Tests.TestUtilities.Extensions;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Store.Base
+namespace mrlldd.Caching.Tests.Stores.Base
 {
     public abstract class StoreDecoratorTestBase : StoreRelatedTestBase
     {
@@ -22,11 +22,11 @@ namespace mrlldd.Caching.Tests.Store.Base
             .Effect(c =>
                 CallsSpecific(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.Get<VoidUnit>(It.Is<string>(s => s.Equals(Key)),
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance)),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata)),
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .Get<VoidUnit>(Key, NullMetadata.Instance),
-                    new VoidUnit().AsSuccess<VoidUnit?>()
+                        .Get<VoidUnit>(Key, DefaultMetadata),
+                    new VoidUnit().AsSuccess()
                 )
             );
 
@@ -35,13 +35,13 @@ namespace mrlldd.Caching.Tests.Store.Base
             .EffectAsync(c =>
                 CallsSpecificAsync(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.GetAsync<VoidUnit>(It.Is<string>(s => s.Equals(Key)),
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance),
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata),
                     It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .GetAsync<VoidUnit>(Key, NullMetadata.Instance)
+                        .GetAsync<VoidUnit>(Key, DefaultMetadata)
                         .AsTask(),
-                    new ValueTask<Result<VoidUnit?>>(new VoidUnit().AsSuccess<VoidUnit?>())
+                    new ValueTask<Result<VoidUnit>>(new VoidUnit().AsSuccess())
                 )
             );
 
@@ -51,11 +51,11 @@ namespace mrlldd.Caching.Tests.Store.Base
                 CallsSpecific(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.Set(It.Is<string>(s => s.Equals(Key)),
                         It.IsAny<VoidUnit>(), 
-                        It.IsAny<CachingOptions>(),
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance)),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                        It.Is<CachingOptions>(o => o == CachingOptions),
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata)),
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .Set(Key, new VoidUnit(), CachingOptions.Disabled, NullMetadata.Instance),
+                        .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata),
                     Result.Success
                 )
             );
@@ -66,13 +66,13 @@ namespace mrlldd.Caching.Tests.Store.Base
                 CallsSpecificAsync(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.SetAsync(It.Is<string>(s => s.Equals(Key)),
                         It.IsAny<VoidUnit>(),
-                        It.IsAny<CachingOptions>(),
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance),
+                        It.Is<CachingOptions>(o => o == CachingOptions),
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata),
                         It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .SetAsync(Key, new VoidUnit(), CachingOptions.Disabled,
-                            NullMetadata.Instance)
+                        .SetAsync(Key, new VoidUnit(), CachingOptions,
+                            DefaultMetadata)
                         .AsTask(),
                     new ValueTask<Result>(Result.Success)
                 ));
@@ -82,10 +82,10 @@ namespace mrlldd.Caching.Tests.Store.Base
             .Effect(c =>
                 CallsSpecific(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.Refresh(It.Is<string>(s => s.Equals(Key)),
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance)),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata)),
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .Refresh(Key, NullMetadata.Instance),
+                        .Refresh(Key, DefaultMetadata),
                     Result.Success
                 ));
 
@@ -94,11 +94,11 @@ namespace mrlldd.Caching.Tests.Store.Base
             .EffectAsync(c =>
                 CallsSpecificAsync(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.RefreshAsync(It.Is<string>(s => s.Equals(Key)),
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance),
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata),
                         It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .RefreshAsync(Key, NullMetadata.Instance)
+                        .RefreshAsync(Key, DefaultMetadata)
                         .AsTask(),
                     new ValueTask<Result>(Result.Success)
                 ));
@@ -108,10 +108,10 @@ namespace mrlldd.Caching.Tests.Store.Base
             .Effect(c =>
                 CallsSpecific(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.Remove(It.Is<string>(s => s.Equals(Key)),
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance)),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata)),
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .Remove(Key, NullMetadata.Instance),
+                        .Remove(Key, DefaultMetadata),
                     Result.Success
                 ));
 
@@ -120,11 +120,11 @@ namespace mrlldd.Caching.Tests.Store.Base
             .EffectAsync(c =>
                 CallsSpecificAsync(c.GetRequiredService<Mock<ICacheStore<InVoid>>>(),
                     x => x.RemoveAsync(It.Is<string>(s => s.Equals(Key)), 
-                        It.Is<ICacheStoreOperationMetadata>(m => m == NullMetadata.Instance),
+                        It.Is<ICacheStoreOperationMetadata>(m => m == DefaultMetadata),
                         It.IsAny<CancellationToken>()),
-                    () => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                    _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                         .CacheStore
-                        .RemoveAsync(Key, NullMetadata.Instance)
+                        .RemoveAsync(Key, DefaultMetadata)
                         .AsTask(),
                     new ValueTask<Result>(Result.Success)
                 ));

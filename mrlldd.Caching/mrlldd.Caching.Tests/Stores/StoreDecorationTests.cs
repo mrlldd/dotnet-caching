@@ -15,7 +15,7 @@ using mrlldd.Caching.Stores.Decoration;
 using mrlldd.Caching.Stores.Internal;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Store
+namespace mrlldd.Caching.Tests.Stores
 {
     [TestFixture]
     public class StoreDecorationTests : TestBase

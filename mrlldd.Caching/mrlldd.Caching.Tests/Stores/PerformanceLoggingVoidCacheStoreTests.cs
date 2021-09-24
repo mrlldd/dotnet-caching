@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using DryIoc;
-using DryIoc.Microsoft.DependencyInjection;
 using FluentAssertions;
 using Functional.Object.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,13 +7,12 @@ using Moq;
 using mrlldd.Caching.Decoration.Internal.Logging.Performance;
 using mrlldd.Caching.Extensions.DependencyInjection;
 using mrlldd.Caching.Flags;
-using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Decoration;
 using mrlldd.Caching.Stores.Internal;
-using mrlldd.Caching.Tests.Store.Base;
+using mrlldd.Caching.Tests.Stores.Base;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Store
+namespace mrlldd.Caching.Tests.Stores
 {
     [TestFixture]
     public class PerformanceLoggingVoidCacheStoreTests : LoggingStoreDecoratorTests

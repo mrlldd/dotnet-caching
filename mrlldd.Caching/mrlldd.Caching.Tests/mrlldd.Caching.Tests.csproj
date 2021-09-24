@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Bogus" Version="33.1.1" />
         <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />

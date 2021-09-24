@@ -31,13 +31,13 @@ namespace mrlldd.Caching.Caches.Internal
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        ValueTask<Result<T?>> GetAsync(CancellationToken token = default);
+        ValueTask<Result<T>> GetAsync(CancellationToken token = default);
 
         /// <summary>
         /// The method used for retrieving data from cache.
         /// </summary>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        public Result<T?> Get();
+        public Result<T> Get();
 
         /// <summary>
         /// The method used for refreshing data expiration in cache.

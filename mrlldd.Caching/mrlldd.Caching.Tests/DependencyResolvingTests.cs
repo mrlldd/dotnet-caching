@@ -49,7 +49,10 @@ namespace mrlldd.Caching.Tests
                 .And.BeOfType<ReadOnlyCachesCollection<DependencyResolvingUnit>>();
             var count = assembly
                 .GetTypes()
-                .Count(t => !string.IsNullOrEmpty(t.Namespace) && t.Namespace.EndsWith("TestImplementations.Caches.DependencyResolving"));
+                .Count(t => !string.IsNullOrEmpty(t.Namespace) &&
+                            !t.IsAbstract &&
+                            !t.IsGenericTypeDefinition &&
+                            t.Namespace.EndsWith("TestImplementations.Caches.DependencyResolving"));
             unified.Instances.Count
                 .Should()
                 .Be(count);

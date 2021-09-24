@@ -98,7 +98,7 @@ namespace mrlldd.Caching
         /// </summary>
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
-        protected Result<T?> TryGetFromCache(string keySuffix)
+        protected Result<T> TryGetFromCache(string keySuffix)
         {
             if (!Options.IsCaching)
             {
@@ -116,7 +116,7 @@ namespace mrlldd.Caching
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{T}"/> that returns data or null.</returns>
-        protected ValueTask<Result<T?>> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
+        protected ValueTask<Result<T>> TryGetFromCacheAsync(string keySuffix, CancellationToken token = default)
         {
             if (!Options.IsCaching)
             {

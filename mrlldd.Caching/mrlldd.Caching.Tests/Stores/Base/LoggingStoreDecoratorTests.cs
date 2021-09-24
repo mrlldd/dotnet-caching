@@ -9,7 +9,7 @@ using mrlldd.Caching.Stores;
 using mrlldd.Caching.Tests.TestUtilities.Extensions;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Store.Base
+namespace mrlldd.Caching.Tests.Stores.Base
 {
     public abstract class LoggingStoreDecoratorTests : StoreDecoratorTestBase
     {

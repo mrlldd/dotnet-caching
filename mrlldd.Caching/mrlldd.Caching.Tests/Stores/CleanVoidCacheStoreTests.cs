@@ -1,7 +1,7 @@
-﻿using mrlldd.Caching.Tests.Store.Base;
+﻿using mrlldd.Caching.Tests.Stores.Base;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Store
+namespace mrlldd.Caching.Tests.Stores
 {
     [TestFixture]
     public class CleanVoidCacheStoreTests : StoreDecoratorTestBase
