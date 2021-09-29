@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using FluentAssertions.Primitives;
 using Functional.Result;
 
@@ -41,5 +42,19 @@ namespace mrlldd.Caching.Tests.TestUtilities.Extensions
                 .Which.Successful.Should().BeFalse();
             return should.BeOfType<Fail>();
         }
+
+        public static AndWhichConstraint<ObjectAssertions, TException> WithException<TException>(
+            this AndWhichConstraint<ObjectAssertions, Fail> fail) where TException : Exception 
+            => fail.Which.Exception
+                .Should()
+                .NotBeNull()
+                .And.BeOfType<TException>();
+
+        public static AndWhichConstraint<ObjectAssertions, TException> WithException<T, TException>(
+            this AndWhichConstraint<ObjectAssertions, Fail<T>> fail) where TException : Exception 
+            => fail.Which.Exception
+                .Should()
+                .NotBeNull()
+                .And.BeOfType<TException>();
     }
 }

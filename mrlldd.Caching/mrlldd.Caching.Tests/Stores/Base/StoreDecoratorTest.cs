@@ -15,7 +15,7 @@ using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests.Stores.Base
 {
-    public abstract class StoreDecoratorTestBase : StoreRelatedTestBase
+    public abstract class StoreDecoratorTest : StoreRelatedTest
     {
         [Test]
         public void CallsGet() => Container

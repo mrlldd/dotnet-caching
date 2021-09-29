@@ -28,6 +28,7 @@ namespace mrlldd.Caching.Tests
             
             new ServiceCollection()
                 .AddLogging(x => x.AddConsole().AddFilter(f => f >= LogLevel.Debug))
+                .Effect(FillServicesCollection)
                 .AddCaching(typeof(TestBase).Assembly)
                 .Effect(FillCachingServiceCollection)
                 .Effect(x => Container.Populate(x));
@@ -38,7 +39,6 @@ namespace mrlldd.Caching.Tests
 
         protected virtual void FillCachingServiceCollection(ICachingServiceCollection services)
         {
-            
         }
 
         protected virtual void FillContainer(IContainer container)
@@ -46,6 +46,10 @@ namespace mrlldd.Caching.Tests
         }
 
         protected virtual void AfterContainerEnriching()
+        {
+        }
+
+        protected virtual void FillServicesCollection(IServiceCollection services)
         {
         }
     }

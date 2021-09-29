@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Functional.Result;
 using Microsoft.Extensions.Caching.Distributed;
+using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Flags;
 using Newtonsoft.Json;
 
@@ -14,26 +15,26 @@ namespace mrlldd.Caching.Stores.Internal
         public DistributedCacheStore(IDistributedCache distributedCache)
             => this.distributedCache = distributedCache;
 
-        public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() =>
             {
                 var fromCache = distributedCache.GetString(key);
                 return string.IsNullOrEmpty(fromCache)
-                    ? default
-                    : Deserialize<T>(fromCache);
+                    ? throw new CacheMissException(key)
+                    : Deserialize<T>(fromCache) ?? throw new DeserializationFailException(key, fromCache);
             });
 
-        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
             var task = Result.Of(async () =>
             {
                 var fromCache = await distributedCache.GetStringAsync(key, token);
                 return string.IsNullOrEmpty(fromCache)
-                    ? default
-                    : Deserialize<T>(fromCache);
+                    ? throw new CacheMissException(key)
+                    : Deserialize<T>(fromCache) ?? throw new DeserializationFailException(key, fromCache);
             });
-            return new ValueTask<Result<T?>>(task);
+            return new ValueTask<Result<T>>(task);
         }
 
         public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)

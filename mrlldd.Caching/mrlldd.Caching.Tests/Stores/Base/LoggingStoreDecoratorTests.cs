@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests.Stores.Base
 {
-    public abstract class LoggingStoreDecoratorTests : StoreDecoratorTestBase
+    public abstract class LoggingStoreDecoratorTests : StoreDecoratorTest
     {
         protected const LogLevel DefaultLogLevel = LogLevel.Information;
 

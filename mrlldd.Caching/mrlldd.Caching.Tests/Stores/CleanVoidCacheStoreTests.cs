@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace mrlldd.Caching.Tests.Stores
 {
     [TestFixture]
-    public class CleanVoidCacheStoreTests : StoreDecoratorTestBase
+    public class CleanVoidCacheStoreTests : StoreDecoratorTest
     {
         
     }

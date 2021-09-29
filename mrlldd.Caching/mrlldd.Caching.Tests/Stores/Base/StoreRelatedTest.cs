@@ -9,7 +9,7 @@ using mrlldd.Caching.Stores.Internal;
 
 namespace mrlldd.Caching.Tests.Stores.Base
 {
-    public class StoreRelatedTestBase : TestBase
+    public class StoreRelatedTest : TestBase
     {
         protected string Key { get; private set; } = null!;
 

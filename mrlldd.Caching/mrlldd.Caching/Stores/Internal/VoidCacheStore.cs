@@ -8,10 +8,10 @@ namespace mrlldd.Caching.Stores.Internal
 {
     internal class VoidCacheStore : ICacheStore<InVoid>
     {
-        public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             => new CacheMissException(key);
 
-        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
             => new(new CacheMissException(key));
 

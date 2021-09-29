@@ -11,9 +11,9 @@ using mrlldd.Caching.Tests.TestUtilities;
 using mrlldd.Caching.Tests.TestUtilities.Extensions;
 using NUnit.Framework;
 
-namespace mrlldd.Caching.Tests.Stores
+namespace mrlldd.Caching.Tests.Stores.Distributed
 {
-    public class DistributedCacheStoreTests : StoreRelatedTestBase
+    public class DistributedCacheStoreCallTests : StoreRelatedTest
     {
         [Test]
         public void CallsGet() => Container

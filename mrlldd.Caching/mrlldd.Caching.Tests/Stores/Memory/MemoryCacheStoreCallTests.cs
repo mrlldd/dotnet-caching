@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace mrlldd.Caching.Tests.Stores.Memory
 {
     [TestFixture]
-    public class MemoryCacheStoreCallTests : StoreRelatedTestBase
+    public class MemoryCacheStoreCallTests : StoreRelatedTest
     {
         [Test]
         public void CallsGet() => Container
