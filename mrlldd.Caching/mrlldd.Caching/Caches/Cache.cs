@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
 using mrlldd.Caching.Caches.Internal;
@@ -18,6 +19,11 @@ namespace mrlldd.Caching.Caches
     {
         /// <inheritdoc />
         protected sealed override string CacheKeyPrefix => "cache";
+
+        protected sealed override void EnrichWithDependencies(IServiceProvider serviceProvider)
+        {
+            base.EnrichWithDependencies(serviceProvider);
+        }
 
         // ReSharper disable once VirtualMemberNeverOverridden.Global
         /// <summary>

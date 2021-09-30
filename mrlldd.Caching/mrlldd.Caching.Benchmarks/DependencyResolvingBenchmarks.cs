@@ -104,11 +104,15 @@ namespace mrlldd.Caching.Benchmarks
         {
             protected override CachingOptions Options => CachingOptions.Disabled;
             protected override string CacheKey => nameof(String);
-            protected override Task<string?> LoadAsync(long args, CancellationToken token = default) 
-                => Task.FromResult(args.ToString())!;
 
             protected override string CacheKeySuffixFactory(long args)
                 => args.ToString();
+        }
+
+        public class Loader : ILoader<long, string>
+        {
+            public Task<string> LoadAsync(long args, CancellationToken token = default)
+                => Task.FromResult(args.ToString());
         }
     }
 }

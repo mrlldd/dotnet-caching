@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Functional.Result.Extensions;
@@ -9,12 +11,11 @@ namespace mrlldd.Caching.Loaders
 {
     internal static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLoaders(this IServiceCollection services, params Assembly[] assemblies)
+        public static IServiceCollection AddLoaders(this IServiceCollection services, ICollection<Type> types)
         {
             services.AddScoped<ILoaderProvider, LoaderProvider>();
-            var loaderTypes = assemblies
-                .SelectMany(x => x.CollectServices(typeof(ICachingLoader<,>), typeof(CachingLoader<,,>),
-                    typeof(IInternalLoaderService<,>), x => new[] { x[0], x[1] }));
+            var loaderTypes = types
+                .CollectServices(typeof(ICachingLoader<,>), typeof(CachingLoader<,,>), typeof(IInternalLoaderService<,>));
             return loaderTypes
                 .Aggregate(services, (prev, next) =>
                 {

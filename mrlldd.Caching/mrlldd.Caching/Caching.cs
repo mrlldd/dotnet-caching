@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
@@ -50,6 +51,11 @@ namespace mrlldd.Caching
             
             Store = storeProvider.CacheStore;
             StoreOperationProvider = storeOperationProvider;
+            EnrichWithDependencies(serviceProvider);
+        }
+
+        protected virtual void EnrichWithDependencies(IServiceProvider serviceProvider)
+        {
         }
 
         private string CacheKeyFactory(string suffix)

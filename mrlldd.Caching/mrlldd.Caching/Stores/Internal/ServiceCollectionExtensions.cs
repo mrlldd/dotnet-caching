@@ -1,5 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Flags;
+using mrlldd.Caching.Stores.Decoration;
 
 namespace mrlldd.Caching.Stores.Internal
 {
@@ -13,10 +20,44 @@ namespace mrlldd.Caching.Stores.Internal
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <returns>The service collection.</returns>
-        public static IServiceCollection AddCachingStores(this IServiceCollection services)
+        public static IServiceCollection AddCachingStores(this IServiceCollection services) 
             => services
                 .UseCachingStore<InMemory, MemoryCacheStore>(ServiceLifetime.Singleton)
                 .UseCachingStore<InDistributed, DistributedCacheStore>()
                 .UseCachingStore<InVoid, VoidCacheStore>(ServiceLifetime.Singleton);
+
+        /*
+        private static IServiceCollection UseCachingStore(this IServiceCollection services,
+            Type serviceType,
+            Type implementationType,
+            Type flagType,
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        {
+            
+            var storeDescriptor = ServiceDescriptor.Describe(serviceType, implementationType, serviceLifetime);
+            services.Add(storeDescriptor);
+            var providerType = typeof(ICacheStoreProvider<>).MakeGenericType(flagType);
+            var decoratorType = typeof(ICacheStoreDecorator<>).MakeGenericType(flagType);
+            var enumerableType = typeof(IEnumerable<>).MakeGenericType(decoratorType);
+
+            var decorate = decoratorType.GetMethod(nameof(ICacheStoreDecorator<CachingFlag>.Decorate))!;
+            
+            
+            services.AddScoped(providerType, sp =>
+            {
+                var decorators = ((IEnumerable)sp.GetRequiredService(enumerableType))
+                    .Cast<object>()
+                    .ToArray();
+                Array.Sort(decorators, OrderComparer.Instance);
+                var s = sp.GetRequiredService(serviceType);
+                for (var i = 0; i < decorators.Length; i++)
+                {
+                    s = decorate.Invoke(decorators[i], new[] {s});
+                }
+
+                return new CacheStoreProvider<TFlag>(s);
+            });
+            return services;
+        }*/
     }
 }

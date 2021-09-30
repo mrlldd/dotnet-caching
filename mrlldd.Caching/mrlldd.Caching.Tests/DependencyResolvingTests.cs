@@ -11,6 +11,8 @@ using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Extensions.DependencyInjection;
 using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores;
+using mrlldd.Caching.Tests.InvalidAssembly;
+using mrlldd.Caching.Tests.InvalidAssembly.Flags;
 using mrlldd.Caching.Tests.TestImplementations.Caches;
 using mrlldd.Caching.Tests.TestImplementations.Caches.DependencyResolving;
 using mrlldd.Caching.Tests.TestImplementations.Flags;
@@ -167,8 +169,13 @@ namespace mrlldd.Caching.Tests
             var sp = new ServiceCollection()
                 .AddCaching(typeof(DependencyResolvingTests).Assembly)
                 .BuildServiceProvider();
-            Func<ICache<DependencyResolvingUnit, InNotExistingStore>> func = () => sp.GetRequiredService<ICache<DependencyResolvingUnit, InNotExistingStore>>();
+            Func<ICache<InvalidUnit, InNotExistingStore>> func = () => sp.GetRequiredService<ICache<InvalidUnit, InNotExistingStore>>();
             func.Should().ThrowExactly<StoreNotFoundException<InNotExistingStore>>();
+        }
+
+        [Test]
+        public void ThrowsIfStoreIsMissingOnRegistration()
+        {
         }
     }
 }

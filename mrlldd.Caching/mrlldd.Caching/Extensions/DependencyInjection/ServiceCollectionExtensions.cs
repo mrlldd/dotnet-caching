@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
@@ -29,10 +30,13 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
                     "Can't find any caching implementations in empty assemblies array.");
             }
 
+            var types = assemblies
+                .SelectMany(a => a.GetTypes())
+                .ToArray();
             services
                 .AddScoped<IStoreOperationProvider, StoreOperationProvider>()
-                .AddCaches(assemblies)
-                .AddLoaders(assemblies)
+                .AddCaches(types)
+                .AddLoaders(types)
                 .AddCachingStores();
             return new CachingServiceCollection(services);
         }

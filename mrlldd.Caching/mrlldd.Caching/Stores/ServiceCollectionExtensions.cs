@@ -21,7 +21,7 @@ namespace mrlldd.Caching.Stores
             {
                 var decorators = sp.GetRequiredService<IEnumerable<ICacheStoreDecorator<TFlag>>>()
                     .ToArray();
-                Array.Sort(decorators, DecoratorComparer<TFlag>.Instance);
+                Array.Sort(decorators, CacheStoreDecoratorComparer<TFlag>.Instance);
                 var s = sp.GetRequiredService<ICacheStore<TFlag>>();
                 for (var i = 0; i < decorators.Length; i++)
                 {

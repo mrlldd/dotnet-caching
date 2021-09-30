@@ -5,7 +5,7 @@ namespace mrlldd.Caching.Stores.Decoration
     /// <summary>
     /// The interface that represents caching store decorator.
     /// </summary>
-    public interface ICacheStoreDecorator<TStoreFlag> 
+    public interface ICacheStoreDecorator<TStoreFlag> : IHasOrder
         where TStoreFlag : CachingFlag
     {
         /// <summary>
@@ -14,10 +14,5 @@ namespace mrlldd.Caching.Stores.Decoration
         /// <param name="cacheStore">The caching store.</param>
         /// <returns>The decorated (or not) caching store.</returns>
         public ICacheStore<TStoreFlag> Decorate(ICacheStore<TStoreFlag> cacheStore);
-
-        /// <summary>
-        /// The order of applying among all registered decorators.
-        /// </summary>
-        public int Order { get; }
     }
 }

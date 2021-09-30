@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\mrlldd.Caching.Logging\mrlldd.Caching.Logging.csproj" />
+      <ProjectReference Include="..\mrlldd.Caching.Tests.InvalidAssembly\mrlldd.Caching.Tests.InvalidAssembly.csproj" />
       <ProjectReference Include="..\mrlldd.Caching\mrlldd.Caching.csproj" />
     </ItemGroup>
 

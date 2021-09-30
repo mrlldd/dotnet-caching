@@ -11,22 +11,27 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
         protected override CachingOptions Options => CachingOptions.Enabled(TimeSpan.FromMinutes(5));
         protected override string CacheKey => "int-string";
 
-        protected override Task<string?> LoadAsync(int args, CancellationToken token = default)
-            => Task.FromResult(args.ToString())!;
-
         protected override string CacheKeySuffixFactory(int args)
             => args.ToString();
+    }
+
+    public class MemoryLoader : ILoader<int, string>
+    {
+        public Task<string> LoadAsync(int args, CancellationToken token = default) 
+            => Task.FromResult(args.ToString());
     }
     
     public class ImplementedDistributedCachingLoader : CachingLoader<byte, string, InDistributed>
     {
         protected override CachingOptions Options => CachingOptions.Enabled(TimeSpan.FromMinutes(5));
         protected override string CacheKey => "byte-string";
-
-        protected override Task<string?> LoadAsync(byte args, CancellationToken token = default)
-            => Task.FromResult(args.ToString())!;
-
         protected override string CacheKeySuffixFactory(byte args)
             => args.ToString();
+    }
+    
+    public class DistributedLoader : ILoader<byte, string>
+    {
+        public Task<string> LoadAsync(byte args, CancellationToken token = default) 
+            => Task.FromResult(args.ToString());
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Functional.Result.Extensions;
@@ -12,15 +13,13 @@ namespace mrlldd.Caching.Caches
 {
     internal static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCaches(this IServiceCollection services, params Assembly[] assemblies)
+        public static IServiceCollection AddCaches(this IServiceCollection services, ICollection<Type> types)
         {
             services.AddMemoryCache();
             services.TryAddSingleton<IDistributedCache, NoOpDistributedCache>();
             services.AddScoped<ICacheProvider, CacheProvider>();
-            var cacheTypes = assemblies
-                .SelectMany(x => x.CollectServices(typeof(ICache<,>), typeof(Cache<,>),
-                    typeof(IInternalCache<,>), t => t)
-                )
+            var cacheTypes = types
+                .CollectServices(typeof(ICache<,>), typeof(Cache<,>), typeof(IInternalCache<,>))
                 .ToArray();
             
             var noflagTypes = cacheTypes
