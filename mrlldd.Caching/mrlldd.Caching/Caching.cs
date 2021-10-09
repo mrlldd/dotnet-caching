@@ -93,7 +93,6 @@ namespace mrlldd.Caching
             {
                 return new ValueTask<Result>(new DisabledCachingException());
             }
-
             var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.SetAsync(key, data, Options, operation, token);
@@ -140,6 +139,11 @@ namespace mrlldd.Caching
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         protected Result Refresh(string keySuffix)
         {
+            if (!Options.IsCaching)
+            {
+                return new DisabledCachingException();
+            }
+            
             var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
 
@@ -153,6 +157,11 @@ namespace mrlldd.Caching
         /// <param name="token">The cancellation token.</param>
         protected ValueTask<Result> RefreshAsync(string keySuffix, CancellationToken token)
         {
+            if (!Options.IsCaching)
+            {
+                return new ValueTask<Result>(new DisabledCachingException());
+            }
+            
             var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.RefreshAsync(key, operation, token);
@@ -164,6 +173,11 @@ namespace mrlldd.Caching
         /// <param name="keySuffix">The suffix extension to generated cache key.</param>
         protected Result Remove(string keySuffix)
         {
+            if (!Options.IsCaching)
+            {
+                return new DisabledCachingException();
+            }
+            
             var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
 
@@ -177,6 +191,11 @@ namespace mrlldd.Caching
         /// <param name="token">The cancellation token.</param>
         protected ValueTask<Result> RemoveAsync(string keySuffix, CancellationToken token)
         {
+            if (!Options.IsCaching)
+            {
+                return new ValueTask<Result>(new DisabledCachingException());
+            }
+            
             var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
             var key = CacheKeyFactory(keySuffix);
             return Store.RemoveAsync(key, operation, token);

@@ -28,8 +28,4 @@
       <ProjectReference Include="..\mrlldd.Caching\mrlldd.Caching.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Caches" />
-    </ItemGroup>
-
 </Project>

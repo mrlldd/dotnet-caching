@@ -5,7 +5,7 @@ namespace mrlldd.Caching
     /// <summary>
     /// The class that represents a caching options used to set up the caches.
     /// </summary>
-    public class CachingOptions
+    public record CachingOptions
     {
         private CachingOptions(bool shouldCache, TimeSpan? slidingExpiration)
         {

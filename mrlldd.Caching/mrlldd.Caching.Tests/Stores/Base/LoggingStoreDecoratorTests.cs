@@ -56,7 +56,7 @@ namespace mrlldd.Caching.Tests.Stores.Base
         }
 
         [TearDown]
-        public void Teardown()
+        public void TearDown()
             => Container
                 .GetRequiredService<Mock<ILogger<ICacheStore<InVoid>>>>()
                 .Verify(loggerSetup, Times);

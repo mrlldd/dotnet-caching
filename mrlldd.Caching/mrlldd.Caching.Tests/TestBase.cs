@@ -1,4 +1,5 @@
-﻿using DryIoc;
+﻿using Bogus;
+using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Functional.Object.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,8 @@ namespace mrlldd.Caching.Tests
     public class TestBase
     {
         protected IContainer Container { get; private set; } = null!;
+
+        protected static Faker Faker { get; } = new();
 
         protected MockRepository MockRepository { get; } = new(MockBehavior.Strict);
 

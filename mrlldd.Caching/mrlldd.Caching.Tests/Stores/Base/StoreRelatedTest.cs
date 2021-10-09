@@ -19,10 +19,9 @@ namespace mrlldd.Caching.Tests.Stores.Base
         protected override void AfterContainerEnriching()
         {
             base.AfterContainerEnriching();
-            var faker = new Faker();
-            Key = faker.Random.String(32);
-            CachingOptions = CachingOptions.Enabled(TimeSpan.FromMilliseconds(faker.Random.Number(60, 6000)));
-            DefaultMetadata = new CacheStoreOperationMetadata(faker.Random.Number(0, 99999), faker.Random.String(0, 32));
+            Key = Faker.Random.String(32);
+            CachingOptions = CachingOptions.Enabled(TimeSpan.FromMilliseconds(Faker.Random.Number(60, 6000)));
+            DefaultMetadata = new CacheStoreOperationMetadata(Faker.Random.Number(0, 99999), Faker.Random.String(0, 32));
         }
 
         protected static void CallsSpecific<T>(Mock<T> mock,
