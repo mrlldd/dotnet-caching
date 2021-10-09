@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores.Decoration;
 using mrlldd.Caching.Stores.Internal;
@@ -17,10 +18,8 @@ namespace mrlldd.Caching.Stores
         {
             var storeDescriptor = ServiceDescriptor.Describe(typeof(ICacheStore<TFlag>), typeof(TStore), serviceLifetime);
             
-            // todo validate only single registration per flag
-            
-            services.Add(storeDescriptor);
-            services.AddScoped<ICacheStoreProvider<TFlag>>(sp =>
+            services.TryAdd(storeDescriptor);
+            services.TryAddScoped<ICacheStoreProvider<TFlag>>(sp =>
             {
                 var decorators = sp
                     .GetRequiredService<IEnumerable<ICacheStoreDecorator<TFlag>>>()

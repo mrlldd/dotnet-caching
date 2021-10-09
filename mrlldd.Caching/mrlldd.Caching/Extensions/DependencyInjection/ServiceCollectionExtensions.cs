@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Extensions.DependencyInjection.Internal;
 using mrlldd.Caching.Loaders;
@@ -34,7 +35,8 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
                 .SelectMany(a => a.GetTypes())
                 .ToArray();
             services
-                .AddScoped<IStoreOperationProvider, StoreOperationProvider>()
+                .TryAddScoped<IStoreOperationProvider, StoreOperationProvider>();
+            services
                 .AddCaches(types)
                 .AddLoaders(types)
                 .AddCachingStores();

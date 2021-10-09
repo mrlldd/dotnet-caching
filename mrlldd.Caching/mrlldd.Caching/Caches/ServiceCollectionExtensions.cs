@@ -17,7 +17,7 @@ namespace mrlldd.Caching.Caches
         {
             services.AddMemoryCache();
             services.TryAddSingleton<IDistributedCache, NoOpDistributedCache>();
-            services.AddScoped<ICacheProvider, CacheProvider>();
+            services.TryAddScoped<ICacheProvider, CacheProvider>();
             var cacheTypes = types
                 .CollectServices(typeof(ICache<,>), typeof(Cache<,>), typeof(IInternalCache<,>))
                 .ToArray();
@@ -37,12 +37,12 @@ namespace mrlldd.Caching.Caches
 
             foreach (var type in noflagTypes.Select(x => x.GenericArgument).Distinct())
             {
-                services.AddScoped(typeof(ICache<>).MakeGenericType(type), typeof(Cache<>).MakeGenericType(type));
+                services.TryAddScoped(typeof(ICache<>).MakeGenericType(type), typeof(Cache<>).MakeGenericType(type));
             }
 
             foreach (var item in noflagTypes)
             {
-                services.AddScoped(item.NoflagService, sp => sp.GetRequiredService(item.Marker));
+                services.TryAddScoped(item.NoflagService, sp => sp.GetRequiredService(item.Marker));
             }
 
             var toReadonlyCachesCollectionMethod = typeof(EnumerableExtensions)
@@ -52,7 +52,7 @@ namespace mrlldd.Caching.Caches
                 var finalToReadonlyCachesCollection =
                     toReadonlyCachesCollectionMethod.MakeGenericMethod(item.GenericArgument);
                 var genericEnumerable = typeof(IEnumerable<>).MakeGenericType(item.NoflagService);
-                services.AddScoped(typeof(IReadOnlyCachesCollection<>).MakeGenericType(item.GenericArgument),
+                services.TryAddScoped(typeof(IReadOnlyCachesCollection<>).MakeGenericType(item.GenericArgument),
                     sp =>
                     {
                         var enumerable = sp.GetRequiredService(genericEnumerable);
@@ -65,9 +65,8 @@ namespace mrlldd.Caching.Caches
                 .Aggregate(services, (prev, next) =>
                 {
                     var (implementation, service, markerInterface) = next;
-                    return prev
-                        .AddScoped(markerInterface, implementation)
-                        .AddScoped(service,
+                    prev.TryAddScoped(markerInterface, implementation);
+                    prev.TryAddScoped(service,
                             sp =>
                             {
                                 var result = sp.GetRequiredService<ICacheProvider>()
@@ -76,6 +75,7 @@ namespace mrlldd.Caching.Caches
                                     ? result.UnwrapAsSuccess()
                                     : throw result;
                             });
+                    return prev;
                 });
         }
     }
