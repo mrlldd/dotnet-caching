@@ -23,18 +23,6 @@ namespace mrlldd.Caching
         private void Populate<T>(T target) where T : ICaching 
             => target.Populate(serviceProvider, storeOperationProvider);
 
-        protected Result<T> InternalRequiredGet<T>() where T : ICaching 
-            => scopedServicesCache.TryGetValue(typeof(T), out var raw)
-               && raw is T service
-                ? service.AsSuccess()
-                : Result.Of(() =>
-                {
-                    var found = serviceProvider.GetRequiredService<T>();
-                    Populate(found);
-                    scopedServicesCache[typeof(T)] = found;
-                    return found;
-                });
-
         protected Result<object> InternalRequiredGet(Type type)
             => scopedServicesCache.TryGetValue(type, out var raw) && raw is ICaching
                 ? raw.AsSuccess()

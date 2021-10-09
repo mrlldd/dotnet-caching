@@ -1,5 +1,7 @@
 using System;
 using Functional.Result;
+using mrlldd.Caching.Flags;
+using mrlldd.Caching.Loaders.Internal;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Loaders
@@ -12,10 +14,6 @@ namespace mrlldd.Caching.Loaders
                 storeOperationProvider)
         {
         }
-
-        public Result<ICachingLoader<TArgs, TResult>> GetRequired<TArgs, TResult>()
-            where TResult : class
-            => InternalRequiredGet<ICachingLoader<TArgs, TResult>>();
 
         public Result<object> GetRequired(Type type)
             => InternalRequiredGet(type);
