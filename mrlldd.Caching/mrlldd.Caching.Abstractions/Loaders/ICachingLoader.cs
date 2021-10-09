@@ -1,16 +1,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Loaders
 {
-
     /// <summary>
     /// The base class for implemented caching loaders
     /// </summary>
     /// <typeparam name="TArgs">Loading argument type.</typeparam>
     /// <typeparam name="TResult">Loading result type.</typeparam>
-    public interface ICachingLoader<in TArgs, TResult> : ICaching
+    /// <typeparam name="TFlag">The caching flag.</typeparam>
+    public interface ICachingLoader<in TArgs, TResult, TFlag> : ICaching where TFlag : CachingFlag
     {
         // todo fix xml comments
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Bogus.DataSets;
 using FluentAssertions;
 using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,12 +11,13 @@ using mrlldd.Caching.Caches.Internal;
 using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Extensions.DependencyInjection;
 using mrlldd.Caching.Flags;
+using mrlldd.Caching.Loaders;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Tests.InvalidAssembly;
 using mrlldd.Caching.Tests.InvalidAssembly.Flags;
-using mrlldd.Caching.Tests.TestImplementations.Caches;
 using mrlldd.Caching.Tests.TestImplementations.Caches.DependencyResolving;
 using mrlldd.Caching.Tests.TestImplementations.Flags;
+using mrlldd.Caching.Tests.TestImplementations.Loaders.DependencyResolving;
 using mrlldd.Caching.Tests.TestImplementations.Stores;
 using mrlldd.Caching.Tests.TestUtilities;
 using NUnit.Framework;
@@ -32,6 +34,14 @@ namespace mrlldd.Caching.Tests
                 .AddCaching(typeof(DependencyResolvingTests).Assembly)
                 .BuildServiceProvider();
             func.Should().NotThrow();
+        }
+
+        [Test]
+        public void ThrowsIfNoAssemblies()
+        {
+            var services = new ServiceCollection();
+            Func<ICachingServiceCollection> func = () => services.AddCaching();
+            func.Should().ThrowExactly<InvalidOperationException>();
         }
 
         [Test]
@@ -66,16 +76,35 @@ namespace mrlldd.Caching.Tests
                 .And.Contain(mc);
         }
 
+        [Test]
+        public void ResolvesLoader()
+        {
+            var assembly = typeof(DependencyResolvingTests).Assembly;
+            var sp = new ServiceCollection()
+                .AddCaching(assembly)
+                .BuildServiceProvider();
+            var loader = sp.GetRequiredService<ILoader<DependencyResolvingUnit, string>>();
+            loader.Should()
+                .NotBeNull()
+                .And.BeOfType<DependencyResolvingLoader>();
+        }
+
 
         private static object[] resolvingCases =
         {
-            new object[] { typeof(ICache<DependencyResolvingUnit, InVoid>), typeof(DependencyResolvingVoidCache) },
-            new object[] { typeof(ICache<DependencyResolvingUnit, InMemory>), typeof(DependencyResolvingMemoryCache) }
+            new object[] {typeof(ICache<DependencyResolvingUnit, InVoid>), typeof(DependencyResolvingVoidCache)},
+            new object[] {typeof(ICache<DependencyResolvingUnit, InMemory>), typeof(DependencyResolvingMemoryCache)},
+            new object[] {typeof(ILoader<DependencyResolvingUnit, string>), typeof(DependencyResolvingLoader)},
+            new object[]
+            {
+                typeof(ICachingLoader<DependencyResolvingUnit, string, InVoid>),
+                typeof(DependencyResolvingVoidCachingLoader)
+            }
         };
 
         [Test]
         [TestCaseSource(nameof(resolvingCases))]
-        public void ResolvesSeparateCaches(Type interfaceType, Type implementationType)
+        public void ResolvesSeparateServices(Type interfaceType, Type implementationType)
         {
             var sp = new ServiceCollection()
                 .AddCaching(typeof(DependencyResolvingTests).Assembly)
@@ -101,10 +130,22 @@ namespace mrlldd.Caching.Tests
                 typeof(CacheCollectionUsingClass),
                 typeof(ICache<DependencyResolvingUnit>),
                 typeof(Cache<DependencyResolvingUnit>)
+            },
+            new object[]
+            {
+                typeof(LoaderUsingClass),
+                typeof(ILoader<DependencyResolvingUnit, string>),
+                typeof(DependencyResolvingLoader)
+            },
+            new object[]
+            {
+                typeof(CachingLoaderUsingClass),
+                typeof(ICachingLoader<DependencyResolvingUnit, string, InVoid>),
+                typeof(DependencyResolvingVoidCachingLoader)
             }
         };
-        
-        
+
+
         [Test]
         [TestCaseSource(nameof(usingServicesCases))]
         public void ResolvesUsingService(Type usingServiceType, Type interfaceType, Type implementationType)
@@ -119,7 +160,7 @@ namespace mrlldd.Caching.Tests
                 .NotBeNull()
                 .And.BeOfType(usingServiceType)
                 .And.BeAssignableTo<HasDependency>();
-            var hasDependency = (HasDependency)service;
+            var hasDependency = (HasDependency) service;
             hasDependency.Dependency
                 .Should()
                 .NotBeNull()
@@ -129,16 +170,31 @@ namespace mrlldd.Caching.Tests
 
         private class HasDependency
         {
-            protected HasDependency(object dependency) 
+            protected HasDependency(object dependency)
                 => Dependency = dependency;
 
-            public object Dependency {get; }
+            public object Dependency { get; }
+        }
+
+        private class LoaderUsingClass : HasDependency
+        {
+            public LoaderUsingClass(ILoader<DependencyResolvingUnit, string> dependency) : base(dependency)
+            {
+            }
+        }
+
+        private class CachingLoaderUsingClass : HasDependency
+        {
+            public CachingLoaderUsingClass(ICachingLoader<DependencyResolvingUnit, string, InVoid> dependency) :
+                base(dependency)
+            {
+            }
         }
 
         private class CacheUsingClass : HasDependency
         {
             public CacheUsingClass(ICache<DependencyResolvingUnit, InVoid> dependency) : base(dependency)
-            { 
+            {
             }
         }
 
@@ -150,7 +206,7 @@ namespace mrlldd.Caching.Tests
         }
 
         [Test]
-        public void ResolvesGenericImplementation()
+        public void ResolvesCacheGenericImplementation()
         {
             var sp = new ServiceCollection()
                 .UseCachingStore<InGenericScope, GenericScopeStore>()
@@ -163,19 +219,22 @@ namespace mrlldd.Caching.Tests
                 .And.BeOfType<GenericImplDependencyResolvingCache>();
         }
 
-        [Test]
-        public void ThrowsIfThereIsNoAnyStoreProvider()
+        private static object[] notExistingStoreCases =
         {
-            var sp = new ServiceCollection()
-                .AddCaching(typeof(DependencyResolvingTests).Assembly)
-                .BuildServiceProvider();
-            Func<ICache<InvalidUnit, InNotExistingStore>> func = () => sp.GetRequiredService<ICache<InvalidUnit, InNotExistingStore>>();
-            func.Should().ThrowExactly<StoreNotFoundException<InNotExistingStore>>();
-        }
+            typeof(ICache<InvalidUnit, InNotExistingStore>),
+            typeof(ICachingLoader<InvalidUnit, InvalidUnit, InNotExistingStore>)
+        };
 
         [Test]
-        public void ThrowsIfStoreIsMissingOnRegistration()
+        [TestCaseSource(nameof(notExistingStoreCases))]
+        public void ThrowsIfStoreNotFound(Type serviceType)
         {
+            var sp = new ServiceCollection()
+                .AddCaching(typeof(InvalidUnit).Assembly)
+                .BuildServiceProvider();
+            Func<object> func = () =>
+                sp.GetRequiredService(serviceType);
+            func.Should().ThrowExactly<StoreNotFoundException<InNotExistingStore>>();
         }
     }
 }

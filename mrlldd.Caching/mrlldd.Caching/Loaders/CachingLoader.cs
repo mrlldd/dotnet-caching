@@ -6,7 +6,7 @@ using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Flags;
-using mrlldd.Caching.Internal;
+using mrlldd.Caching.Loaders.Internal;
 
 namespace mrlldd.Caching.Loaders
 {
@@ -17,7 +17,7 @@ namespace mrlldd.Caching.Loaders
     /// <typeparam name="TResult">Loading result type.</typeparam>
     /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
     public abstract class CachingLoader<TArgs, TResult, TStoreFlag> : Caching<TResult, TStoreFlag>,
-        ICachingLoader<TArgs, TResult>, IInternalLoaderService<TArgs, TResult>
+        ICachingLoader<TArgs, TResult, TStoreFlag>, IInternalLoaderService<TArgs, TResult, TStoreFlag>
         where TResult : class
         where TStoreFlag : CachingFlag
     {

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using mrlldd.Caching.Exceptions;
+﻿using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Flags;
-using mrlldd.Caching.Stores.Decoration;
 
 namespace mrlldd.Caching.Stores.Internal
 {

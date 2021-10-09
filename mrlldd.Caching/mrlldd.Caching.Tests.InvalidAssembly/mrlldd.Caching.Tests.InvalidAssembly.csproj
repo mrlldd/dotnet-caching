@@ -5,10 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Loaders" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\mrlldd.Caching.Abstractions\mrlldd.Caching.Abstractions.csproj" />
       <ProjectReference Include="..\mrlldd.Caching\mrlldd.Caching.csproj" />
     </ItemGroup>

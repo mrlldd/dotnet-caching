@@ -16,10 +16,14 @@ namespace mrlldd.Caching.Stores
             where TFlag : CachingFlag
         {
             var storeDescriptor = ServiceDescriptor.Describe(typeof(ICacheStore<TFlag>), typeof(TStore), serviceLifetime);
+            
+            // todo validate only single registration per flag
+            
             services.Add(storeDescriptor);
             services.AddScoped<ICacheStoreProvider<TFlag>>(sp =>
             {
-                var decorators = sp.GetRequiredService<IEnumerable<ICacheStoreDecorator<TFlag>>>()
+                var decorators = sp
+                    .GetRequiredService<IEnumerable<ICacheStoreDecorator<TFlag>>>()
                     .ToArray();
                 Array.Sort(decorators, CacheStoreDecoratorComparer<TFlag>.Instance);
                 var s = sp.GetRequiredService<ICacheStore<TFlag>>();

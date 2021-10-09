@@ -7,7 +7,7 @@ namespace mrlldd.Caching
     /// </summary>
     public class CachingOptions
     {
-        private CachingOptions(bool shouldCache, TimeSpan slidingExpiration)
+        private CachingOptions(bool shouldCache, TimeSpan? slidingExpiration)
         {
             IsCaching = shouldCache;
             SlidingExpiration = slidingExpiration;
@@ -20,14 +20,12 @@ namespace mrlldd.Caching
         /// <summary>
         /// The cache item expiration timeout.
         /// </summary>
-        public TimeSpan SlidingExpiration { get; }
+        public TimeSpan? SlidingExpiration { get; }
         
-        private static readonly TimeSpan DisabledTimeout = TimeSpan.FromMilliseconds(1);
-
         /// <summary>
         /// Options that represents a disabled caching.
         /// </summary>
-        public static readonly CachingOptions Disabled = new(false, DisabledTimeout);
+        public static readonly CachingOptions Disabled = new(false, null);
         
         /// <summary>
         /// The factory method used for creating an enabled caching.

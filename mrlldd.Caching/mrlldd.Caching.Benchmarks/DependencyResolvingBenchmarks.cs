@@ -70,28 +70,28 @@ namespace mrlldd.Caching.Benchmarks
 
         [Benchmark]
         public void Resolve_Clean_GenericLoader() =>
-            noDecoratorsCachingServiceProvider.GetRequiredService<ICachingLoader<long, string>>();
+            noDecoratorsCachingServiceProvider.GetRequiredService<ICachingLoader<long, string, InVoid>>();
 
         [Benchmark]
         public void Resolve_PerfLog_DecoratedGenericCache() => perfLoggingDecoratedServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]
         public void Resolve_PerfLog_DecoratedGenericLoader() =>
-            perfLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string>>();
+            perfLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string, InVoid>>();
 
         [Benchmark]
         public void Resolve_ActionsLog_DecoratedGenericCache() => actionsLoggingDecoratedServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]
         public void Resolve_ActionsLog_DecoratedGenericLoader() =>
-            actionsLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string>>();
+            actionsLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string, InVoid>>();
         
         [Benchmark]
         public void Resolve_ActionsAndPerfLog_DecoratedGenericCache() => actionsAndPerfLoggingDecoratedServiceProvider.GetRequiredService<ICache<long, InVoid>>();
 
         [Benchmark]
         public void Resolve_ActionsAndPerfLog_DecoratedGenericLoader() =>
-            actionsAndPerfLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string>>();
+            actionsAndPerfLoggingDecoratedServiceProvider.GetRequiredService<ICachingLoader<long, string, InVoid>>();
 
 
         public class ImplementedCache : Cache<long, InVoid>
