@@ -34,8 +34,8 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
             var types = assemblies
                 .SelectMany(a => a.GetTypes())
                 .ToArray();
-            services
-                .TryAddScoped<IStoreOperationProvider, StoreOperationProvider>();
+            services.TryAddScoped<IStoreOperationProvider, StoreOperationProvider>();
+            services.TryAddScoped<CachingProvider>();
             services
                 .AddCaches(types)
                 .AddLoaders(types)

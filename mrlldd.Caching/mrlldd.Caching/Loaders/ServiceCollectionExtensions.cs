@@ -13,9 +13,8 @@ namespace mrlldd.Caching.Loaders
     {
         public static IServiceCollection AddLoaders(this IServiceCollection services, ICollection<Type> types)
         {
-            services.TryAddScoped<ILoaderProvider, LoaderProvider>();
             var cachingLoaderTypes = types
-                .CollectServices(typeof(ICachingLoader<,,>), typeof(CachingLoader<,,>), typeof(IInternalLoaderService<,,>));
+                .CollectServices(typeof(ICachingLoader<,,>), typeof(CachingLoader<,,>), typeof(IInternalLoader<,,>));
             var loaderTypes = types
                 .CollectServices(typeof(ILoader<,>));
             foreach (var (implementation, service) in loaderTypes)
@@ -33,7 +32,7 @@ namespace mrlldd.Caching.Loaders
                     prev.TryAddScoped(service,
                             sp =>
                             {
-                                var result = sp.GetRequiredService<ILoaderProvider>()
+                                var result = sp.GetRequiredService<CachingProvider>()
                                     .GetRequired(markerInterface);
                                 return result.Successful
                                     ? result.UnwrapAsSuccess()

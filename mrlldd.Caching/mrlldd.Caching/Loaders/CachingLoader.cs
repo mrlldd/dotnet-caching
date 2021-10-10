@@ -17,7 +17,7 @@ namespace mrlldd.Caching.Loaders
     /// <typeparam name="TResult">Loading result type.</typeparam>
     /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
     public abstract class CachingLoader<TArgs, TResult, TStoreFlag> : Caching<TResult, TStoreFlag>,
-        ICachingLoader<TArgs, TResult, TStoreFlag>, IInternalLoaderService<TArgs, TResult, TStoreFlag>
+        ICachingLoader<TArgs, TResult, TStoreFlag>, IInternalLoader<TArgs, TResult, TStoreFlag>
         where TResult : class
         where TStoreFlag : CachingFlag
     {

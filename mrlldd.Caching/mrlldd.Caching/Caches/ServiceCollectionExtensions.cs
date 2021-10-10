@@ -17,7 +17,6 @@ namespace mrlldd.Caching.Caches
         {
             services.AddMemoryCache();
             services.TryAddSingleton<IDistributedCache, NoOpDistributedCache>();
-            services.TryAddScoped<ICacheProvider, CacheProvider>();
             var cacheTypes = types
                 .CollectServices(typeof(ICache<,>), typeof(Cache<,>), typeof(IInternalCache<,>))
                 .ToArray();
@@ -42,7 +41,7 @@ namespace mrlldd.Caching.Caches
 
             foreach (var item in noflagTypes)
             {
-                services.TryAddScoped(item.NoflagService, sp => sp.GetRequiredService(item.Marker));
+                services.AddScoped(item.NoflagService, sp => sp.GetRequiredService(item.Marker));
             }
 
             var toReadonlyCachesCollectionMethod = typeof(EnumerableExtensions)
@@ -69,7 +68,7 @@ namespace mrlldd.Caching.Caches
                     prev.TryAddScoped(service,
                             sp =>
                             {
-                                var result = sp.GetRequiredService<ICacheProvider>()
+                                var result = sp.GetRequiredService<CachingProvider>()
                                     .GetRequired(markerInterface);
                                 return result.Successful
                                     ? result.UnwrapAsSuccess()

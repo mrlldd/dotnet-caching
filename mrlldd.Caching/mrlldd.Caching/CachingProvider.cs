@@ -7,31 +7,39 @@ using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching
 {
-    internal abstract class CachingProvider
+    internal sealed class CachingProvider
     {
         private readonly IServiceProvider serviceProvider;
         private readonly IDictionary<Type, object> scopedServicesCache = new Dictionary<Type, object>();
         private readonly IStoreOperationProvider storeOperationProvider;
 
-        protected CachingProvider(IServiceProvider serviceProvider,
+        public  CachingProvider(IServiceProvider serviceProvider,
             IStoreOperationProvider storeOperationProvider)
         {
             this.serviceProvider = serviceProvider;
             this.storeOperationProvider = storeOperationProvider;
         }
 
-        private void Populate<T>(T target) where T : ICaching 
+        private void Populate(ICaching target) 
             => target.Populate(serviceProvider, storeOperationProvider);
 
-        protected Result<object> InternalRequiredGet(Type type)
-            => scopedServicesCache.TryGetValue(type, out var raw) && raw is ICaching
+        public Result<object> GetRequired(Type type)
+        {
+            if (!typeof(ICaching).IsAssignableFrom(type))
+            {
+                return new ArgumentException(
+                        $"Type '{type.FullName}' is not assignable to '${typeof(ICaching).FullName}'.", nameof(type))
+                    .AsFail<object>();
+            }
+            return scopedServicesCache.TryGetValue(type, out var raw) && raw is ICaching
                 ? raw.AsSuccess()
                 : Result.Of(() =>
                 {
                     var found = serviceProvider.GetRequiredService(type);
-                    Populate((ICaching)found);
+                    Populate((ICaching) found);
                     scopedServicesCache[type] = found;
                     return found;
                 });
+        }
     }
 }
