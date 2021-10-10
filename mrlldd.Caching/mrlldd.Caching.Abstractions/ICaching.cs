@@ -1,4 +1,5 @@
 using System;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching
@@ -16,5 +17,13 @@ namespace mrlldd.Caching
         /// <param name="storeOperationProvider">The store operation provider.</param>
         void Populate(IServiceProvider serviceProvider,
             IStoreOperationProvider storeOperationProvider);
+    }
+
+    /// <summary>
+    /// The interface that represents a generic base class for implementing caching utilities.
+    /// </summary>
+    public interface ICaching<T, TFlag> : ICaching where TFlag : CachingFlag
+    {
+        
     }
 }
