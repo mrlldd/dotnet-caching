@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Extensions.DependencyInjection
 {
@@ -7,5 +8,6 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
     /// </summary>
     public interface ICachingServiceCollection : IServiceCollection
     {
+        IDecoratorsCachingServiceCollection<TFlag> Decorators<TFlag>() where TFlag : CachingFlag;
     }
 }

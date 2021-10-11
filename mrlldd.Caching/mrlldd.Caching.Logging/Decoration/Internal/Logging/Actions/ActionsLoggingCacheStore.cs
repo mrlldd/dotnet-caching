@@ -1,25 +1,23 @@
-﻿using System.Diagnostics;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Functional.Object.Extensions;
 using Functional.Result;
 using Functional.Result.Extensions;
 using Microsoft.Extensions.Logging;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Logging;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
 {
-    internal class ActionsLoggingCacheStore<TCachingStore, TOptions> : ICacheStore<TOptions>
-        where TCachingStore : ICacheStore<TOptions>
+    internal class ActionsLoggingCacheStore<TFlag> : ICacheStore<TFlag> where TFlag : CachingFlag
     {
-        private readonly TCachingStore sourceCacheStore;
-        private readonly ILogger<ActionsLoggingCacheStore<TCachingStore, TOptions>> logger;
+        private readonly ICacheStore<TFlag> sourceCacheStore;
+        private readonly ILogger<ICacheStore<TFlag>> logger;
         private readonly ICachingActionsLoggingOptions loggingOptions;
         private readonly string storeLogPrefix;
 
-        protected ActionsLoggingCacheStore(TCachingStore sourceCacheStore,
-            ILogger<ActionsLoggingCacheStore<TCachingStore, TOptions>> logger,
+        public ActionsLoggingCacheStore(ICacheStore<TFlag> sourceCacheStore,
+            ILogger<ICacheStore<TFlag>> logger,
             ICachingActionsLoggingOptions loggingOptions,
             string storeLogPrefix)
         {
@@ -32,11 +30,12 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
         public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
         {
             LogGetTry<T>(key, metadata);
-            return sourceCacheStore.Get<T>(key, metadata)
-                .Effect(result => LogGetResult(result, key, metadata));
+            var result = sourceCacheStore.Get<T>(key, metadata);
+            LogGetResult(result, key, metadata);
+            return result;
         }
 
-        public async Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
             LogGetTry<T>(key, metadata);
@@ -45,7 +44,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public Result Set<T>(string key, T value, TOptions options, ICacheStoreOperationMetadata metadata)
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
         {
             LogSetTry<T>(key, metadata);
             var result = sourceCacheStore.Set(key, value, options, metadata);
@@ -53,7 +52,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async Task<Result> SetAsync<T>(string key, T value, TOptions options,
+        public async ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
             ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
@@ -71,7 +70,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
             LogRefreshTry(key, metadata);
@@ -88,7 +87,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
             LogRemoveTry(key, metadata);

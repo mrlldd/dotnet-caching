@@ -1,14 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Stores
 {
     /// <summary>
     /// The interface that represents caching store and provides cache operations.
     /// </summary>
-    /// <typeparam name="TOptions">The generic parameter that represents cache entry options.</typeparam>
-    public interface ICacheStore<in TOptions>
+    // ReSharper disable once UnusedTypeParameter
+    public interface ICacheStore<TFlag> where TFlag : CachingFlag
     {
         /// <summary>
         /// The method for getting cache entry.
@@ -17,7 +18,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Result{T}"/> with value of type <typeparamref name="T"/>.</returns>
-        Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata);
+        Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata);
 
         /// <summary>
         /// The method for getting cache entry.
@@ -27,7 +28,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result{T}"/> with value of type <typeparamref name="T"/>.</returns>
-        Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
+        ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
 
         /// <summary>
         /// The method for setting cache entry.
@@ -38,7 +39,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Result"/>.</returns>
-        Result Set<T>(string key, T value, TOptions options, ICacheStoreOperationMetadata metadata);
+        Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata);
 
         /// <summary>
         /// The method for setting cache entry.
@@ -50,7 +51,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <typeparam name="T">The result type.</typeparam>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result"/>.</returns>
-        Task<Result> SetAsync<T>(string key, T value, TOptions options, ICacheStoreOperationMetadata metadata,
+        ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default);
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace mrlldd.Caching.Stores
         /// <param name="token">The cancellation token.</param>
         /// <param name="metadata">The store operation metadata.</param>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result"/>.</returns>
-        Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
+        ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
 
         /// <summary>
         /// The method for removing cache entry expiration.
@@ -85,6 +86,6 @@ namespace mrlldd.Caching.Stores
         /// <param name="metadata">The store operation metadata.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{T}"/> that returns <see cref="Result"/>.</returns>
-        Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
+        ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default);
     }
 }

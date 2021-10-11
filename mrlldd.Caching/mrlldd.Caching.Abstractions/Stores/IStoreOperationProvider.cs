@@ -8,7 +8,8 @@
         /// <summary>
         /// The method that handles uniqueness of every new operation.
         /// </summary>
+        /// <param name="cacheKeyDelimiter">The cache key delimiter.</param>
         /// <returns>The cache store operation metadata.</returns>
-        ICacheStoreOperationMetadata Next();
+        ICacheStoreOperationMetadata Next(string cacheKeyDelimiter);
     }
 }

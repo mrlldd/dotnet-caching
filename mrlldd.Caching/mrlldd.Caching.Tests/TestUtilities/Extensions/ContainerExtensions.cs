@@ -1,15 +1,16 @@
 ﻿using DryIoc;
-using Microsoft.Extensions.Caching.Distributed;
+using Moq;
 
 namespace mrlldd.Caching.Tests.TestUtilities.Extensions
 {
     public static class ContainerExtensions
     {
-        public static IContainer WithFakeDistributedCache(this IContainer container)
+        public static IContainer AddMock<T>(this IContainer container, MockRepository mockRepository) where T : class
         {
-            container.Register<IDistributedCache, FakeDistributedCache>();
+            var mock = mockRepository.Create<T>();
+            container.RegisterInstance(mock);
+            container.RegisterInstance(mock.Object);
             return container;
         }
-
     }
 }

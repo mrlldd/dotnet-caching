@@ -1,76 +1,45 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Functional.Object.Extensions;
 using Functional.Result;
 using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Stores;
-using mrlldd.Caching.Stores.Decoration;
 
 namespace mrlldd.Caching
 {
-    internal abstract class CachingProvider
+    internal sealed class CachingProvider
     {
         private readonly IServiceProvider serviceProvider;
-        private readonly ICacheStoreDecorator[] decorators;
         private readonly IDictionary<Type, object> scopedServicesCache = new Dictionary<Type, object>();
-        private readonly IBubbleCacheStore bubbleCacheStore;
         private readonly IStoreOperationProvider storeOperationProvider;
-        private readonly IMemoryCacheStore memoryCacheStore;
-        private readonly IDistributedCacheStore distributedCacheStore;
 
-        protected CachingProvider(IServiceProvider serviceProvider,
-            IMemoryCacheStore memoryCacheStore,
-            IDistributedCacheStore distributedCacheStore,
-            IBubbleCacheStore bubbleCacheStore,
-            IStoreOperationProvider storeOperationProvider,
-            IEnumerable<ICacheStoreDecorator> decorators)
+        public  CachingProvider(IServiceProvider serviceProvider,
+            IStoreOperationProvider storeOperationProvider)
         {
             this.serviceProvider = serviceProvider;
-            this.memoryCacheStore = memoryCacheStore;
-            this.distributedCacheStore = distributedCacheStore;
-            this.bubbleCacheStore = bubbleCacheStore;
             this.storeOperationProvider = storeOperationProvider;
-            this.decorators = decorators
-                .OrderBy(x => x.Order)
-                .ToArray();
         }
 
-        private void Populate<T>(T target) where T : ICaching 
-            => target.Populate(
-                target.IsUsingMemory
-                    ? decorators.Aggregate(memoryCacheStore, (store, decorator) => decorator.Decorate(store))
-                    : bubbleCacheStore,
-                target.IsUsingDistributed
-                    ? decorators.Aggregate(distributedCacheStore, (store, decorator) => decorator.Decorate(store))
-                    : bubbleCacheStore,
-                storeOperationProvider
-            );
+        private void Populate(ICaching target) 
+            => target.Populate(serviceProvider, storeOperationProvider);
 
-        protected Result<T> InternalRequiredGet<T>() where T : ICaching
-            => scopedServicesCache.TryGetValue(typeof(T), out var raw)
-               && raw is T service
-                ? service.AsSuccess()
-                : Result.Of(() => serviceProvider
-                    .GetRequiredService<T>()
-                    .Effect(Populate)
-                    .Effect(x => scopedServicesCache[typeof(T)] = x));
-
-        protected Result<object> InternalRequiredGet(Type type)
-            => scopedServicesCache.TryGetValue(type, out var raw) && raw is ICaching
+        public Result<object> GetRequired(Type type)
+        {
+            if (!typeof(ICaching).IsAssignableFrom(type))
+            {
+                return new ArgumentException(
+                        $"Type '{type.FullName}' is not assignable to '${typeof(ICaching).FullName}'.", nameof(type))
+                    .AsFail<object>();
+            }
+            return scopedServicesCache.TryGetValue(type, out var raw) && raw is ICaching
                 ? raw.AsSuccess()
-                : Result.Of(() => serviceProvider.GetRequiredService(type)
-                    .Effect(x => Populate((ICaching) x))
-                    .Effect(x => scopedServicesCache[type] = x));
-
-        protected T? InternalGet<T>() where T : ICaching
-            => scopedServicesCache.TryGetValue(typeof(T), out var raw)
-               && raw is T service
-                ? service
-                : serviceProvider
-                    .GetService<T>()
-                    .EffectIfPresent(Populate)
-                    .EffectIfPresent(x => scopedServicesCache[typeof(T)] = x);
+                : Result.Of(() =>
+                {
+                    var found = serviceProvider.GetRequiredService(type);
+                    Populate((ICaching) found);
+                    scopedServicesCache[type] = found;
+                    return found;
+                });
+        }
     }
 }

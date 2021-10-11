@@ -1,17 +1,17 @@
 ﻿using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Functional.Result;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Extensions.DependencyInjection;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Benchmarks.Cache
 {
     public class CleanCacheBenchmarks : Benchmark
     {
-        private readonly ICache<int> cleanMemoryCacheImplementation;
-        private readonly ICache<byte> cleanDistributedCacheImplementation;
-        private readonly ICache<short> cleanMemoryAndDistributedCacheImplementation;
-
+        private readonly ICache<int, InMemory> cleanMemoryCacheImplementation;
+        private readonly ICache<byte,  InDistributed> cleanDistributedCacheImplementation;
 
         public CleanCacheBenchmarks()
         {
@@ -20,23 +20,22 @@ namespace mrlldd.Caching.Benchmarks.Cache
                 .AddCaching(typeof(CleanCacheBenchmarks).Assembly)
                 .BuildServiceProvider()
                 .CreateScope().ServiceProvider;
-            cleanMemoryCacheImplementation = cleanSp.GetRequiredService<ICache<int>>();
-            cleanDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<byte>>();
-            cleanMemoryAndDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<short>>();
+            cleanMemoryCacheImplementation = cleanSp.GetRequiredService<ICache<int, InMemory>>();
+            cleanDistributedCacheImplementation = cleanSp.GetRequiredService<ICache<byte, InDistributed>>();
         }
 
         [Benchmark]
         public void Cache_Caching_CleanMemoryCacheImplementation_Set_Sync() => cleanMemoryCacheImplementation.Set(3);
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Set_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanMemoryCacheImplementation_Set_Async() =>
             cleanMemoryCacheImplementation.SetAsync(3);
 
         [Benchmark]
         public void Cache_Caching_CleanMemoryCacheImplementation_Get_Sync() => cleanMemoryCacheImplementation.Get();
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Get_Async() =>
+        public ValueTask<Result<int>> Cache_Caching_CleanMemoryCacheImplementation_Get_Async() =>
             cleanMemoryCacheImplementation.GetAsync();
 
         [Benchmark]
@@ -44,7 +43,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanMemoryCacheImplementation.Refresh();
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Refresh_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanMemoryCacheImplementation_Refresh_Async() =>
             cleanMemoryCacheImplementation.RefreshAsync();
 
         [Benchmark]
@@ -52,7 +51,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanMemoryCacheImplementation.Remove();
 
         [Benchmark]
-        public Task Cache_Caching_CleanMemoryCacheImplementation_Remove_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanMemoryCacheImplementation_Remove_Async() =>
             cleanMemoryCacheImplementation.RemoveAsync();
 
         [Benchmark]
@@ -60,7 +59,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Set(3);
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Set_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanDistributedCacheImplementation_Set_Async() =>
             cleanDistributedCacheImplementation.SetAsync(3);
 
         [Benchmark]
@@ -68,7 +67,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Get();
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Get_Async() =>
+        public ValueTask<Result<byte>> Cache_Caching_CleanDistributedCacheImplementation_Get_Async() =>
             cleanDistributedCacheImplementation.GetAsync();
 
         [Benchmark]
@@ -76,7 +75,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Refresh();
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Refresh_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanDistributedCacheImplementation_Refresh_Async() =>
             cleanDistributedCacheImplementation.RefreshAsync();
 
         [Benchmark]
@@ -84,39 +83,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
             cleanDistributedCacheImplementation.Remove();
 
         [Benchmark]
-        public Task Cache_Caching_CleanDistributedCacheImplementation_Remove_Async() =>
+        public ValueTask<Result> Cache_Caching_CleanDistributedCacheImplementation_Remove_Async() =>
             cleanDistributedCacheImplementation.RemoveAsync();
-
-        [Benchmark]
-        public void Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Set_Sync() =>
-            cleanMemoryAndDistributedCacheImplementation.Set(3);
-
-        [Benchmark]
-        public Task Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Set_Async() =>
-            cleanMemoryAndDistributedCacheImplementation.SetAsync(3);
-
-        [Benchmark]
-        public void Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Get_Sync() =>
-            cleanMemoryAndDistributedCacheImplementation.Get();
-
-        [Benchmark]
-        public Task Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Get_Async() =>
-            cleanMemoryAndDistributedCacheImplementation.GetAsync();
-
-        [Benchmark]
-        public void Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Refresh_Sync() =>
-            cleanMemoryAndDistributedCacheImplementation.Refresh();
-
-        [Benchmark]
-        public Task Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Refresh_Async() =>
-            cleanMemoryAndDistributedCacheImplementation.RefreshAsync();
-
-        [Benchmark]
-        public void Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Remove_Sync() =>
-            cleanMemoryAndDistributedCacheImplementation.Remove();
-
-        [Benchmark]
-        public Task Cache_Caching_CleanMemoryAndDistributedCacheImplementation_Remove_Async() =>
-            cleanMemoryAndDistributedCacheImplementation.RemoveAsync();
     }
 }

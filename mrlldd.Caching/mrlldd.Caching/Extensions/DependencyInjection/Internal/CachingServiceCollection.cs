@@ -1,52 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using mrlldd.Caching.Flags;
 
 namespace mrlldd.Caching.Extensions.DependencyInjection.Internal
 {
     internal class CachingServiceCollection : ICachingServiceCollection 
     {
-        private readonly IServiceCollection serviceCollection;
-        public CachingServiceCollection(IServiceCollection serviceCollection) 
-            => this.serviceCollection = serviceCollection;
+        protected readonly IServiceCollection Services;
+        public CachingServiceCollection(IServiceCollection services) 
+            => this.Services = services;
 
         public IEnumerator<ServiceDescriptor> GetEnumerator()
-            => serviceCollection.GetEnumerator();
+            => Services.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-            => serviceCollection.GetEnumerator();
+            => Services.GetEnumerator();
 
         public void Add(ServiceDescriptor item)
-            => serviceCollection.Add(item);
+            => Services.Add(item);
 
         public void Clear()
-            => serviceCollection.Clear();
+            => Services.Clear();
 
         public bool Contains(ServiceDescriptor item)
-            => serviceCollection.Contains(item);
+            => Services.Contains(item);
 
         public void CopyTo(ServiceDescriptor[] array, int arrayIndex)
-            => serviceCollection.CopyTo(array, arrayIndex);
+            => Services.CopyTo(array, arrayIndex);
 
         public bool Remove(ServiceDescriptor item)
-            => serviceCollection.Remove(item);
+            => Services.Remove(item);
 
-        public int Count => serviceCollection.Count;
-        public bool IsReadOnly => serviceCollection.IsReadOnly;
+        public int Count => Services.Count;
+        public bool IsReadOnly => Services.IsReadOnly;
 
         public int IndexOf(ServiceDescriptor item)
-            => serviceCollection.IndexOf(item);
+            => Services.IndexOf(item);
 
         public void Insert(int index, ServiceDescriptor item)
-            => serviceCollection.Insert(index, item);
+            => Services.Insert(index, item);
 
         public void RemoveAt(int index)
-            => serviceCollection.RemoveAt(index);
+            => Services.RemoveAt(index);
 
         public ServiceDescriptor this[int index]
         {
-            get => serviceCollection[index];
-            set => serviceCollection[index] = value;
+            get => Services[index];
+            set => Services[index] = value;
         }
+
+        public IDecoratorsCachingServiceCollection<TFlag> Decorators<TFlag>() where TFlag : CachingFlag
+            => new DecoratorsCachingServiceCollection<TFlag>(this);
     }
 }

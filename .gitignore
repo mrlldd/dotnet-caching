@@ -11,3 +11,5 @@ mrlldd.Caching/mrlldd.Caching.sln.DotSettings.user
 mrlldd.Caching/mrlldd.Caching/mrlldd.Caching.xml
 mrlldd.Caching/mrlldd.Caching.Benchmarks/obj
 mrlldd.Caching/mrlldd.Caching.Benchmarks/bin
+mrlldd.Caching/mrlldd.Caching.Tests.InvalidAssembly/bin
+mrlldd.Caching/mrlldd.Caching.Tests.InvalidAssembly/obj

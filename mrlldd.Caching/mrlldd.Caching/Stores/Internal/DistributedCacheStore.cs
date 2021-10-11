@@ -1,60 +1,83 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Functional.Object.Extensions;
 using Functional.Result;
 using Microsoft.Extensions.Caching.Distributed;
+using mrlldd.Caching.Exceptions;
+using mrlldd.Caching.Flags;
+using Newtonsoft.Json;
 
 namespace mrlldd.Caching.Stores.Internal
 {
-    internal class DistributedCacheStore : CachingStore, IDistributedCacheStore
+    internal class DistributedCacheStore : ICacheStore<InDistributed>
     {
         private readonly IDistributedCache distributedCache;
 
         public DistributedCacheStore(IDistributedCache distributedCache)
             => this.distributedCache = distributedCache;
 
-        public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() =>
             {
                 var fromCache = distributedCache.GetString(key);
                 return string.IsNullOrEmpty(fromCache)
-                    ? default
-                    : Deserialize<T>(fromCache);
+                    ? throw new CacheMissException(key)
+                    : Deserialize<T>(fromCache) ?? throw new DeserializationFailException(key, fromCache);
             });
 
-        public Task<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Result.Of(async () =>
+        {
+            var task = Result.Of(async () =>
             {
                 var fromCache = await distributedCache.GetStringAsync(key, token);
                 return string.IsNullOrEmpty(fromCache)
-                    ? default
-                    : Deserialize<T>(fromCache);
+                    ? throw new CacheMissException(key)
+                    : Deserialize<T>(fromCache) ?? throw new DeserializationFailException(key, fromCache);
             });
+            return new ValueTask<Result<T>>(task);
+        }
 
-        public Result Set<T>(string key, T value,
-            DistributedCacheEntryOptions options,
-            ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => distributedCache.SetString(key, Serialize(value), options));
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
+            => Result.Of(() => distributedCache.SetString(key, Serialize(value), new DistributedCacheEntryOptions
+            {
+                SlidingExpiration = options.SlidingExpiration
+            }));
 
-        public Task<Result> SetAsync<T>(string key, T value, DistributedCacheEntryOptions options,
-            ICacheStoreOperationMetadata metadata,
-            CancellationToken token = default)
-            => Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value), options, token));
+        public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
+            ICacheStoreOperationMetadata metadata, CancellationToken token = default)
+        {
+            var task =  Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value),
+                new DistributedCacheEntryOptions
+                {
+                    SlidingExpiration = options.SlidingExpiration
+                }, token));
+            return new ValueTask<Result>(task);
+        }
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() => distributedCache.Refresh(key));
 
-        public Task<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Result.Of(() => distributedCache.RefreshAsync(key, token));
+        {
+            var task = Result.Of(() => distributedCache.RefreshAsync(key, token));
+            return new ValueTask<Result>(task);
+        }
 
         public Result Remove(string key, ICacheStoreOperationMetadata metadata)
             => Result.Of(() => distributedCache.Remove(key));
 
-        public Task<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => Result.Of(() => distributedCache.RemoveAsync(key, token));
+        {
+            var task = Result.Of(() => distributedCache.RemoveAsync(key, token));
+            return new ValueTask<Result>(task);
+        }
+
+        private static string Serialize<T>(T data)
+            => JsonConvert.SerializeObject(data);
+
+        private static T? Deserialize<T>(string raw)
+            => JsonConvert.DeserializeObject<T>(raw);
     }
 }

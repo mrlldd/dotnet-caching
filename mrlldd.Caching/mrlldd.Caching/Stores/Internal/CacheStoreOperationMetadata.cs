@@ -2,9 +2,13 @@
 {
     internal record CacheStoreOperationMetadata : ICacheStoreOperationMetadata
     {
-        public CacheStoreOperationMetadata(int id) 
-            => OperationId = id;
+        public CacheStoreOperationMetadata(int id, string delimiter)
+        {
+            OperationId = id;
+            Delimiter = delimiter;
+        }
 
         public int OperationId { get; }
+        public string Delimiter { get; }
     }
 }

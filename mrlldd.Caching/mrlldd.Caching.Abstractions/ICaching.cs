@@ -1,3 +1,5 @@
+using System;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching
@@ -11,20 +13,17 @@ namespace mrlldd.Caching
         /// A method used for populating that class with dependencies,
         /// created in order to reduce the boilerplate constructor code in every implementation.
         /// </summary>
-        /// <param name="memoryCacheStore">The memory cache.</param>
-        /// <param name="distributedCacheStore">The distributed cache.</param>
+        /// <param name="serviceProvider">The service provider.</param>
         /// <param name="storeOperationProvider">The store operation provider.</param>
-        void Populate(IMemoryCacheStore memoryCacheStore,
-            IDistributedCacheStore distributedCacheStore,
+        void Populate(IServiceProvider serviceProvider,
             IStoreOperationProvider storeOperationProvider);
+    }
+
+    /// <summary>
+    /// The interface that represents a generic base class for implementing caching utilities.
+    /// </summary>
+    public interface ICaching<T, TFlag> : ICaching where TFlag : CachingFlag
+    {
         
-        /// <summary>
-        /// Indicates that caching service is using memory to cache data.
-        /// </summary>
-        bool IsUsingMemory { get; }
-        /// <summary>
-        /// Indicates that caching service is using distributed cache to cache data.
-        /// </summary>
-        bool IsUsingDistributed { get; }
     }
 }
