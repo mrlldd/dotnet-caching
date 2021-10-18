@@ -47,23 +47,24 @@ Example of using of cache:
 public class IntCacheUsingService  
 {  
 	private readonly ICache<int, InMemory> intCache;  
-  
+
 	public IntCacheUsingService(ICache<int, InMemory> intCache)   
 		=> this.intCache = intCache;  
-  
-  
- 	public int CalculateWithMemoization(int a, int b)  
- 	{
+
+
+	public int CalculateWithMemoization(int a, int b)  
+	{
 		var fromCache = intCache.Get();  
 		if (fromCache.Successful)  
 		{
 			return fromCache;  
 		} 
-		
+
 		var result = PerformExpensiveCalculation(a, b);  
 		intCache.Set(result);  
 		return result;  
-	}}
+	}
+}
 ```
 ## Caching loaders
 
