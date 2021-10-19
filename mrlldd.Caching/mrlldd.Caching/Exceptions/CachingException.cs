@@ -3,7 +3,7 @@
 namespace mrlldd.Caching.Exceptions
 {
     /// <summary>
-    ///     The interface that represents exception happen during using that library.
+    ///     The class that represents exception happen during using that library.
     /// </summary>
     public abstract class CachingException : Exception
     {
