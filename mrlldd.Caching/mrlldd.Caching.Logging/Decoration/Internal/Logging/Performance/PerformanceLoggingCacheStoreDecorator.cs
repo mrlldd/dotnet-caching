@@ -8,8 +8,8 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
     internal sealed class PerformanceLoggingCacheStoreDecorator<TFlag> : LoggingCacheStoreDecorator<TFlag>
         where TFlag : CachingFlag
     {
-        private readonly ICachingPerformanceLoggingOptions options;
         private readonly ILogger<ICacheStore<TFlag>> logger;
+        private readonly ICachingPerformanceLoggingOptions options;
 
         public PerformanceLoggingCacheStoreDecorator(ILogger<ICacheStore<TFlag>> logger,
             ICachingPerformanceLoggingOptions options)
@@ -18,9 +18,11 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
             this.options = options;
         }
 
-        public override ICacheStore<TFlag> Decorate(ICacheStore<TFlag> cacheStore)
-            => new PerformanceLoggingCacheStore<TFlag>(cacheStore, logger, options, LogPrefix);
-
         public override int Order => int.MinValue;
+
+        public override ICacheStore<TFlag> Decorate(ICacheStore<TFlag> cacheStore)
+        {
+            return new PerformanceLoggingCacheStore<TFlag>(cacheStore, logger, options, LogPrefix);
+        }
     }
 }

@@ -16,77 +16,102 @@ namespace mrlldd.Caching.Tests.Stores.Void
     public class VoidCacheStoreTests : StoreRelatedTest
     {
         [Test]
-        public void FailOnAnyGet() => Container
-            .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>().Get<VoidUnit>(Key, DefaultMetadata)
-                .Should()
-                .BeFailResult<VoidUnit>()
-                .WithException<VoidUnit, CacheMissException>()
-                .Which.Key.Should().BeEquivalentTo(Key));
-
-        [Test]
-        public Task FailOnAnyGetAsync() => Container
-            .EffectAsync(async c =>
-            {
-                var result = await c.GetRequiredService<ICacheStore<InVoid>>().GetAsync<VoidUnit>(Key, DefaultMetadata);
-                result
+        public void FailOnAnyGet()
+        {
+            Container
+                .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>().Get<VoidUnit>(Key, DefaultMetadata)
                     .Should()
                     .BeFailResult<VoidUnit>()
                     .WithException<VoidUnit, CacheMissException>()
-                    .Which.Key.Should().BeEquivalentTo(Key);
-            });
+                    .Which.Key.Should().BeEquivalentTo(Key));
+        }
 
         [Test]
-        public void SuccessOnAnySet() => Container
-            .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
-                .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
-                .Should()
-                .BeSuccessfulResult());
-        
+        public Task FailOnAnyGetAsync()
+        {
+            return Container
+                .EffectAsync(async c =>
+                {
+                    var result = await c.GetRequiredService<ICacheStore<InVoid>>()
+                        .GetAsync<VoidUnit>(Key, DefaultMetadata);
+                    result
+                        .Should()
+                        .BeFailResult<VoidUnit>()
+                        .WithException<VoidUnit, CacheMissException>()
+                        .Which.Key.Should().BeEquivalentTo(Key);
+                });
+        }
+
         [Test]
-        public Task SuccessOnAnySetAsync() => Container
-            .EffectAsync(async c =>
-            {
-                var result = await c.GetRequiredService<ICacheStore<InVoid>>()
-                    .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
-                result
+        public void SuccessOnAnySet()
+        {
+            Container
+                .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
+                    .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
                     .Should()
-                    .BeSuccessfulResult();
-            });
-        
+                    .BeSuccessfulResult());
+        }
+
         [Test]
-        public void SuccessOnAnyRefresh() => Container
-            .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
-                .Refresh(Key, DefaultMetadata)
-                .Should()
-                .BeSuccessfulResult());
-        
+        public Task SuccessOnAnySetAsync()
+        {
+            return Container
+                .EffectAsync(async c =>
+                {
+                    var result = await c.GetRequiredService<ICacheStore<InVoid>>()
+                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                    result
+                        .Should()
+                        .BeSuccessfulResult();
+                });
+        }
+
         [Test]
-        public void SuccessOnAnyRefreshAsync() => Container
-            .EffectAsync(async c =>
-            {
-                var result = await c.GetRequiredService<ICacheStore<InVoid>>()
-                    .RefreshAsync(Key, DefaultMetadata);
-                result
+        public void SuccessOnAnyRefresh()
+        {
+            Container
+                .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
+                    .Refresh(Key, DefaultMetadata)
                     .Should()
-                    .BeSuccessfulResult();
-            });
-        
+                    .BeSuccessfulResult());
+        }
+
         [Test]
-        public void SuccessOnAnyRemove() => Container
-            .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
-                .Remove(Key, DefaultMetadata)
-                .Should()
-                .BeSuccessfulResult());
-        
+        public void SuccessOnAnyRefreshAsync()
+        {
+            Container
+                .EffectAsync(async c =>
+                {
+                    var result = await c.GetRequiredService<ICacheStore<InVoid>>()
+                        .RefreshAsync(Key, DefaultMetadata);
+                    result
+                        .Should()
+                        .BeSuccessfulResult();
+                });
+        }
+
         [Test]
-        public void SuccessOnAnyRemoveAsync() => Container
-            .EffectAsync(async c =>
-            {
-                var result = await c.GetRequiredService<ICacheStore<InVoid>>()
-                    .RemoveAsync(Key, DefaultMetadata);
-                result
+        public void SuccessOnAnyRemove()
+        {
+            Container
+                .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
+                    .Remove(Key, DefaultMetadata)
                     .Should()
-                    .BeSuccessfulResult();
-            });
+                    .BeSuccessfulResult());
+        }
+
+        [Test]
+        public void SuccessOnAnyRemoveAsync()
+        {
+            Container
+                .EffectAsync(async c =>
+                {
+                    var result = await c.GetRequiredService<ICacheStore<InVoid>>()
+                        .RemoveAsync(Key, DefaultMetadata);
+                    result
+                        .Should()
+                        .BeSuccessfulResult();
+                });
+        }
     }
 }

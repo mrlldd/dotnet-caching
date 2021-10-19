@@ -9,6 +9,8 @@ namespace mrlldd.Caching.Tests.InvalidAssembly.Loaders
         protected override string CacheKey => "broken";
 
         protected override string CacheKeySuffixFactory(InvalidUnit args)
-            => args.ToString();
+        {
+            return args.ToString();
+        }
     }
 }

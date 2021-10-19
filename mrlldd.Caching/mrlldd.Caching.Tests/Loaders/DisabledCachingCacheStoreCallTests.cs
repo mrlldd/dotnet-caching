@@ -13,6 +13,8 @@ namespace mrlldd.Caching.Tests.Loaders
         protected override Func<Times> SingleActionHits { get; } = Times.Never;
 
         protected override Result<VoidUnit> ResultFactory(VoidUnit args)
-            => new DisabledCachingException();
+        {
+            return new DisabledCachingException();
+        }
     }
 }

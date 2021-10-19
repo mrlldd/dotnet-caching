@@ -8,7 +8,7 @@ using mrlldd.Caching.Flags;
 namespace mrlldd.Caching.Caches
 {
     /// <summary>
-    /// The base class for implementing caches.
+    ///     The base class for implementing caches.
     /// </summary>
     /// <typeparam name="T">The cached objects type.</typeparam>
     /// <typeparam name="TStoreFlag">The cache store flag type.</typeparam>
@@ -20,16 +20,11 @@ namespace mrlldd.Caching.Caches
         /// <inheritdoc />
         protected sealed override string CacheKeyPrefix => "cache";
 
-        protected sealed override void EnrichWithDependencies(IServiceProvider serviceProvider)
-        {
-            base.EnrichWithDependencies(serviceProvider);
-        }
-
         // ReSharper disable once VirtualMemberNeverOverridden.Global
         /// <summary>
-        /// The default key suffix for given cache type.
+        ///     The cache key suffix for given cache type.
         /// </summary>
-        protected virtual string DefaultKeySuffix
+        protected virtual string CacheKeySuffix
         {
             get
             {
@@ -40,34 +35,56 @@ namespace mrlldd.Caching.Caches
 
         /// <inheritdoc />
         public ValueTask<Result> SetAsync(T value, CancellationToken token = default)
-            => PerformCachingAsync(value, DefaultKeySuffix, token);
+        {
+            return PerformCachingAsync(value, CacheKeySuffix, token);
+        }
 
         /// <inheritdoc />
         public Result Set(T value)
-            => PerformCaching(value, DefaultKeySuffix);
+        {
+            return PerformCaching(value, CacheKeySuffix);
+        }
 
         /// <inheritdoc />
         public ValueTask<Result<T>> GetAsync(CancellationToken token = default)
-            => TryGetFromCacheAsync(DefaultKeySuffix, token);
+        {
+            return TryGetFromCacheAsync(CacheKeySuffix, token);
+        }
 
         /// <inheritdoc />
         public Result<T> Get()
-            => TryGetFromCache(DefaultKeySuffix);
+        {
+            return TryGetFromCache(CacheKeySuffix);
+        }
 
         /// <inheritdoc />
         public ValueTask<Result> RefreshAsync(CancellationToken token = default)
-            => RefreshAsync(DefaultKeySuffix, token);
+        {
+            return RefreshAsync(CacheKeySuffix, token);
+        }
 
         /// <inheritdoc />
         public Result Refresh()
-            => Refresh(DefaultKeySuffix);
+        {
+            return Refresh(CacheKeySuffix);
+        }
 
         /// <inheritdoc />
         public ValueTask<Result> RemoveAsync(CancellationToken token = default)
-            => RemoveAsync(DefaultKeySuffix, token);
+        {
+            return RemoveAsync(CacheKeySuffix, token);
+        }
 
         /// <inheritdoc />
         public Result Remove()
-            => Remove(DefaultKeySuffix);
+        {
+            return Remove(CacheKeySuffix);
+        }
+
+        /// <inheritdoc />
+        protected sealed override void EnrichWithDependencies(IServiceProvider serviceProvider)
+        {
+            base.EnrichWithDependencies(serviceProvider);
+        }
     }
 }

@@ -9,28 +9,28 @@ namespace mrlldd.Caching
 {
     internal sealed class CachingProvider
     {
-        private readonly IServiceProvider serviceProvider;
         private readonly IDictionary<Type, object> scopedServicesCache = new Dictionary<Type, object>();
+        private readonly IServiceProvider serviceProvider;
         private readonly IStoreOperationProvider storeOperationProvider;
 
-        public  CachingProvider(IServiceProvider serviceProvider,
+        public CachingProvider(IServiceProvider serviceProvider,
             IStoreOperationProvider storeOperationProvider)
         {
             this.serviceProvider = serviceProvider;
             this.storeOperationProvider = storeOperationProvider;
         }
 
-        private void Populate(ICaching target) 
-            => target.Populate(serviceProvider, storeOperationProvider);
+        private void Populate(ICaching target)
+        {
+            target.Populate(serviceProvider, storeOperationProvider);
+        }
 
         public Result<object> GetRequired(Type type)
         {
             if (!typeof(ICaching).IsAssignableFrom(type))
-            {
                 return new ArgumentException(
                         $"Type '{type.FullName}' is not assignable to '${typeof(ICaching).FullName}'.", nameof(type))
                     .AsFail<object>();
-            }
             return scopedServicesCache.TryGetValue(type, out var raw) && raw is ICaching
                 ? raw.AsSuccess()
                 : Result.Of(() =>

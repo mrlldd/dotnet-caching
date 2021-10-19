@@ -9,32 +9,56 @@ using mrlldd.Caching.Exceptions;
 
 namespace mrlldd.Caching.Strategies
 {
+    /// <summary>
+    ///     The class that represents a strategy that interacts with caches in parallel.
+    /// </summary>
     public sealed class ParallelStrategy : ICachingRemoveStrategy, ICachingRefreshStrategy, ICachingSetStrategy
     {
         private ParallelStrategy()
         {
         }
 
+        /// <summary>
+        ///     The singleton instance.
+        /// </summary>
         public static ParallelStrategy Instance { get; } = new();
 
-        public Task<Result> RemoveAsync<T>(IReadOnlyCachesCollection<T> caches, CancellationToken token = default)
-            => ExecuteInParallelAsync(caches, (x, ct) => x.RemoveAsync(ct), token);
-
-        public Result Remove<T>(IReadOnlyCachesCollection<T> caches)
-            => new NotSupportedSyncStrategyMethodException(nameof(ParallelStrategy), nameof(Remove));
-
+        /// <inheritdoc />
         public Task<Result> RefreshAsync<T>(IReadOnlyCachesCollection<T> caches, CancellationToken token = default)
-            => ExecuteInParallelAsync(caches, (x, ct) => x.RefreshAsync(ct), token);
+        {
+            return ExecuteInParallelAsync(caches, (x, ct) => x.RefreshAsync(ct), token);
+        }
 
+        /// <inheritdoc />
         public Result Refresh<T>(IReadOnlyCachesCollection<T> caches)
-            => new NotSupportedSyncStrategyMethodException(nameof(ParallelStrategy), nameof(Refresh));
+        {
+            return new NotSupportedSyncStrategyMethodException(nameof(ParallelStrategy), nameof(Refresh));
+        }
 
+        /// <inheritdoc />
+        public Task<Result> RemoveAsync<T>(IReadOnlyCachesCollection<T> caches, CancellationToken token = default)
+        {
+            return ExecuteInParallelAsync(caches, (x, ct) => x.RemoveAsync(ct), token);
+        }
+
+        /// <inheritdoc />
+        public Result Remove<T>(IReadOnlyCachesCollection<T> caches)
+        {
+            return new NotSupportedSyncStrategyMethodException(nameof(ParallelStrategy), nameof(Remove));
+        }
+
+        /// <inheritdoc />
         public Task<Result> SetAsync<T>(IReadOnlyCachesCollection<T> caches, T value,
             CancellationToken token = default)
-            => ExecuteInParallelAsync(caches, (x, ct) => x.SetAsync(value, ct), token);
+        {
+            return ExecuteInParallelAsync(caches, (x, ct) => x.SetAsync(value, ct), token);
+        }
 
+        /// <inheritdoc />
         public Result Set<T>(IReadOnlyCachesCollection<T> caches, T value)
-            => new NotSupportedSyncStrategyMethodException(nameof(ParallelStrategy), nameof(Set));
+        {
+            return new NotSupportedSyncStrategyMethodException(nameof(ParallelStrategy), nameof(Set));
+        }
 
         private static async Task<Result> ExecuteInParallelAsync<T>(IReadOnlyCachesCollection<T> caches,
             Func<IUnknownStoreCache<T>, CancellationToken, ValueTask<Result>> func, CancellationToken token)
@@ -47,10 +71,7 @@ namespace mrlldd.Caching.Strategies
                 var valueTask = func(caches.ElementAt(i), token);
                 if (valueTask.IsCompletedSuccessfully)
                 {
-                    if (!valueTask.Result.Successful)
-                    {
-                        fails.Add(valueTask.Result);
-                    }
+                    if (!valueTask.Result.Successful) fails.Add(valueTask.Result);
                     continue;
                 }
 
@@ -62,10 +83,7 @@ namespace mrlldd.Caching.Strategies
             for (var i = 0; i < length; i++)
             {
                 var r = results[i];
-                if (!r.Successful)
-                {
-                    fails.Add(r);
-                }
+                if (!r.Successful) fails.Add(r);
             }
 
             return fails.Any()

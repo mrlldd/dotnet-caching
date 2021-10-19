@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using Bogus.DataSets;
 using FluentAssertions;
-using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Caches.Internal;
@@ -171,7 +167,9 @@ namespace mrlldd.Caching.Tests
         private class HasDependency
         {
             protected HasDependency(object dependency)
-                => Dependency = dependency;
+            {
+                Dependency = dependency;
+            }
 
             public object Dependency { get; }
         }

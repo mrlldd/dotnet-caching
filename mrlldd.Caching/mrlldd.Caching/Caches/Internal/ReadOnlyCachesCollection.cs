@@ -10,17 +10,25 @@ namespace mrlldd.Caching.Caches.Internal
         private readonly IReadOnlyCollection<IUnknownStoreCache<T>> collection;
 
         public ReadOnlyCachesCollection(IReadOnlyCollection<IUnknownStoreCache<T>> collection)
-            => this.collection = collection;
+        {
+            this.collection = collection;
+        }
 
         public IEnumerable<ICache<T, TFlag>> WithFlag<TFlag>()
             where TFlag : CachingFlag
-            => collection.OfType<ICache<T, TFlag>>();
+        {
+            return collection.OfType<ICache<T, TFlag>>();
+        }
 
         public IEnumerator<IUnknownStoreCache<T>> GetEnumerator()
-            => collection.GetEnumerator();
+        {
+            return collection.GetEnumerator();
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
-            => collection.GetEnumerator();
+        {
+            return collection.GetEnumerator();
+        }
 
         public int Count => collection.Count;
     }

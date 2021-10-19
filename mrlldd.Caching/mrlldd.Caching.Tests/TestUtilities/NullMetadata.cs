@@ -5,7 +5,8 @@ namespace mrlldd.Caching.Tests.TestUtilities
     public class NullMetadata : ICacheStoreOperationMetadata
     {
         private NullMetadata()
-        {}
+        {
+        }
 
         public static ICacheStoreOperationMetadata Instance { get; } = new NullMetadata();
 

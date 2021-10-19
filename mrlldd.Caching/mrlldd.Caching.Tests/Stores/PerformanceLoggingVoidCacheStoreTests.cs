@@ -36,27 +36,33 @@ namespace mrlldd.Caching.Tests.Stores
         }
 
         [Test]
-        public void ProvidesAlreadyDecoratedStore() => Container
-            .Effect(c => c.GetRequiredService<ICacheStoreProvider<InVoid>>().CacheStore
-                .Should()
-                .NotBeNull()
-                .And.BeOfType<PerformanceLoggingCacheStore<InVoid>>());
-
-        [Test]
-        public void HasRegisteredDecorator() => Container
-            .Effect(c =>
-            {
-                var decorators = c.GetRequiredService<IEnumerable<ICacheStoreDecorator<InVoid>>>().ToArray();
-                decorators
-                    .Should()
-                    .NotBeNull();
-                decorators.Length
-                    .Should()
-                    .Be(1);
-                decorators[0]
+        public void ProvidesAlreadyDecoratedStore()
+        {
+            Container
+                .Effect(c => c.GetRequiredService<ICacheStoreProvider<InVoid>>().CacheStore
                     .Should()
                     .NotBeNull()
-                    .And.BeOfType<PerformanceLoggingCacheStoreDecorator<InVoid>>();
-            });
+                    .And.BeOfType<PerformanceLoggingCacheStore<InVoid>>());
+        }
+
+        [Test]
+        public void HasRegisteredDecorator()
+        {
+            Container
+                .Effect(c =>
+                {
+                    var decorators = c.GetRequiredService<IEnumerable<ICacheStoreDecorator<InVoid>>>().ToArray();
+                    decorators
+                        .Should()
+                        .NotBeNull();
+                    decorators.Length
+                        .Should()
+                        .Be(1);
+                    decorators[0]
+                        .Should()
+                        .NotBeNull()
+                        .And.BeOfType<PerformanceLoggingCacheStoreDecorator<InVoid>>();
+                });
+        }
     }
 }

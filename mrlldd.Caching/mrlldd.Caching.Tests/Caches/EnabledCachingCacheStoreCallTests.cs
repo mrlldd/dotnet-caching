@@ -1,5 +1,4 @@
 ﻿using System;
-using Functional.Object.Extensions;
 using Functional.Result;
 using Moq;
 using mrlldd.Caching.Tests.TestUtilities;
@@ -15,6 +14,8 @@ namespace mrlldd.Caching.Tests.Caches
         protected override Result Result => Result.Success;
 
         protected override Result<VoidUnit> ResultFactory(VoidUnit unit)
-            => unit;
+        {
+            return unit;
+        }
     }
 }

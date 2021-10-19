@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using mrlldd.Caching.Extensions.DependencyInjection;
-using mrlldd.Caching.Flags;
 using NUnit.Framework;
 
 namespace mrlldd.Caching.Tests
@@ -28,7 +27,7 @@ namespace mrlldd.Caching.Tests
                 .WithTrackingDisposableTransients()
                 .With(FactoryMethod.ConstructorWithResolvableArguments)
             );
-            
+
             new ServiceCollection()
                 .AddLogging(x => x.AddConsole().AddFilter(f => f >= LogLevel.Debug))
                 .Effect(FillServicesCollection)
@@ -36,7 +35,7 @@ namespace mrlldd.Caching.Tests
                 .Effect(FillCachingServiceCollection)
                 .Effect(x => Container.Populate(x));
             FillContainer(Container);
-            
+
             AfterContainerEnriching();
         }
 

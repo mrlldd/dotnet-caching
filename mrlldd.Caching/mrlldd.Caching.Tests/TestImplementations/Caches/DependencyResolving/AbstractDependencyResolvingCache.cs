@@ -12,7 +12,7 @@ namespace mrlldd.Caching.Tests.TestImplementations.Caches.DependencyResolving
         protected override string CacheKey => $"abstract-{typeof(T).FullName}-{typeof(TFlag).Name}";
     }
 
-    public class AbstractImplDependencyResolvingCache 
+    public class AbstractImplDependencyResolvingCache
         : AbstractDependencyResolvingCache<DependencyResolvingUnit, InAbstractScope>
     {
     }

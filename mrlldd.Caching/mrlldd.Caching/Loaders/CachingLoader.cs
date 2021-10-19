@@ -11,7 +11,7 @@ using mrlldd.Caching.Loaders.Internal;
 namespace mrlldd.Caching.Loaders
 {
     /// <summary>
-    /// The base class for implemented caching loaders
+    ///     The base class for implemented caching loaders.
     /// </summary>
     /// <typeparam name="TArgs">Loading argument type.</typeparam>
     /// <typeparam name="TResult">Loading result type.</typeparam>
@@ -21,14 +21,17 @@ namespace mrlldd.Caching.Loaders
         where TResult : class
         where TStoreFlag : CachingFlag
     {
-        protected sealed override void EnrichWithDependencies(IServiceProvider serviceProvider)
-        {
-            base.EnrichWithDependencies(serviceProvider);
-            var foundLoader = serviceProvider.GetService<ILoader<TArgs, TResult>>();
-            Loader = foundLoader ?? throw new LoaderNotFoundException<TArgs, TResult>();
-        }
+        /// <summary>
+        ///     The loader service.
+        /// </summary>
+        protected ILoader<TArgs, TResult> Loader { get; private set; } = null!;
 
-        protected ILoader<TArgs, TResult> Loader { get; private set; }
+        /// <summary>
+        ///     The sealed factory method used for creating the global cache key prefixes.
+        /// </summary>
+        /// <returns>The collection of prefixes.</returns>
+        protected sealed override string CacheKeyPrefix
+            => "loader";
 
         /// <inheritdoc />
         public async ValueTask<Result<TResult>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
@@ -38,21 +41,15 @@ namespace mrlldd.Caching.Loaders
             if (!omitCacheOnLoad)
             {
                 var gettingTask = TryGetFromCacheAsync(keySuffix, token);
-                var inCache = gettingTask.IsCompletedSuccessfully 
+                var inCache = gettingTask.IsCompletedSuccessfully
                     ? gettingTask.Result
                     : await gettingTask;
-                if (inCache.Successful)
-                {
-                    return inCache.UnwrapAsSuccess();
-                }
+                if (inCache.Successful) return inCache.UnwrapAsSuccess();
             }
 
             var loaded = await Loader.LoadAsync(args, token);
             var cachingTask = PerformCachingAsync(loaded, keySuffix, token);
-            if (!cachingTask.IsCompletedSuccessfully)
-            {
-                await cachingTask;
-            }
+            if (!cachingTask.IsCompletedSuccessfully) await cachingTask;
 
             return loaded;
         }
@@ -64,10 +61,7 @@ namespace mrlldd.Caching.Loaders
             if (!omitCacheOnLoad)
             {
                 var fromCache = TryGetFromCache(keySuffix);
-                if (fromCache.Successful)
-                {
-                    return fromCache;
-                }
+                if (fromCache.Successful) return fromCache;
             }
 
             var loaded = Loader.LoadAsync(args, token).GetAwaiter().GetResult();
@@ -77,46 +71,63 @@ namespace mrlldd.Caching.Loaders
 
         /// <inheritdoc />
         public ValueTask<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default)
-            => PerformCachingAsync(result, CacheKeySuffixFactory(args), token);
+        {
+            return PerformCachingAsync(result, CacheKeySuffixFactory(args), token);
+        }
 
         /// <inheritdoc />
         public Result Set(TArgs args, TResult result)
-            => PerformCaching(result, CacheKeySuffixFactory(args));
+        {
+            return PerformCaching(result, CacheKeySuffixFactory(args));
+        }
 
         /// <inheritdoc />
         public ValueTask<Result<TResult>> GetAsync(TArgs args, CancellationToken token = default)
-            => TryGetFromCacheAsync(CacheKeySuffixFactory(args), token);
+        {
+            return TryGetFromCacheAsync(CacheKeySuffixFactory(args), token);
+        }
 
         /// <inheritdoc />
         public Result<TResult> Get(TArgs args)
-            => TryGetFromCache(CacheKeySuffixFactory(args));
+        {
+            return TryGetFromCache(CacheKeySuffixFactory(args));
+        }
 
         /// <inheritdoc />
         public ValueTask<Result> RefreshAsync(TArgs args, CancellationToken token = default)
-            => RefreshAsync(CacheKeySuffixFactory(args), token);
+        {
+            return RefreshAsync(CacheKeySuffixFactory(args), token);
+        }
 
         /// <inheritdoc />
         public Result Refresh(TArgs args)
-            => Refresh(CacheKeySuffixFactory(args));
+        {
+            return Refresh(CacheKeySuffixFactory(args));
+        }
 
         /// <inheritdoc />
         public ValueTask<Result> RemoveAsync(TArgs args, CancellationToken token = default)
-            => RemoveAsync(CacheKeySuffixFactory(args), token);
+        {
+            return RemoveAsync(CacheKeySuffixFactory(args), token);
+        }
 
         /// <inheritdoc />
         public Result Remove(TArgs args)
-            => Remove(CacheKeySuffixFactory(args));
+        {
+            return Remove(CacheKeySuffixFactory(args));
+        }
+
+        /// <inheritdoc />
+        protected sealed override void EnrichWithDependencies(IServiceProvider serviceProvider)
+        {
+            base.EnrichWithDependencies(serviceProvider);
+            var foundLoader = serviceProvider.GetService<ILoader<TArgs, TResult>>();
+            Loader = foundLoader ?? throw new LoaderNotFoundException<TArgs, TResult>();
+        }
 
         /// <summary>
-        /// The sealed factory method used for creating the global cache key prefixes.
-        /// </summary>
-        /// <returns>The collection of prefixes.</returns>
-        protected sealed override string CacheKeyPrefix
-            => "loader";
-
-        /// <summary>
-        /// The abstract method for creating cache key suffix in order to make stored items keys really unique,
-        /// the returned string should be kinda hash of argument.
+        ///     The abstract method for creating cache key suffix in order to make stored items keys really unique,
+        ///     the returned string should be kinda hash of argument.
         /// </summary>
         /// <param name="args">The arguments.</param>
         /// <returns>The additional cache key suffix.</returns>

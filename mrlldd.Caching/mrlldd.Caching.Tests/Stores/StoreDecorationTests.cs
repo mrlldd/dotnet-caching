@@ -26,7 +26,7 @@ namespace mrlldd.Caching.Tests.Stores
         protected override void FillCachingServiceCollection(ICachingServiceCollection services)
         {
             base.FillCachingServiceCollection(services);
-            
+
             var mock = MockRepository.Create<ICacheStoreDecorator<InVoid>>();
             Container.RegisterInstance(mock);
             services
@@ -39,58 +39,67 @@ namespace mrlldd.Caching.Tests.Stores
         }
 
         [Test]
-        public void CallsDecorator() => Container
-            .Effect(c =>
-            {
-                var decoratedStore = c.GetRequiredService<ICacheStoreProvider<InVoid>>()
-                    .CacheStore;
-                var mock = c.GetRequiredService<Mock<ICacheStoreDecorator<InVoid>>>();
-                mock.Verify(decorateExpression, Times.Once);
+        public void CallsDecorator()
+        {
+            Container
+                .Effect(c =>
+                {
+                    var decoratedStore = c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                        .CacheStore;
+                    var mock = c.GetRequiredService<Mock<ICacheStoreDecorator<InVoid>>>();
+                    mock.Verify(decorateExpression, Times.Once);
 
-                decoratedStore
-                    .Should()
-                    .NotBeNull()
-                    .And.BeOfType<StoreWrapper>();
-                var wrapper = (StoreWrapper)decoratedStore;
-                wrapper.Store
-                    .Should()
-                    .NotBeNull()
-                    .And.BeOfType<VoidCacheStore>();
-            });
-        
+                    decoratedStore
+                        .Should()
+                        .NotBeNull()
+                        .And.BeOfType<StoreWrapper>();
+                    var wrapper = (StoreWrapper) decoratedStore;
+                    wrapper.Store
+                        .Should()
+                        .NotBeNull()
+                        .And.BeOfType<VoidCacheStore>();
+                });
+        }
+
         [Test]
-        public void CallsSomeDecorators() => Container
-            .Effect(c =>
-            {
-                var decoratedStore = c.GetRequiredService<ICacheStoreProvider<InVoid>>()
-                    .CacheStore;
-                var mock = c.GetRequiredService<Mock<ICacheStoreDecorator<InVoid>>>();
-                mock.Verify(decorateExpression, Times.Once);
+        public void CallsSomeDecorators()
+        {
+            Container
+                .Effect(c =>
+                {
+                    var decoratedStore = c.GetRequiredService<ICacheStoreProvider<InVoid>>()
+                        .CacheStore;
+                    var mock = c.GetRequiredService<Mock<ICacheStoreDecorator<InVoid>>>();
+                    mock.Verify(decorateExpression, Times.Once);
 
-                decoratedStore
-                    .Should()
-                    .NotBeNull()
-                    .And.BeOfType<StoreWrapper>();
-                var wrapper = (StoreWrapper)decoratedStore;
-                wrapper.Store
-                    .Should()
-                    .NotBeNull()
-                    .And.BeOfType<VoidCacheStore>();
-            });
+                    decoratedStore
+                        .Should()
+                        .NotBeNull()
+                        .And.BeOfType<StoreWrapper>();
+                    var wrapper = (StoreWrapper) decoratedStore;
+                    wrapper.Store
+                        .Should()
+                        .NotBeNull()
+                        .And.BeOfType<VoidCacheStore>();
+                });
+        }
 
         private class StoreWrapper : ICacheStore<InVoid>
         {
+            public StoreWrapper(ICacheStore<InVoid> store)
+            {
+                Store = store;
+            }
+
             public ICacheStore<InVoid> Store { get; }
 
-            public StoreWrapper(ICacheStore<InVoid> store) 
-                => Store = store;
-
-            public Result<T?> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+            public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
             {
                 throw new NotImplementedException();
             }
 
-            public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
+            public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+                CancellationToken token = default)
             {
                 throw new NotImplementedException();
             }
@@ -100,7 +109,8 @@ namespace mrlldd.Caching.Tests.Stores
                 throw new NotImplementedException();
             }
 
-            public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata,
+            public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
+                ICacheStoreOperationMetadata metadata,
                 CancellationToken token = default)
             {
                 throw new NotImplementedException();
@@ -111,7 +121,8 @@ namespace mrlldd.Caching.Tests.Stores
                 throw new NotImplementedException();
             }
 
-            public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
+            public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+                CancellationToken token = default)
             {
                 throw new NotImplementedException();
             }
@@ -121,7 +132,8 @@ namespace mrlldd.Caching.Tests.Stores
                 throw new NotImplementedException();
             }
 
-            public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata, CancellationToken token = default)
+            public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+                CancellationToken token = default)
             {
                 throw new NotImplementedException();
             }

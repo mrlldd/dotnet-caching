@@ -9,7 +9,7 @@ namespace mrlldd.Caching.Benchmarks.Cache
         protected override CachingOptions Options => CachingOptions.Enabled(TimeSpan.MaxValue);
         protected override string CacheKey => nameof(Int32);
     }
-        
+
     public class ImplementedDistributedCache : Cache<byte, InDistributed>
     {
         protected override CachingOptions Options => CachingOptions.Enabled(TimeSpan.MaxValue);

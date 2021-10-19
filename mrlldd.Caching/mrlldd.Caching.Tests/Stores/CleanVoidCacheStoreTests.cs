@@ -6,6 +6,5 @@ namespace mrlldd.Caching.Tests.Stores
     [TestFixture]
     public class CleanVoidCacheStoreTests : StoreDecoratorTest
     {
-        
     }
 }

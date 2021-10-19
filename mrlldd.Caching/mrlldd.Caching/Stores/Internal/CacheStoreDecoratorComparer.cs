@@ -11,9 +11,12 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         public static CacheStoreDecoratorComparer<T> Instance { get; } = new();
-        public int Compare(ICacheStoreDecorator<T> x, ICacheStoreDecorator<T> y) 
-            => ReferenceEquals(x, y)
+
+        public int Compare(ICacheStoreDecorator<T> x, ICacheStoreDecorator<T> y)
+        {
+            return ReferenceEquals(x, y)
                 ? 0
                 : x.Order.CompareTo(y.Order);
+        }
     }
 }

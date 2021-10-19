@@ -13,16 +13,20 @@ namespace mrlldd.Caching.Stores.Internal
         private readonly IDistributedCache distributedCache;
 
         public DistributedCacheStore(IDistributedCache distributedCache)
-            => this.distributedCache = distributedCache;
+        {
+            this.distributedCache = distributedCache;
+        }
 
         public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(() =>
+        {
+            return Result.Of(() =>
             {
                 var fromCache = distributedCache.GetString(key);
                 return string.IsNullOrEmpty(fromCache)
                     ? throw new CacheMissException(key)
                     : Deserialize<T>(fromCache) ?? throw new DeserializationFailException(key, fromCache);
             });
+        }
 
         public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
@@ -38,15 +42,17 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => distributedCache.SetString(key, Serialize(value), new DistributedCacheEntryOptions
+        {
+            return Result.Of(() => distributedCache.SetString(key, Serialize(value), new DistributedCacheEntryOptions
             {
                 SlidingExpiration = options.SlidingExpiration
             }));
+        }
 
         public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
             ICacheStoreOperationMetadata metadata, CancellationToken token = default)
         {
-            var task =  Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value),
+            var task = Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value),
                 new DistributedCacheEntryOptions
                 {
                     SlidingExpiration = options.SlidingExpiration
@@ -55,7 +61,9 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => distributedCache.Refresh(key));
+        {
+            return Result.Of(() => distributedCache.Refresh(key));
+        }
 
         public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
@@ -65,7 +73,9 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         public Result Remove(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => distributedCache.Remove(key));
+        {
+            return Result.Of(() => distributedCache.Remove(key));
+        }
 
         public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
@@ -75,9 +85,13 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         private static string Serialize<T>(T data)
-            => JsonConvert.SerializeObject(data);
+        {
+            return JsonConvert.SerializeObject(data);
+        }
 
         private static T? Deserialize<T>(string raw)
-            => JsonConvert.DeserializeObject<T>(raw);
+        {
+            return JsonConvert.DeserializeObject<T>(raw);
+        }
     }
 }

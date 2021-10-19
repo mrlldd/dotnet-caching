@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\mrlldd.Caching.Logging\mrlldd.Caching.Logging.csproj" />
-      <ProjectReference Include="..\mrlldd.Caching\mrlldd.Caching.csproj" />
+        <ProjectReference Include="..\mrlldd.Caching.Logging\mrlldd.Caching.Logging.csproj"/>
+        <ProjectReference Include="..\mrlldd.Caching\mrlldd.Caching.csproj"/>
     </ItemGroup>
 
 </Project>

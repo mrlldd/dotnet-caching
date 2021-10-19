@@ -8,7 +8,8 @@ namespace mrlldd.Caching.Extensions.Internal
     {
         public static IEnumerable<(Type Implementation, Type Service)> CollectServices(this IEnumerable<Type> types,
             Type serviceType)
-            => types
+        {
+            return types
                 .Where(x => x.IsClass && !x.IsAbstract && !x.IsGenericType &&
                             x.GetInterfaces().Any(i =>
                                 i.IsConstructedGenericType && i.GetGenericTypeDefinition() == serviceType))
@@ -20,13 +21,15 @@ namespace mrlldd.Caching.Extensions.Internal
                         )
                     )
                 );
+        }
 
         public static IEnumerable<(Type Implementation, Type Service, Type MarkerInterface)> CollectServices(
             this IEnumerable<Type> types,
             Type baseServiceType,
             Type baseImplementationType,
             Type markerInterfaceType)
-            => types
+        {
+            return types
                 .Where(x => x.IsClass && !x.IsAbstract && !x.IsGenericType &&
                             x.GetInterfaces().Any(i =>
                                 i.IsConstructedGenericType && i.GetGenericTypeDefinition() == baseServiceType))
@@ -37,15 +40,13 @@ namespace mrlldd.Caching.Extensions.Internal
                     x.GetInterfaces()
                         .First(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == markerInterfaceType)
                 ));
+        }
 
         private static Type GetRequiredBaseGenericImplementationType(Type? inherited, Type targetBaseType)
         {
             while (true)
             {
-                if (inherited == null)
-                {
-                    throw new ArgumentNullException(nameof(inherited));
-                }
+                if (inherited == null) throw new ArgumentNullException(nameof(inherited));
 
                 if (!inherited.IsConstructedGenericType)
                 {
@@ -53,10 +54,7 @@ namespace mrlldd.Caching.Extensions.Internal
                     continue;
                 }
 
-                if (inherited.GetGenericTypeDefinition() == targetBaseType)
-                {
-                    return inherited;
-                }
+                if (inherited.GetGenericTypeDefinition() == targetBaseType) return inherited;
 
                 inherited = inherited.BaseType;
             }

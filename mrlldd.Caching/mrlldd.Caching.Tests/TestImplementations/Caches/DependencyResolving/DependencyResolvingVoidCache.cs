@@ -9,6 +9,4 @@ namespace mrlldd.Caching.Tests.TestImplementations.Caches.DependencyResolving
         protected override CachingOptions Options => CachingOptions.Disabled;
         protected override string CacheKey => "void";
     }
-    
-    
 }

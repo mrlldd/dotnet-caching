@@ -6,6 +6,5 @@ namespace mrlldd.Caching.Benchmarks
     [MemoryDiagnoser]
     public class Benchmark
     {
-        
     }
 }

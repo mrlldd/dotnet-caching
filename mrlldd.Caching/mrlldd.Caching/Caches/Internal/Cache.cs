@@ -7,56 +7,91 @@ namespace mrlldd.Caching.Caches.Internal
 {
     internal class Cache<T> : ICache<T>
     {
+        public Cache(IReadOnlyCachesCollection<T> instances)
+        {
+            Instances = instances;
+        }
+
         public IReadOnlyCachesCollection<T> Instances { get; }
 
-        public Cache(IReadOnlyCachesCollection<T> instances)
-            => Instances = instances;
+        public Task<Result<T>> GetAsync(CancellationToken token = default)
+        {
+            return GetAsync(GetFirstSuccessfulStrategy.Instance, token);
+        }
 
-        public Task<Result<T?>> GetAsync(CancellationToken token = default)
-            => GetAsync(GetFirstSuccessfulStrategy.Instance, token);
+        public Result<T> Get()
+        {
+            return Get(GetFirstSuccessfulStrategy.Instance);
+        }
 
-        public Result<T?> Get() => Get(GetFirstSuccessfulStrategy.Instance);
+        public Task<Result<T>> GetAsync(ICacheGetStrategy strategy, CancellationToken token = default)
+        {
+            return strategy.GetAsync(Instances, token);
+        }
 
-        public Task<Result<T?>> GetAsync(ICachingGetStrategy strategy, CancellationToken token = default)
-            => strategy.GetAsync(Instances, token);
-
-        public Result<T?> Get(ICachingGetStrategy strategy)
-            => strategy.Get(Instances);
+        public Result<T> Get(ICacheGetStrategy strategy)
+        {
+            return strategy.Get(Instances);
+        }
 
         public Task<Result> SetAsync(T value, CancellationToken token = default)
-            => SetAsync(value, ParallelStrategy.Instance, token);
+        {
+            return SetAsync(value, ParallelStrategy.Instance, token);
+        }
 
         public Result Set(T value)
-            => Set(value, SequenceStrategy.Instance);
+        {
+            return Set(value, SequenceStrategy.Instance);
+        }
 
-        public Task<Result> SetAsync(T value, ICachingSetStrategy strategy, CancellationToken token = default) 
-            => strategy.SetAsync(Instances, value, token);
+        public Task<Result> SetAsync(T value, ICachingSetStrategy strategy, CancellationToken token = default)
+        {
+            return strategy.SetAsync(Instances, value, token);
+        }
 
         public Result Set(T value, ICachingSetStrategy strategy)
-            => strategy.Set(Instances, value);
+        {
+            return strategy.Set(Instances, value);
+        }
 
         public Task<Result> RefreshAsync(CancellationToken token = default)
-            => RefreshAsync(ParallelStrategy.Instance, token);
+        {
+            return RefreshAsync(ParallelStrategy.Instance, token);
+        }
 
         public Result Refresh()
-            => Refresh(SequenceStrategy.Instance);
+        {
+            return Refresh(SequenceStrategy.Instance);
+        }
 
         public Task<Result> RefreshAsync(ICachingRefreshStrategy strategy, CancellationToken token = default)
-            => strategy.RefreshAsync(Instances, token);
+        {
+            return strategy.RefreshAsync(Instances, token);
+        }
 
         public Result Refresh(ICachingRefreshStrategy strategy)
-            => strategy.Refresh(Instances);
+        {
+            return strategy.Refresh(Instances);
+        }
 
         public Task<Result> RemoveAsync(CancellationToken token = default)
-            => RemoveAsync(ParallelStrategy.Instance, token);
+        {
+            return RemoveAsync(ParallelStrategy.Instance, token);
+        }
 
         public Result Remove()
-            => Remove(SequenceStrategy.Instance);
+        {
+            return Remove(SequenceStrategy.Instance);
+        }
 
         public Task<Result> RemoveAsync(ICachingRemoveStrategy strategy, CancellationToken token = default)
-            => strategy.RemoveAsync(Instances, token);
+        {
+            return strategy.RemoveAsync(Instances, token);
+        }
 
         public Result Remove(ICachingRemoveStrategy strategy)
-            => strategy.Remove(Instances);
+        {
+            return strategy.Remove(Instances);
+        }
     }
 }

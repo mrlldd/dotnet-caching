@@ -10,6 +10,8 @@ namespace mrlldd.Caching.Tests.TestImplementations.Loaders.DependencyResolving
         protected override string CacheKey => "void";
 
         protected override string CacheKeySuffixFactory(DependencyResolvingUnit args)
-            => args.ToString()!;
+        {
+            return args.ToString()!;
+        }
     }
 }

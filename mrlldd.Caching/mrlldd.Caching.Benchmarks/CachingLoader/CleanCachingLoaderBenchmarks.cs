@@ -25,77 +25,147 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
         }
 
         [Benchmark]
-        public void Loader_Clean_Memory_GetOrLoad_Sync() => cleanMemoryCachingLoader.GetOrLoad(3);
+        public void Loader_Clean_Memory_GetOrLoad_Sync()
+        {
+            cleanMemoryCachingLoader.GetOrLoad(3);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Memory_GetOrLoad_OmitCache_Sync() => cleanMemoryCachingLoader.GetOrLoadAsync(3, true);
+        public void Loader_Clean_Memory_GetOrLoad_OmitCache_Sync()
+        {
+            cleanMemoryCachingLoader.GetOrLoadAsync(3, true);
+        }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Memory_GetOrLoad_Async() => cleanMemoryCachingLoader.GetOrLoadAsync(3);
+        public ValueTask<Result<string>> Loader_Clean_Memory_GetOrLoad_Async()
+        {
+            return cleanMemoryCachingLoader.GetOrLoadAsync(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Memory_GetOrLoad_OmitCache_Async() => cleanMemoryCachingLoader.GetOrLoadAsync(3, true);
+        public ValueTask<Result<string>> Loader_Clean_Memory_GetOrLoad_OmitCache_Async()
+        {
+            return cleanMemoryCachingLoader.GetOrLoadAsync(3, true);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Memory_Get_Sync() => cleanMemoryCachingLoader.Get(3);
+        public void Loader_Clean_Memory_Get_Sync()
+        {
+            cleanMemoryCachingLoader.Get(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Memory_Get_Async() => cleanMemoryCachingLoader.GetAsync(3);
+        public ValueTask<Result<string>> Loader_Clean_Memory_Get_Async()
+        {
+            return cleanMemoryCachingLoader.GetAsync(3);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Memory_Set_Sync() => cleanMemoryCachingLoader.Set(3, "3");
+        public void Loader_Clean_Memory_Set_Sync()
+        {
+            cleanMemoryCachingLoader.Set(3, "3");
+        }
 
         [Benchmark]
-        public ValueTask<Result> Loader_Clean_Memory_Set_Async() => cleanMemoryCachingLoader.SetAsync(3, "3");
+        public ValueTask<Result> Loader_Clean_Memory_Set_Async()
+        {
+            return cleanMemoryCachingLoader.SetAsync(3, "3");
+        }
 
         [Benchmark]
-        public void Loader_Clean_Memory_Refresh_Sync() => cleanMemoryCachingLoader.Refresh(3);
+        public void Loader_Clean_Memory_Refresh_Sync()
+        {
+            cleanMemoryCachingLoader.Refresh(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result> Loader_Clean_Memory_Refresh_Async() => cleanMemoryCachingLoader.RefreshAsync(3);
+        public ValueTask<Result> Loader_Clean_Memory_Refresh_Async()
+        {
+            return cleanMemoryCachingLoader.RefreshAsync(3);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Memory_Remove_Sync() => cleanMemoryCachingLoader.Remove(3);
+        public void Loader_Clean_Memory_Remove_Sync()
+        {
+            cleanMemoryCachingLoader.Remove(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result> Loader_Clean_Memory_Remove_Async() => cleanMemoryCachingLoader.RemoveAsync(3);
+        public ValueTask<Result> Loader_Clean_Memory_Remove_Async()
+        {
+            return cleanMemoryCachingLoader.RemoveAsync(3);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Distributed_GetOrLoad_Sync() => cleanDistributedCachingLoader.GetOrLoad(3);
+        public void Loader_Clean_Distributed_GetOrLoad_Sync()
+        {
+            cleanDistributedCachingLoader.GetOrLoad(3);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Distributed_GetOrLoad_OmitCache_Sync() =>
+        public void Loader_Clean_Distributed_GetOrLoad_OmitCache_Sync()
+        {
             cleanDistributedCachingLoader.GetOrLoadAsync(3, true);
+        }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Distributed_GetOrLoad_Async() => cleanDistributedCachingLoader.GetOrLoadAsync(3);
+        public ValueTask<Result<string>> Loader_Clean_Distributed_GetOrLoad_Async()
+        {
+            return cleanDistributedCachingLoader.GetOrLoadAsync(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Distributed_GetOrLoad_OmitCache_Async() =>
-            cleanDistributedCachingLoader.GetOrLoadAsync(3, true);
+        public ValueTask<Result<string>> Loader_Clean_Distributed_GetOrLoad_OmitCache_Async()
+        {
+            return cleanDistributedCachingLoader.GetOrLoadAsync(3, true);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Distributed_Get_Sync() => cleanDistributedCachingLoader.Get(3);
+        public void Loader_Clean_Distributed_Get_Sync()
+        {
+            cleanDistributedCachingLoader.Get(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Distributed_Get_Async() => cleanDistributedCachingLoader.GetAsync(3);
+        public ValueTask<Result<string>> Loader_Clean_Distributed_Get_Async()
+        {
+            return cleanDistributedCachingLoader.GetAsync(3);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Distributed_Set_Sync() => cleanDistributedCachingLoader.Set(3, "3");
+        public void Loader_Clean_Distributed_Set_Sync()
+        {
+            cleanDistributedCachingLoader.Set(3, "3");
+        }
 
         [Benchmark]
-        public ValueTask<Result> Loader_Clean_Distributed_Set_Async() => cleanDistributedCachingLoader.SetAsync(3, "3");
+        public ValueTask<Result> Loader_Clean_Distributed_Set_Async()
+        {
+            return cleanDistributedCachingLoader.SetAsync(3, "3");
+        }
 
         [Benchmark]
-        public void Loader_Clean_Distributed_Refresh_Sync() => cleanDistributedCachingLoader.Refresh(3);
+        public void Loader_Clean_Distributed_Refresh_Sync()
+        {
+            cleanDistributedCachingLoader.Refresh(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result> Loader_Clean_Distributed_Refresh_Async() => cleanDistributedCachingLoader.RefreshAsync(3);
+        public ValueTask<Result> Loader_Clean_Distributed_Refresh_Async()
+        {
+            return cleanDistributedCachingLoader.RefreshAsync(3);
+        }
 
         [Benchmark]
-        public void Loader_Clean_Distributed_Remove_Sync() => cleanDistributedCachingLoader.Remove(3);
+        public void Loader_Clean_Distributed_Remove_Sync()
+        {
+            cleanDistributedCachingLoader.Remove(3);
+        }
 
         [Benchmark]
-        public ValueTask<Result> Loader_Clean_Distributed_Remove_Async() => cleanDistributedCachingLoader.RemoveAsync(3);
+        public ValueTask<Result> Loader_Clean_Distributed_Remove_Async()
+        {
+            return cleanDistributedCachingLoader.RemoveAsync(3);
+        }
     }
 }

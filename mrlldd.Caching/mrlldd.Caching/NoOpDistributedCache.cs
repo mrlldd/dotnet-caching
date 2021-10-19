@@ -7,32 +7,42 @@ namespace mrlldd.Caching
 {
     internal class NoOpDistributedCache : IDistributedCache
     {
-        public byte[] Get(string key) 
-            => Array.Empty<byte>();
+        public byte[] Get(string key)
+        {
+            return Array.Empty<byte>();
+        }
 
         public Task<byte[]> GetAsync(string key, CancellationToken token = default)
-            => Task.FromResult(Array.Empty<byte>());
+        {
+            return Task.FromResult(Array.Empty<byte>());
+        }
 
         public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
         {
         }
 
         public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options,
-            CancellationToken token = default) 
-            => Task.CompletedTask;
+            CancellationToken token = default)
+        {
+            return Task.CompletedTask;
+        }
 
         public void Refresh(string key)
         {
         }
 
-        public Task RefreshAsync(string key, CancellationToken token = default) 
-            => Task.CompletedTask;
+        public Task RefreshAsync(string key, CancellationToken token = default)
+        {
+            return Task.CompletedTask;
+        }
 
         public void Remove(string key)
         {
         }
 
-        public Task RemoveAsync(string key, CancellationToken token = default) 
-            => Task.CompletedTask;
+        public Task RemoveAsync(string key, CancellationToken token = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

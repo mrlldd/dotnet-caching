@@ -18,6 +18,8 @@ namespace mrlldd.Caching.Tests.Caches
         protected override Result Result => new DisabledCachingException();
 
         protected override Result<VoidUnit> ResultFactory(VoidUnit unit)
-            => new Exception();
+        {
+            return new Exception();
+        }
     }
 }

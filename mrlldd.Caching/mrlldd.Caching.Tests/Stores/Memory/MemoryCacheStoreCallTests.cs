@@ -16,91 +16,115 @@ namespace mrlldd.Caching.Tests.Stores.Memory
     public class MemoryCacheStoreCallTests : StoreRelatedTest
     {
         [Test]
-        public void CallsGet() => Container
-            .Effect(c =>
-            {
-                object obj;
-                CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
-                    m => new MemoryCacheStore(m)
-                        .Get<VoidUnit>(Key, DefaultMetadata)
-                );
-            });
+        public void CallsGet()
+        {
+            Container
+                .Effect(c =>
+                {
+                    object obj;
+                    CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
+                        m => new MemoryCacheStore(m)
+                            .Get<VoidUnit>(Key, DefaultMetadata)
+                    );
+                });
+        }
 
         [Test]
-        public Task CallsGetAsync() => Container
-            .EffectAsync(c =>
-            {
-                object obj;
-                return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
-                    m => new MemoryCacheStore(m)
-                        .GetAsync<VoidUnit>(Key, DefaultMetadata).AsTask());
-            });
+        public Task CallsGetAsync()
+        {
+            return Container
+                .EffectAsync(c =>
+                {
+                    object obj;
+                    return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
+                        m => new MemoryCacheStore(m)
+                            .GetAsync<VoidUnit>(Key, DefaultMetadata).AsTask());
+                });
+        }
 
         [Test]
-        public void CallsSet() => Container
-            .Effect(c =>
-                CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
-                    m => new MemoryCacheStore(m)
-                        .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
-                ));
+        public void CallsSet()
+        {
+            Container
+                .Effect(c =>
+                    CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
+                        m => new MemoryCacheStore(m)
+                            .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
+                    ));
+        }
 
         [Test]
-        public Task CallsSetAsync() => Container
-            .EffectAsync(c =>
-                CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
-                    m => new MemoryCacheStore(m)
-                        .SetAsync(Key, new VoidUnit(), CachingOptions,
-                            NullMetadata.Instance)
-                        .AsTask()
-                ));
+        public Task CallsSetAsync()
+        {
+            return Container
+                .EffectAsync(c =>
+                    CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
+                        m => new MemoryCacheStore(m)
+                            .SetAsync(Key, new VoidUnit(), CachingOptions,
+                                NullMetadata.Instance)
+                            .AsTask()
+                    ));
+        }
 
         [Test]
-        public void CallsRefresh() => Container
-            .Effect(c =>
-            {
-                object obj;
-                CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
-                    m => new MemoryCacheStore(m)
-                        .Refresh(Key, DefaultMetadata)
-                );
-            });
+        public void CallsRefresh()
+        {
+            Container
+                .Effect(c =>
+                {
+                    object obj;
+                    CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
+                        m => new MemoryCacheStore(m)
+                            .Refresh(Key, DefaultMetadata)
+                    );
+                });
+        }
 
         [Test]
-        public Task CallsRefreshAsync() => Container
-            .EffectAsync(c =>
-            {
-                object obj;
-                return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
-                    m => new MemoryCacheStore(m)
-                        .RefreshAsync(Key, DefaultMetadata)
-                        .AsTask()
-                );
-            });
+        public Task CallsRefreshAsync()
+        {
+            return Container
+                .EffectAsync(c =>
+                {
+                    object obj;
+                    return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
+                        m => new MemoryCacheStore(m)
+                            .RefreshAsync(Key, DefaultMetadata)
+                            .AsTask()
+                    );
+                });
+        }
 
         [Test]
-        public void CallsRemove() => Container
-            .Effect(c =>
-                CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.Remove(It.Is<string>(s => s.Equals(Key))),
-                    m => new MemoryCacheStore(m)
-                        .Remove(Key, DefaultMetadata)
-                ));
+        public void CallsRemove()
+        {
+            Container
+                .Effect(c =>
+                    CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.Remove(It.Is<string>(s => s.Equals(Key))),
+                        m => new MemoryCacheStore(m)
+                            .Remove(Key, DefaultMetadata)
+                    ));
+        }
 
         [Test]
-        public void CallsRemoveAsync() => Container
-            .EffectAsync(c =>
-                CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
-                    x => x.Remove(It.Is<string>(s => s.Equals(Key))),
-                    m => new MemoryCacheStore(m)
-                        .RemoveAsync(Key, DefaultMetadata)
-                        .AsTask()
-                ));
+        public void CallsRemoveAsync()
+        {
+            Container
+                .EffectAsync(c =>
+                    CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
+                        x => x.Remove(It.Is<string>(s => s.Equals(Key))),
+                        m => new MemoryCacheStore(m)
+                            .RemoveAsync(Key, DefaultMetadata)
+                            .AsTask()
+                    ));
+        }
 
         protected override void FillContainer(IContainer container)
         {

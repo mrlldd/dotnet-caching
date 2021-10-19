@@ -12,7 +12,8 @@ namespace mrlldd.Caching.Tests.TestImplementations.Caches.DependencyResolving
         protected override string CacheKey => $"generic-{typeof(T).FullName}-{typeof(TFlag).Name}";
     }
 
-    public class GenericImplDependencyResolvingCache : GenericDependencyResolvingCache<DependencyResolvingUnit, InGenericScope>
+    public class
+        GenericImplDependencyResolvingCache : GenericDependencyResolvingCache<DependencyResolvingUnit, InGenericScope>
     {
     }
 }

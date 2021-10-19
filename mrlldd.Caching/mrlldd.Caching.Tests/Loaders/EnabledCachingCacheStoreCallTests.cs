@@ -17,6 +17,8 @@ namespace mrlldd.Caching.Tests.Loaders
         protected override Func<Times> SingleActionHits => Times.Once;
 
         protected override Result<VoidUnit> ResultFactory(VoidUnit args)
-            => args;
+        {
+            return args;
+        }
     }
 }

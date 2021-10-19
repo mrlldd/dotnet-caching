@@ -14,6 +14,9 @@ namespace mrlldd.Caching.Tests
 {
     public abstract class CachingTest : TestBase
     {
+        private static readonly Expression<Func<IStoreOperationProvider, ICacheStoreOperationMetadata>>
+            OperationProviderSetupExpression = x => x.Next(It.IsAny<string>());
+
         protected override void AfterContainerEnriching()
         {
             base.AfterContainerEnriching();
@@ -28,11 +31,9 @@ namespace mrlldd.Caching.Tests
         }
 
         protected void InjectInstance<T>(T instance)
-            => Container.RegisterInstance(instance);
-
-
-        private static readonly Expression<Func<IStoreOperationProvider, ICacheStoreOperationMetadata>>
-            OperationProviderSetupExpression = x => x.Next(It.IsAny<string>());
+        {
+            Container.RegisterInstance(instance);
+        }
 
         protected void WithExactOperationsCount(Action action, Func<Times> times)
         {
@@ -45,7 +46,7 @@ namespace mrlldd.Caching.Tests
             action();
             mock.Verify(OperationProviderSetupExpression, times);
         }
-        
+
         protected async Task WithExactOperationsCountAsync(Func<Task> asyncAction, Func<Times> times)
         {
             var provider = Container.GetRequiredService<IStoreOperationProvider>();

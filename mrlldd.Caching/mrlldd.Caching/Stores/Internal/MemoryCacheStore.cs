@@ -14,21 +14,29 @@ namespace mrlldd.Caching.Stores.Internal
         private readonly IMemoryCache memoryCache;
 
         public MemoryCacheStore(IMemoryCache memoryCache)
-            => this.memoryCache = memoryCache;
+        {
+            this.memoryCache = memoryCache;
+        }
 
-        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata) 
-            => Result.Of(() => memoryCache.Get<T>(key))
+        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+        {
+            return Result.Of(() => memoryCache.Get<T>(key))
                 .Bind(t => t != null ? t : throw new CacheMissException(key));
+        }
 
         public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
-            => new(Get<T>(key, metadata));
+        {
+            return new(Get<T>(key, metadata));
+        }
 
         public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
-            => Result.Of(new Action(() => memoryCache.Set(key, value, new MemoryCacheEntryOptions
+        {
+            return Result.Of(new Action(() => memoryCache.Set(key, value, new MemoryCacheEntryOptions
             {
                 SlidingExpiration = options.SlidingExpiration
             })));
+        }
 
         public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
             ICacheStoreOperationMetadata metadata,
@@ -45,25 +53,26 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(new Action(() => memoryCache.Get(key)));
+        {
+            return Result.Of(new Action(() => memoryCache.Get(key)));
+        }
 
         public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
-            var result = Result.Of(new Action(() => memoryCache.Get(key))); 
+            var result = Result.Of(new Action(() => memoryCache.Get(key)));
             return new ValueTask<Result>(result);
         }
 
         public Result Remove(string key, ICacheStoreOperationMetadata metadata)
-            => Result.Of(() => memoryCache.Remove(key));
+        {
+            return Result.Of(() => memoryCache.Remove(key));
+        }
 
         public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
             CancellationToken token = default)
         {
-            var result = Result.Of(() =>
-            {
-                memoryCache.Remove(key);
-            }); 
+            var result = Result.Of(() => { memoryCache.Remove(key); });
             return new ValueTask<Result>(result);
         }
     }

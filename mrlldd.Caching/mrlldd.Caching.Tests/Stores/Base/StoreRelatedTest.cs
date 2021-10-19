@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Bogus;
-using Functional.Object.Extensions;
 using Moq;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Internal;
@@ -21,7 +19,8 @@ namespace mrlldd.Caching.Tests.Stores.Base
             base.AfterContainerEnriching();
             Key = Faker.Random.String(32);
             CachingOptions = CachingOptions.Enabled(TimeSpan.FromMilliseconds(Faker.Random.Number(60, 6000)));
-            DefaultMetadata = new CacheStoreOperationMetadata(Faker.Random.Number(0, 99999), Faker.Random.String(0, 32));
+            DefaultMetadata =
+                new CacheStoreOperationMetadata(Faker.Random.Number(0, 99999), Faker.Random.String(0, 32));
         }
 
         protected static void CallsSpecific<T>(Mock<T> mock,
