@@ -19,7 +19,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <PackageVersion>4.0.0</PackageVersion>
+        <PackageVersion>4.1.0</PackageVersion>
         <Description>
             Provides logging utilites for cache stores in mrlldd.Caching library.
         </Description>
