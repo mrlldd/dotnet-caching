@@ -45,7 +45,8 @@ namespace mrlldd.Caching.Stores.Internal
         {
             return Result.Of(() => distributedCache.SetString(key, Serialize(value), new DistributedCacheEntryOptions
             {
-                SlidingExpiration = options.SlidingExpiration
+                SlidingExpiration = options.SlidingExpiration,
+                AbsoluteExpirationRelativeToNow = options.AbsoluteExpirationRelativeToNow
             }));
         }
 
@@ -55,7 +56,8 @@ namespace mrlldd.Caching.Stores.Internal
             var task = Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value),
                 new DistributedCacheEntryOptions
                 {
-                    SlidingExpiration = options.SlidingExpiration
+                    SlidingExpiration = options.SlidingExpiration,
+                    AbsoluteExpirationRelativeToNow = options.AbsoluteExpirationRelativeToNow
                 }, token));
             return new ValueTask<Result>(task);
         }

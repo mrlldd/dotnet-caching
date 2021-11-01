@@ -9,12 +9,17 @@ namespace mrlldd.Caching.Tests
     [TestFixture]
     public class CachingOptionsTests
     {
-        [Test]
-        public void EnabledIsValid()
-        {
-            var timeSpan = new Faker().Random
+        private TimeSpan timeSpan { get; set; } = TimeSpan.Zero;
+
+        [SetUp]
+        public void SetUp()
+            => timeSpan = new Faker().Random
                 .Double()
                 .Map(TimeSpan.FromMilliseconds);
+
+        [Test]
+        public void EnabledSlidingExpirationIsValid()
+        {
             var options = CachingOptions.Enabled(timeSpan);
             options.Should()
                 .NotBeNull();
@@ -22,6 +27,52 @@ namespace mrlldd.Caching.Tests
                 .BeTrue();
             options.SlidingExpiration.Should()
                 .Be(timeSpan);
+            options.AbsoluteExpirationRelativeToNow.Should()
+                .BeNull();
+        }
+
+        [Test]
+        public void EnabledAbsoluteRelativeToNowIsValid()
+        {
+            var options = CachingOptions.EnabledAbsoluteRelativeToNow(timeSpan);
+            options.Should()
+                .NotBeNull();
+            options.IsCaching.Should()
+                .BeTrue();
+            options.AbsoluteExpirationRelativeToNow
+                .Should()
+                .Be(timeSpan);
+            options.SlidingExpiration
+                .Should()
+                .BeNull();
+        }
+
+        [Test]
+        public void EnabledWithSlidingExpirationIsValid()
+        {
+            var options = CachingOptions.Enabled(timeSpan, timeSpan);
+            options.Should()
+                .NotBeNull();
+            options.IsCaching.Should()
+                .BeTrue();
+            options.AbsoluteExpirationRelativeToNow.Should()
+                .Be(timeSpan);
+            options.SlidingExpiration.Should()
+                .Be(timeSpan);
+        }
+        
+        [Test]
+        public void EnabledWithoutSlidingExpirationIsValid()
+        {
+            var options = CachingOptions.Enabled(null, timeSpan);
+            options.Should()
+                .NotBeNull();
+            options.IsCaching.Should()
+                .BeTrue();
+            options.AbsoluteExpirationRelativeToNow.Should()
+                .Be(timeSpan);
+            options.SlidingExpiration.Should()
+                .BeNull();
         }
 
         [Test]

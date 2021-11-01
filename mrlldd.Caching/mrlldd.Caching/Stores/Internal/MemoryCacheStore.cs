@@ -34,7 +34,8 @@ namespace mrlldd.Caching.Stores.Internal
         {
             return Result.Of(new Action(() => memoryCache.Set(key, value, new MemoryCacheEntryOptions
             {
-                SlidingExpiration = options.SlidingExpiration
+                SlidingExpiration = options.SlidingExpiration,
+                AbsoluteExpirationRelativeToNow = options.AbsoluteExpirationRelativeToNow
             })));
         }
 
@@ -46,7 +47,8 @@ namespace mrlldd.Caching.Stores.Internal
             {
                 memoryCache.Set(key, value, new MemoryCacheEntryOptions
                 {
-                    SlidingExpiration = options.SlidingExpiration
+                    SlidingExpiration = options.SlidingExpiration,
+                    AbsoluteExpirationRelativeToNow = options.AbsoluteExpirationRelativeToNow
                 });
             });
             return new ValueTask<Result>(result);
