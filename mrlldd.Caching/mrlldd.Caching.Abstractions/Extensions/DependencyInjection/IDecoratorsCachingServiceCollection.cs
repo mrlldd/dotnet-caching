@@ -6,7 +6,7 @@ using mrlldd.Caching.Stores.Decoration;
 namespace mrlldd.Caching.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     The interface used in order to access methods that customize store decorations in that library.
+    ///     The interface used to access methods that customize store decorations in that library.
     /// </summary>
     public interface IDecoratorsCachingServiceCollection<TFlag> : ICachingServiceCollection where TFlag : CachingFlag
     {

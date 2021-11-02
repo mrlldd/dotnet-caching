@@ -14,3 +14,5 @@ mrlldd.Caching/mrlldd.Caching.Benchmarks/bin
 mrlldd.Caching/mrlldd.Caching.Tests.InvalidAssembly/bin
 mrlldd.Caching/mrlldd.Caching.Tests.InvalidAssembly/obj
 .obsidian
+mrlldd.Caching/mrlldd.Caching.Serializers.SystemTextJson/obj
+mrlldd.Caching/mrlldd.Caching.Serializers.NewtonsoftJson/obj

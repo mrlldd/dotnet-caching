@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mrlldd.Caching.Tests.InvalidAssembly", "mrlldd.Caching.Tests.InvalidAssembly\mrlldd.Caching.Tests.InvalidAssembly.csproj", "{93739095-14AF-4BE6-9B95-09E965DFB413}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serializers", "Serializers", "{D5FCB62F-CDD5-4379-87CE-66F4D0B287AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mrlldd.Caching.Serializers.NewtonsoftJson", "mrlldd.Caching.Serializers.NewtonsoftJson\mrlldd.Caching.Serializers.NewtonsoftJson.csproj", "{F78CE216-5636-477E-8CE8-4E45CA885E73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mrlldd.Caching.Serializers.SystemTextJson", "mrlldd.Caching.Serializers.SystemTextJson\mrlldd.Caching.Serializers.SystemTextJson.csproj", "{84CD356B-D6FB-4106-815B-6D8939A185DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +56,14 @@ Global
 		{93739095-14AF-4BE6-9B95-09E965DFB413}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93739095-14AF-4BE6-9B95-09E965DFB413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93739095-14AF-4BE6-9B95-09E965DFB413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F78CE216-5636-477E-8CE8-4E45CA885E73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F78CE216-5636-477E-8CE8-4E45CA885E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F78CE216-5636-477E-8CE8-4E45CA885E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F78CE216-5636-477E-8CE8-4E45CA885E73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84CD356B-D6FB-4106-815B-6D8939A185DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84CD356B-D6FB-4106-815B-6D8939A185DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84CD356B-D6FB-4106-815B-6D8939A185DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84CD356B-D6FB-4106-815B-6D8939A185DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2CF89982-7CA3-4119-A259-3498740153CD} = {7ECF3D6B-C2E0-40E9-85D9-7B3218E4DF4E}
@@ -58,5 +72,7 @@ Global
 		{79250112-8BB7-43DF-8903-50784B2D9A62} = {F52D93D1-9D84-4F96-BE52-C11C2D7A176F}
 		{314AEA59-639C-48FB-AB91-59A64D6C29C5} = {F52D93D1-9D84-4F96-BE52-C11C2D7A176F}
 		{93739095-14AF-4BE6-9B95-09E965DFB413} = {314AEA59-639C-48FB-AB91-59A64D6C29C5}
+		{F78CE216-5636-477E-8CE8-4E45CA885E73} = {D5FCB62F-CDD5-4379-87CE-66F4D0B287AC}
+		{84CD356B-D6FB-4106-815B-6D8939A185DD} = {D5FCB62F-CDD5-4379-87CE-66F4D0B287AC}
 	EndGlobalSection
 EndGlobal

@@ -9,11 +9,17 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
     public interface ICachingServiceCollection : IServiceCollection
     {
         /// <summary>
-        ///     The method used to get the decorators collection for specific store with flag of type <typeparamref name="TFlag" />
-        ///     .
+        ///     The method used to get the decorators collection for specific store with flag of type <typeparamref name="TFlag" />.
         /// </summary>
         /// <typeparam name="TFlag">The type of caching flag.</typeparam>
         /// <returns>The decorators collection.</returns>
         IDecoratorsCachingServiceCollection<TFlag> Decorators<TFlag>() where TFlag : CachingFlag;
+
+        /// <summary>
+        ///     The method used to get the serializers collection for specific store with flag of type <typeparamref name="TFlag" />.
+        /// </summary>
+        /// <typeparam name="TFlag">The type of caching flag.</typeparam>
+        /// <returns>The decorators collection.</returns>
+        ISerializersCachingServiceCollection<TFlag> Serializers<TFlag>() where TFlag : CachingFlag;
     }
 }

@@ -73,9 +73,10 @@ namespace mrlldd.Caching.Extensions.DependencyInjection.Internal
             set => Services[index] = value;
         }
 
-        public IDecoratorsCachingServiceCollection<TFlag> Decorators<TFlag>() where TFlag : CachingFlag
-        {
-            return new DecoratorsCachingServiceCollection<TFlag>(this);
-        }
+        public IDecoratorsCachingServiceCollection<TFlag> Decorators<TFlag>() where TFlag : CachingFlag 
+            => new DecoratorsCachingServiceCollection<TFlag>(this);
+
+        public ISerializersCachingServiceCollection<TFlag> Serializers<TFlag>() where TFlag : CachingFlag
+            => new SerializersCachingServiceCollection<TFlag>(this);
     }
 }
