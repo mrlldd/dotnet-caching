@@ -48,8 +48,16 @@ namespace mrlldd.Caching.Loaders
             }
 
             var loaded = await Loader.LoadAsync(args, token);
+            var onLoadFinishTask = OnLoadFinishAsync(args, loaded, token);
+            if (!onLoadFinishTask.IsCompletedSuccessfully)
+            {
+                await onLoadFinishTask;
+            }
             var cachingTask = PerformCachingAsync(loaded, keySuffix, token);
-            if (!cachingTask.IsCompletedSuccessfully) await cachingTask;
+            if (!cachingTask.IsCompletedSuccessfully)
+            {
+                await cachingTask;
+            }
 
             return loaded;
         }
@@ -65,6 +73,11 @@ namespace mrlldd.Caching.Loaders
             }
 
             var loaded = Loader.LoadAsync(args, token).GetAwaiter().GetResult();
+            var onLoadFinishTask = OnLoadFinishAsync(args, loaded, token);
+            if (!onLoadFinishTask.IsCompletedSuccessfully)
+            {
+                onLoadFinishTask.GetAwaiter().GetResult();
+            }
             PerformCaching(loaded, keySuffix);
             return loaded;
         }
@@ -132,5 +145,14 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The arguments.</param>
         /// <returns>The additional cache key suffix.</returns>
         protected abstract string CacheKeySuffixFactory(TArgs args);
+
+        /// <summary>
+        ///     The virtual method for performing side effects after load finish. 
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        /// <param name="result">The result.</param>
+        /// <param name="token">The cancellation token.</param>
+        /// <returns>The value task.</returns>
+        protected virtual ValueTask OnLoadFinishAsync(TArgs args, TResult result, CancellationToken token) => new();
     }
 }

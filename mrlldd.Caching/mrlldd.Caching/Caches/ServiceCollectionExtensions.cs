@@ -54,7 +54,6 @@ namespace mrlldd.Caching.Caches
                     });
             }
 
-            // todo improve caches collection service registration and use
             return cacheTypes
                 .Aggregate(services, (prev, next) =>
                 {
