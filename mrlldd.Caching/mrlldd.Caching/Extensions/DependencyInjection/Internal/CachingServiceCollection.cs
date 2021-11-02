@@ -76,6 +76,8 @@ namespace mrlldd.Caching.Extensions.DependencyInjection.Internal
         public IDecoratorsCachingServiceCollection<TFlag> Decorators<TFlag>() where TFlag : CachingFlag 
             => new DecoratorsCachingServiceCollection<TFlag>(this);
 
+        public ISerializersCachingServiceCollection Serializers()
+            => new SerializersCachingServiceCollection(this);
         public ISerializersCachingServiceCollection<TFlag> Serializers<TFlag>() where TFlag : CachingFlag
             => new SerializersCachingServiceCollection<TFlag>(this);
     }

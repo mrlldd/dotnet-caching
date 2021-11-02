@@ -5,6 +5,8 @@ using Functional.Result;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Flags;
+using mrlldd.Caching.Serializers;
+using mrlldd.Caching.Serializers.Internal;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Internal;
 
@@ -33,26 +35,44 @@ namespace mrlldd.Caching
         protected abstract string CacheKey { get; }
 
         /// <summary>
-        ///     Delimiter used in cache key formatting.
-        /// </summary>
-        // ReSharper disable once VirtualMemberNeverOverridden.Global
-        protected virtual string CacheKeyDelimiter => ":";
-
-        /// <summary>
         ///     Global cache key prefix.
         /// </summary>
         /// <returns>The string.</returns>
         protected abstract string CacheKeyPrefix { get; }
 
+        /// <summary>
+        ///     Delimiter used in cache key formatting.
+        /// </summary>
+        // ReSharper disable once VirtualMemberNeverOverridden.Global
+        protected virtual string CacheKeyDelimiter => ":";
+        
+        protected virtual ICachingSerializer? Serializer { get; private set; }
+        
         /// <inheritdoc />
         public void Populate(IServiceProvider serviceProvider,
             IStoreOperationProvider storeOperationProvider)
         {
             var storeProvider = serviceProvider.GetService<ICacheStoreProvider<TStoreFlag>>();
-            if (storeProvider == null) throw new StoreNotFoundException<TStoreFlag>();
+            if (storeProvider == null)
+            {
+                throw new StoreNotFoundException<TStoreFlag>();
+            }
 
             Store = storeProvider.CacheStore;
             StoreOperationProvider = storeOperationProvider;
+            if (Serializer == null)
+            {
+                var flagSerializer = serviceProvider.GetService<CachingSerializerProvider<TStoreFlag>>();
+                if (flagSerializer == null)
+                {
+                    var globalSerializer = serviceProvider.GetRequiredService<CachingSerializerProvider>();
+                    Serializer = globalSerializer.Serializer;
+                }
+                else
+                {
+                    Serializer = flagSerializer.Serializer;
+                }
+            }
             EnrichWithDependencies(serviceProvider);
         }
 
