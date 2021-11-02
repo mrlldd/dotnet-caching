@@ -1,7 +1,9 @@
-﻿namespace mrlldd.Caching.Exceptions
+﻿using System;
+
+namespace mrlldd.Caching.Exceptions
 {
     /// <summary>
-    ///     The interface that represents deserialization fail.
+    ///     The exception that represents deserialization fail.
     /// </summary>
     public class DeserializationFailException : CachingException
     {
@@ -10,11 +12,14 @@
         /// </summary>
         /// <param name="key">The cache entry key.</param>
         /// <param name="value">The value.</param>
-        public DeserializationFailException(string key, string value) : base(
-            $"Failed to deserialize entry with key '{key}'. See exception properties.")
+        /// <param name="valueType">The type of value.</param>
+        /// <param name="exception">The inner exception.</param>
+        public DeserializationFailException(string key, byte[] value, Type valueType, Exception exception) : base(
+            $"Failed to deserialize entry with key '{key}' to instance of type '{valueType.FullName}'. See exception properties.", exception)
         {
             Key = key;
             Value = value;
+            ValueType = valueType;
         }
 
         /// <summary>
@@ -25,6 +30,11 @@
         /// <summary>
         ///     Value used for deserialization.
         /// </summary>
-        public string Value { get; }
+        public byte[] Value { get; }
+
+        /// <summary>
+        ///     The type of value.
+        /// </summary>
+        public Type ValueType { get; }
     }
 }

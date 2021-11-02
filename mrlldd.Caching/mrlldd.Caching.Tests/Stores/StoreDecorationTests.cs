@@ -93,23 +93,23 @@ namespace mrlldd.Caching.Tests.Stores
 
             public ICacheStore<InVoid> Store { get; }
 
-            public Result<T> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
+            public Result<T?> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
             {
                 throw new NotImplementedException();
             }
 
-            public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
+            public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
                 CancellationToken token = default)
             {
                 throw new NotImplementedException();
             }
 
-            public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
+            public Result Set<T>(string key, T? value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
             {
                 throw new NotImplementedException();
             }
 
-            public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
+            public ValueTask<Result> SetAsync<T>(string key, T? value, CachingOptions options,
                 ICacheStoreOperationOptions operationOptions,
                 CancellationToken token = default)
             {

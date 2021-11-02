@@ -131,13 +131,12 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
         public void FailIfNotSet()
         {
             Container
-                .Effect(c =>
+                .Effect(async c =>
                 {
                     c.AddMock<IDistributedCache>(MockRepository);
                     var mock = c.GetRequiredService<Mock<IDistributedCache>>();
-                    var bytes = new VoidUnit()
-                        .Map(JsonConvert.SerializeObject)
-                        .Map(Encoding.UTF8.GetBytes);
+                    var serializationResult = await DefaultOperationOptions.Serializer.SerializeAsync(new VoidUnit());
+                    var bytes = serializationResult.UnwrapAsSuccess();
                     mock.Setup(x => x.Set(It.Is<string>(s => s == Key), It.Is<byte[]>(b => b.SequenceEqual(bytes)),
                             It.Is<DistributedCacheEntryOptions>(
                                 o => o.SlidingExpiration == CachingOptions.SlidingExpiration)))
@@ -159,9 +158,8 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                     c.AddMock<IDistributedCache>(MockRepository);
                     var mock = c.GetRequiredService<Mock<IDistributedCache>>();
                     var unit = new VoidUnit();
-                    var bytes = unit
-                        .Map(JsonConvert.SerializeObject)
-                        .Map(Encoding.UTF8.GetBytes);
+                    var serializationResult = await DefaultOperationOptions.Serializer.SerializeAsync(new VoidUnit());
+                    var bytes = serializationResult.UnwrapAsSuccess();
                     mock.Setup(x => x.SetAsync(It.Is<string>(s => s == Key),
                             It.Is<byte[]>(b => b.SequenceEqual(bytes)),
                             It.Is<DistributedCacheEntryOptions>(o =>

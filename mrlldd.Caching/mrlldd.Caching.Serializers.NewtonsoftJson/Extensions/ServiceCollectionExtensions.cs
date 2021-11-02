@@ -36,5 +36,28 @@ namespace mrlldd.Caching.Extensions
             Func<IServiceProvider, JsonSerializerSettings?> optionsFactory,
             ServiceLifetime scope = ServiceLifetime.Scoped) where TFlag : CachingFlag
             => services.Use(sp => new NewtonsoftJsonCachingSerializer(optionsFactory(sp)), scope);
+
+        /// <summary>
+        ///     The method used to register global Newtonsoft.Json serializer in specified scope. 
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="optionsFactory">The json serializer settings factory delegate.</param>
+        /// <param name="scope">The service lifetime scope.</param>
+        /// <returns>The service collection.</returns>
+        public static ISerializersCachingServiceCollection UseNewtonsoftJson(
+            this ISerializersCachingServiceCollection services,
+            Func<IServiceProvider, JsonSerializerSettings?> optionsFactory,
+            ServiceLifetime scope = ServiceLifetime.Scoped)
+            => services.Use(sp => new NewtonsoftJsonCachingSerializer(optionsFactory(sp)), scope);
+        
+        /// <summary>
+        ///     The method used to register global Newtonsoft.Json serializer in singleton scope.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="options">The json serializer settings.</param>
+        /// <returns>The service collection.</returns>
+        public static ISerializersCachingServiceCollection UseNewtonsoftJson(
+            this ISerializersCachingServiceCollection services, JsonSerializerSettings? options = null) 
+            => services.Use(new NewtonsoftJsonCachingSerializer(options));
     }
 }

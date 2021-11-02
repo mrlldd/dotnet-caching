@@ -37,13 +37,13 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
         }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Memory_GetOrLoad_Async()
+        public ValueTask<Result<string?>> Loader_Clean_Memory_GetOrLoad_Async()
         {
             return cleanMemoryCachingLoader.GetOrLoadAsync(3);
         }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Memory_GetOrLoad_OmitCache_Async()
+        public ValueTask<Result<string?>> Loader_Clean_Memory_GetOrLoad_OmitCache_Async()
         {
             return cleanMemoryCachingLoader.GetOrLoadAsync(3, true);
         }
@@ -55,7 +55,7 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
         }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Memory_Get_Async()
+        public ValueTask<Result<string?>> Loader_Clean_Memory_Get_Async()
         {
             return cleanMemoryCachingLoader.GetAsync(3);
         }
@@ -109,13 +109,13 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
         }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Distributed_GetOrLoad_Async()
+        public ValueTask<Result<string?>> Loader_Clean_Distributed_GetOrLoad_Async()
         {
             return cleanDistributedCachingLoader.GetOrLoadAsync(3);
         }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Distributed_GetOrLoad_OmitCache_Async()
+        public ValueTask<Result<string?>> Loader_Clean_Distributed_GetOrLoad_OmitCache_Async()
         {
             return cleanDistributedCachingLoader.GetOrLoadAsync(3, true);
         }
@@ -127,7 +127,7 @@ namespace mrlldd.Caching.Benchmarks.CachingLoader
         }
 
         [Benchmark]
-        public ValueTask<Result<string>> Loader_Clean_Distributed_Get_Async()
+        public ValueTask<Result<string?>> Loader_Clean_Distributed_Get_Async()
         {
             return cleanDistributedCachingLoader.GetAsync(3);
         }

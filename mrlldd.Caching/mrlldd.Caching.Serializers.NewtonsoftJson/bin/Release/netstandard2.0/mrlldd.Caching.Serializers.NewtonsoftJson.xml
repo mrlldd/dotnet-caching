@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>mrlldd.Caching.Serializers.NewtonsoftJson</name>
+    </assembly>
+    <members>
+        <member name="T:mrlldd.Caching.Extensions.ServiceCollectionExtensions">
+            <summary>
+                The class that contains extensions methods for dependency injection of Newtonsoft.Json caching serializer.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.ServiceCollectionExtensions.UseNewtonsoftJson``1(mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection{``0},Newtonsoft.Json.JsonSerializerSettings)">
+            <summary>
+                The method used to register Newtonsoft.Json serializer for specific caching flag in singleton scope.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="options">The json serializer settings.</param>
+            <typeparam name="TFlag">The caching flag.</typeparam>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.ServiceCollectionExtensions.UseNewtonsoftJson``1(mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection{``0},System.Func{System.IServiceProvider,Newtonsoft.Json.JsonSerializerSettings},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to register Newtonsoft.Json serializer for specific caching flag in specified scope. 
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="optionsFactory">The json serializer settings factory delegate.</param>
+            <param name="scope">The service lifetime scope.</param>
+            <typeparam name="TFlag">The caching flag.</typeparam>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.ServiceCollectionExtensions.UseNewtonsoftJson(mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection,System.Func{System.IServiceProvider,Newtonsoft.Json.JsonSerializerSettings},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to register global Newtonsoft.Json serializer in specified scope. 
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="optionsFactory">The json serializer settings factory delegate.</param>
+            <param name="scope">The service lifetime scope.</param>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.ServiceCollectionExtensions.UseNewtonsoftJson(mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection,Newtonsoft.Json.JsonSerializerSettings)">
+            <summary>
+                The method used to register global Newtonsoft.Json serializer in singleton scope.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="options">The json serializer settings.</param>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Serializers.NewtonsoftJsonCachingSerializer">
+            <summary>
+                The Newtonsoft.Json caching serializer.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.NewtonsoftJsonCachingSerializer.#ctor(Newtonsoft.Json.JsonSerializerSettings)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="settings"></param>
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.NewtonsoftJsonCachingSerializer.SerializeAsync``1(``0,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.NewtonsoftJsonCachingSerializer.DeserializeAsync``1(System.Byte[],System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

@@ -28,7 +28,7 @@ namespace mrlldd.Caching.Tests.Stores.Base
                         _ => c.GetRequiredService<ICacheStoreProvider<InVoid>>()
                             .CacheStore
                             .Get<VoidUnit>(Key, DefaultOperationOptions),
-                        new VoidUnit().AsSuccess()
+                        new VoidUnit().AsSuccess<VoidUnit?>()
                     )
                 );
         }
@@ -46,7 +46,7 @@ namespace mrlldd.Caching.Tests.Stores.Base
                             .CacheStore
                             .GetAsync<VoidUnit>(Key, DefaultOperationOptions)
                             .AsTask(),
-                        new ValueTask<Result<VoidUnit>>(new VoidUnit().AsSuccess())
+                        new ValueTask<Result<VoidUnit?>>(new VoidUnit().AsSuccess<VoidUnit?>())
                     )
                 );
         }

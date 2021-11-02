@@ -13,7 +13,7 @@ namespace mrlldd.Caching.Tests.Caches
         protected override Func<Times> Hits => Times.Once;
         protected override Result Result => Result.Success;
 
-        protected override Result<VoidUnit> ResultFactory(VoidUnit unit)
+        protected override Result<VoidUnit?> ResultFactory(VoidUnit unit)
         {
             return unit;
         }

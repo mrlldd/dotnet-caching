@@ -1,0 +1,735 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>mrlldd.Caching.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:mrlldd.Caching.Caches.ICache`1">
+            <summary>
+                The interface that represents caches with entries of type <typeparamref name="T" /> wrapper with unified
+                interaction methods.
+            </summary>
+            <typeparam name="T">The type of entries.</typeparam>
+        </member>
+        <member name="P:mrlldd.Caching.Caches.ICache`1.Instances">
+            <summary>
+                The caches of type <typeparamref name="T" /> instances.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.GetAsync(System.Threading.CancellationToken)">
+            <summary>
+                The method used for retrieving data from cache.
+            </summary>
+            <param name="token">The cancellation token.</param>
+            <returns>The cached data or null (if entry was not found or expired).</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Get">
+            <summary>
+                The method used for retrieving data from cache.
+            </summary>
+            <returns>The cached data or null (if entry was not found or expired).</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.GetAsync(mrlldd.Caching.Strategies.ICacheGetStrategy,System.Threading.CancellationToken)">
+            <summary>
+                The method used for retrieving data from cache.
+            </summary>
+            <param name="strategy">The caching get strategy.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The cached data or null (if entry was not found or expired).</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Get(mrlldd.Caching.Strategies.ICacheGetStrategy)">
+            <summary>
+                The method used for retrieving data from cache.
+            </summary>
+            <param name="strategy">The caching get strategy.</param>
+            <returns>The cached data or null (if entry was not found or expired).</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.SetAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                The method used for performing a caching.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Set(`0)">
+            <summary>
+                The method used for performing a caching.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.SetAsync(`0,mrlldd.Caching.Strategies.ICachingSetStrategy,System.Threading.CancellationToken)">
+            <summary>
+                The method used for performing a caching.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="strategy">The caching set strategy.</param>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Set(`0,mrlldd.Caching.Strategies.ICachingSetStrategy)">
+            <summary>
+                The method used for performing a caching.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="strategy">The caching set strategy.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.RefreshAsync(System.Threading.CancellationToken)">
+            <summary>
+                The method used for refreshing data expiration in cache.
+            </summary>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Refresh">
+            <summary>
+                The method used for refreshing data expiration in cache.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.RefreshAsync(mrlldd.Caching.Strategies.ICachingRefreshStrategy,System.Threading.CancellationToken)">
+            <summary>
+                The method used for refreshing data expiration in cache.
+            </summary>
+            <param name="strategy">The caching refresh strategy.</param>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Refresh(mrlldd.Caching.Strategies.ICachingRefreshStrategy)">
+            <summary>
+                The method used for refreshing data expiration in cache.
+            </summary>
+            <param name="strategy">The caching refresh strategy.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.RemoveAsync(System.Threading.CancellationToken)">
+            <summary>
+                The method used for removing data from cache.
+            </summary>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Remove">
+            <summary>
+                The method used for removing data from cache.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.RemoveAsync(mrlldd.Caching.Strategies.ICachingRemoveStrategy,System.Threading.CancellationToken)">
+            <summary>
+                The method used for removing data from cache.
+            </summary>
+            <param name="strategy">The caching remove strategy.</param>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.ICache`1.Remove(mrlldd.Caching.Strategies.ICachingRemoveStrategy)">
+            <summary>
+                The method used for removing data from cache.
+            </summary>
+            <param name="strategy">The caching remove strategy.</param>
+        </member>
+        <member name="T:mrlldd.Caching.Caches.ICache`2">
+            <summary>
+                The base interface for implementing caches.
+            </summary>
+            <typeparam name="T">The cached objects type.</typeparam>
+            <typeparam name="TFlag"></typeparam>
+        </member>
+        <member name="T:mrlldd.Caching.Caches.IReadOnlyCachesCollection`1">
+            <summary>
+                The interface that represents a readonly collection of caches for entries of type <typeparamref name="T" />.
+            </summary>
+            <typeparam name="T">The type of entry.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IReadOnlyCachesCollection`1.WithFlag``1">
+            <summary>
+                The filter method that used to retrieve caches with specific stores.
+            </summary>
+            <typeparam name="TFlag">The type of caching flag.</typeparam>
+            <returns>The <see cref="T:System.Collections.Generic.IEnumerable`1" /> with filtered caches.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Caches.IUnknownStoreCache`1">
+            <summary>
+                The base interface for caches that represents cache with unknown entry store.
+            </summary>
+            <typeparam name="T">The cached objects type.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.SetAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                The method used for performing a caching.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.Set(`0)">
+            <summary>
+                The method used for performing a caching.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.GetAsync(System.Threading.CancellationToken)">
+            <summary>
+                The method used for retrieving data from cache.
+            </summary>
+            <param name="token">The cancellation token.</param>
+            <returns>The cached data or null (if entry was not found or expired).</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.Get">
+            <summary>
+                The method used for retrieving data from cache.
+            </summary>
+            <returns>The cached data or null (if entry was not found or expired).</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.RefreshAsync(System.Threading.CancellationToken)">
+            <summary>
+                The method used for refreshing data expiration in cache.
+            </summary>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.Refresh">
+            <summary>
+                The method used for refreshing data expiration in cache.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.RemoveAsync(System.Threading.CancellationToken)">
+            <summary>
+                The method used for removing data from cache.
+            </summary>
+            <param name="token">The cancellation token.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Caches.IUnknownStoreCache`1.Remove">
+            <summary>
+                The method used for removing data from cache.
+            </summary>
+        </member>
+        <member name="T:mrlldd.Caching.CachingOptions">
+            <summary>
+                The class that represents a caching options used to set up the caches.
+            </summary>
+        </member>
+        <member name="F:mrlldd.Caching.CachingOptions.Disabled">
+            <summary>
+                Options that represents a disabled caching.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.CachingOptions.IsCaching">
+            <summary>
+                The bool that indicates if caching is enabled.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.CachingOptions.SlidingExpiration">
+            <summary>
+                The cache item sliding expiration timeout.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.CachingOptions.AbsoluteExpirationRelativeToNow">
+            <summary>
+                The cache item absolute expiration timeout relative to now. 
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.CachingOptions.Enabled(System.TimeSpan)">
+            <summary>
+                The factory method used for creating an enabled caching.
+            </summary>
+            <param name="slidingExpiration">The cache item sliding expiration timeout.</param>
+            <returns>The caching options.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.CachingOptions.Enabled(System.Nullable{System.TimeSpan},System.TimeSpan)">
+            <summary>
+                The factory method used for creating an enabled caching.
+            </summary>
+            <param name="slidingExpiration">The cache item sliding expiration timeout.</param>
+            <param name="absoluteExpirationRelativeToNow">The cache item absolute expiration timeout relative to now.</param>
+            <returns>The caching options.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.CachingOptions.EnabledAbsoluteRelativeToNow(System.TimeSpan)">
+            <summary>
+                The factory method used for creating an enabled caching.
+            </summary>
+            <param name="absoluteExpirationRelativeToNow">The cache item absolute expiration timeout relative to now.</param>
+            <returns>The caching options.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Extensions.DependencyInjection.ICachingServiceCollection">
+            <summary>
+                The interface-wrapper used in order to access extensions methods that customize usage of that library.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ICachingServiceCollection.Decorators``1">
+            <summary>
+                The method used to get the caching decorators collection for specific store with flag of type <typeparamref name="TFlag" />.
+            </summary>
+            <typeparam name="TFlag">The type of caching flag.</typeparam>
+            <returns>The decorators collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ICachingServiceCollection.Serializers``1">
+            <summary>
+                The method used to get the caching serializers collection for specific store with flag of type <typeparamref name="TFlag" />.
+            </summary>
+            <typeparam name="TFlag">The type of caching flag.</typeparam>
+            <returns>The decorators collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ICachingServiceCollection.Serializers">
+            <summary>
+                The method used to get the global caching serializers collection.
+            </summary>
+            <returns>The decorators collection.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Extensions.DependencyInjection.IDecoratorsCachingServiceCollection`1">
+            <summary>
+                The interface used to access methods that customize store decorations in that library.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.IDecoratorsCachingServiceCollection`1.Add``1(Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to add decorator service for current caching flag.
+            </summary>
+            <param name="lifetime">The service lifetime scope of decorator.</param>
+            <typeparam name="T">The type of decorator.</typeparam>
+            <returns>The decorators builder collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.IDecoratorsCachingServiceCollection`1.Add``1(System.Func{System.IServiceProvider,``0})">
+            <summary>
+                The method used to add decorator service in scoped lifetime scope for current caching flag.
+            </summary>
+            <param name="implementationFactory">The method used to create decorator.</param>
+            <typeparam name="T">The type of decorator.</typeparam>
+            <returns>The decorators builder collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.IDecoratorsCachingServiceCollection`1.Add``1(``0)">
+            <summary>
+                The method used to add decorator service in singleton lifetime scope for current caching flag.
+            </summary>
+            <param name="instance">The decorator instance.</param>
+            <typeparam name="T">The type of decorator.</typeparam>
+            <returns>The decorators builder collection.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection">
+            <summary>
+                The interface used to access methods that customize store serializers in that library.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection.Use(mrlldd.Caching.Serializers.ICachingSerializer)">
+            <summary>
+                The method used to register serializer for specific caching flag in singleton scope.
+            </summary>
+            <param name="serializer">The caching serializer instance.</param>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection.Use(System.Func{System.IServiceProvider,mrlldd.Caching.Serializers.ICachingSerializer},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to register serializer for specific caching flag in specified scope.
+            </summary>
+            <param name="serializerFactory">The caching serializer factory delegate.</param>
+            <param name="scope">The service lifetime scope.</param>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection.Use``1(Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to register serializer for specific caching flog in specified scope.
+            </summary>
+            <param name="scope">The service lifetime scope.</param>
+            <typeparam name="T">The type of caching serializer service.</typeparam>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection`1">
+            <summary>
+                The interface used to access methods that customize store serializers in that library.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection`1.Use(mrlldd.Caching.Serializers.ICachingSerializer)">
+            <summary>
+                The method used to register serializer for specific caching flag in singleton scope.
+            </summary>
+            <param name="serializer">The caching serializer instance.</param>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection`1.Use(System.Func{System.IServiceProvider,mrlldd.Caching.Serializers.ICachingSerializer},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to register serializer for specific caching flag in specified scope.
+            </summary>
+            <param name="serializerFactory">The caching serializer factory delegate.</param>
+            <param name="scope">The service lifetime scope.</param>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection`1.Use``1(Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to register serializer for specific caching flog in specified scope.
+            </summary>
+            <param name="scope">The service lifetime scope.</param>
+            <typeparam name="T">The type of caching serializer service.</typeparam>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Flags.CachingFlag">
+            <summary>
+                The class that represents a generic parameter in caching services that identifies the caching entries store.
+            </summary>
+        </member>
+        <member name="T:mrlldd.Caching.ICaching">
+            <summary>
+                The interface that represents a base class for implementing caching utilities.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.ICaching.Populate(System.IServiceProvider,mrlldd.Caching.Stores.IStoreOperationOptionsProvider,mrlldd.Caching.Serializers.ICachingSerializer)">
+            <summary>
+                A method used for populating that class with dependencies,
+                created in order to reduce the boilerplate constructor code in every implementation.
+            </summary>
+            <param name="serviceProvider">The service provider.</param>
+            <param name="storeOperationOptionsProvider">The store operation provider.</param>
+            <param name="globalDefaultSerializer">The global default caching serializer.</param>
+        </member>
+        <member name="T:mrlldd.Caching.ICaching`2">
+            <summary>
+                The interface that represents a generic base class for implementing caching utilities.
+            </summary>
+        </member>
+        <member name="T:mrlldd.Caching.Loaders.ICachingLoader`3">
+            <summary>
+                The base class for implemented caching loaders
+            </summary>
+            <typeparam name="TArgs">Loading argument type.</typeparam>
+            <typeparam name="TResult">Loading result type.</typeparam>
+            <typeparam name="TFlag">The caching flag.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.GetOrLoadAsync(`0,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+                The method used for getting (if cached) or loading the object of result type.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="omitCacheOnLoad">
+                The boolean that indicates if cache should be omitted on getting (means there should be
+                only load and caching).
+            </param>
+            <param name="token">The cancellation token.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns the object of result type.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.GetOrLoad(`0,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+                The method used for getting (if cached) or loading the object of result type.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="omitCacheOnLoad">
+                The boolean that indicates if cache should be omitted on getting (means there should be
+                only load and caching).
+            </param>
+            <param name="token">The cancellation token.</param>
+            <returns>The object of result <typeparamref name="TResult" /> type.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.SetAsync(`0,`1,System.Threading.CancellationToken)">
+            <summary>
+                The method used for setting the object entry of result type in cache.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="result">The data.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The task.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.Set(`0,`1)">
+            <summary>
+                The method used for setting the object entry of result type in cache.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="result">The data.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.GetAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                The method used for getting the object entry of result type from cache.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns the object of result type.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.Get(`0)">
+            <summary>
+                The method used for getting the object entry of result type from cache.
+            </summary>
+            <param name="args">The argument.</param>
+            <returns>The object of result <typeparamref name="TResult" /> type.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.RefreshAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                The method used for refreshing the object entry of result type in cache.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The task.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.Refresh(`0)">
+            <summary>
+                The method used for refreshing the object entry of result type in cache.
+            </summary>
+            <param name="args">The argument.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.RemoveAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                The method used for removing the object entry of result type in cache.
+            </summary>
+            <param name="args">The argument.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The task.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ICachingLoader`3.Remove(`0)">
+            <summary>
+                The method used for removing the object entry of result type in cache.
+            </summary>
+            <param name="args">The argument.</param>
+        </member>
+        <member name="T:mrlldd.Caching.Loaders.ILoader`2">
+            <summary>
+                The interface that represents loaders used in caching loaders (see
+                <see cref="T:mrlldd.Caching.Loaders.ICachingLoader`3" /> loaders.
+            </summary>
+            <typeparam name="TArgs">Loading argument type.</typeparam>
+            <typeparam name="TResult">Loading result type.</typeparam>
+        </member>
+        <member name="M:mrlldd.Caching.Loaders.ILoader`2.LoadAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+                The method used to load <typeparamref name="TResult" /> with argument of type <typeparamref name="TArgs" />
+            </summary>
+            <param name="args">The arguments for loading.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The result of loading.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Serializers.ICachingSerializer">
+            <summary>
+                The interface that represents serializer used in caching operations.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.ICachingSerializer.SerializeAsync``1(``0,System.Threading.CancellationToken)">
+            <summary>
+                The method used to serialize generic value.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="token">The cancellation token.</param>
+            <typeparam name="T">The type of value.</typeparam>
+            <returns>The result of serialization.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.ICachingSerializer.DeserializeAsync``1(System.Byte[],System.Threading.CancellationToken)">
+            <summary>
+                The method used to deserialize raw byte array value to generic type instance.
+            </summary>
+            <param name="rawValue">The byte array value.</param>
+            <param name="token">The cancellation token.</param>
+            <typeparam name="T">The type of generic result value.</typeparam>
+            <returns>The result of deserialization.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Stores.Decoration.ICacheStoreDecorator`1">
+            <summary>
+                The interface that represents caching store decorator.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.Decoration.ICacheStoreDecorator`1.Decorate(mrlldd.Caching.Stores.ICacheStore{`0})">
+            <summary>
+                The method used for decorating the memory caching store.
+            </summary>
+            <param name="cacheStore">The caching store.</param>
+            <returns>The decorated (or not) caching store.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Stores.Decoration.IHasOrder">
+            <summary>
+                The interface that represents something with specified order.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Stores.Decoration.IHasOrder.Order">
+            <summary>
+                The order of applying among all registered decorators.
+            </summary>
+        </member>
+        <member name="T:mrlldd.Caching.Stores.ICacheStore`1">
+            <summary>
+                The interface that represents caching store and provides cache operations.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.Get``1(System.String,mrlldd.Caching.Stores.ICacheStoreOperationOptions)">
+            <summary>
+                The method for getting cache entry.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <typeparam name="T">The result type.</typeparam>
+            <returns>The <see cref="T:Functional.Result.Result`1" /> with value of type <typeparamref name="T" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.GetAsync``1(System.String,mrlldd.Caching.Stores.ICacheStoreOperationOptions,System.Threading.CancellationToken)">
+            <summary>
+                The method for getting cache entry.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="token">The cancellation token.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <typeparam name="T">The result type.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns <see cref="T:Functional.Result.Result`1" /> with value of type <typeparamref name="T" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.Set``1(System.String,``0,mrlldd.Caching.CachingOptions,mrlldd.Caching.Stores.ICacheStoreOperationOptions)">
+            <summary>
+                The method for setting cache entry.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="value">The value.</param>
+            <param name="options">The cache entry options.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <typeparam name="T">The result type.</typeparam>
+            <returns>The <see cref="T:Functional.Result.Result" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.SetAsync``1(System.String,``0,mrlldd.Caching.CachingOptions,mrlldd.Caching.Stores.ICacheStoreOperationOptions,System.Threading.CancellationToken)">
+            <summary>
+                The method for setting cache entry.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="value">The value.</param>
+            <param name="options">The cache entry options.</param>
+            <param name="token">The cancellation token.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <typeparam name="T">The result type.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns <see cref="T:Functional.Result.Result" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.Refresh(System.String,mrlldd.Caching.Stores.ICacheStoreOperationOptions)">
+            <summary>
+                The method for refreshing cache entry expiration.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <returns>The <see cref="T:Functional.Result.Result" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.RefreshAsync(System.String,mrlldd.Caching.Stores.ICacheStoreOperationOptions,System.Threading.CancellationToken)">
+            <summary>
+                The method for refreshing cache entry.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="token">The cancellation token.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns <see cref="T:Functional.Result.Result" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.Remove(System.String,mrlldd.Caching.Stores.ICacheStoreOperationOptions)">
+            <summary>
+                The method for removing cache entry expiration.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <returns>The <see cref="T:Functional.Result.Result" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.ICacheStore`1.RemoveAsync(System.String,mrlldd.Caching.Stores.ICacheStoreOperationOptions,System.Threading.CancellationToken)">
+            <summary>
+                The method for removing cache entry.
+            </summary>
+            <param name="key">The cache entry key.</param>
+            <param name="operationOptions">The store operation metadata.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns <see cref="T:Functional.Result.Result" />.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Stores.ICacheStoreOperationOptions">
+            <summary>
+                The interface that represents store operation method metadata.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Stores.ICacheStoreOperationOptions.OperationId">
+            <summary>
+                The store operation id.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Stores.ICacheStoreOperationOptions.Delimiter">
+            <summary>
+                The cache key delimiter.
+            </summary>
+        </member>
+        <member name="P:mrlldd.Caching.Stores.ICacheStoreOperationOptions.Serializer">
+            <summary>
+                The caching serializer.
+            </summary>
+        </member>
+        <member name="T:mrlldd.Caching.Stores.IStoreOperationOptionsProvider">
+            <summary>
+                The interface that represents service for handling store operations.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Stores.IStoreOperationOptionsProvider.Next(System.String,mrlldd.Caching.Serializers.ICachingSerializer)">
+            <summary>
+                The method that handles uniqueness of every new operation.
+            </summary>
+            <param name="cacheKeyDelimiter">The cache key delimiter.</param>
+            <param name="serializer">The caching serializer.</param>
+            <returns>The cache store operation metadata.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Strategies.ICacheGetStrategy">
+            <summary>
+                The interface that represents cache entry getting operations strategy.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICacheGetStrategy.GetAsync``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0},System.Threading.CancellationToken)">
+            <summary>
+                The method used to get entry of type <typeparamref name="T" /> from cache asynchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <param name="token">The cancellation token.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns result of getting entry of type <typeparamref name="T" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICacheGetStrategy.Get``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0})">
+            <summary>
+                The method used to get entry of type <typeparamref name="T" /> from cache synchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns result of getting entry of type <typeparamref name="T" />.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Strategies.ICachingRefreshStrategy">
+            <summary>
+                The interface that represents cache entry refreshing operations strategy.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICachingRefreshStrategy.RefreshAsync``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0},System.Threading.CancellationToken)">
+            <summary>
+                The method used to refresh entry of type <typeparamref name="T" /> in cache asynchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <param name="token">The cancellation token.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns result of entry of type <typeparamref name="T" /> refreshing.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICachingRefreshStrategy.Refresh``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0})">
+            <summary>
+                The method used to refresh entry of type <typeparamref name="T" /> in cache synchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns result of entry of type <typeparamref name="T" /> refreshing.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Strategies.ICachingRemoveStrategy">
+            <summary>
+                The interface that represents cache entry removing operations strategy.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICachingRemoveStrategy.RemoveAsync``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0},System.Threading.CancellationToken)">
+            <summary>
+                The method used to remove entry of type <typeparamref name="T" /> in cache asynchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <param name="token">The cancellation token.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns result of entry of type <typeparamref name="T" /> removing.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICachingRemoveStrategy.Remove``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0})">
+            <summary>
+                The method used to remove entry of type <typeparamref name="T" /> in cache synchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns result of entry of type <typeparamref name="T" /> removing.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Strategies.ICachingSetStrategy">
+            <summary>
+                The interface that represents cache entry setting operations strategy.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICachingSetStrategy.SetAsync``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0},``0,System.Threading.CancellationToken)">
+            <summary>
+                The method used to set entry of type <typeparamref name="T" /> in cache asynchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <param name="value">The value to set.</param>
+            <param name="token">The cancellation token.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns the setting result of entry of type <typeparamref name="T" />.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Strategies.ICachingSetStrategy.Set``1(mrlldd.Caching.Caches.IReadOnlyCachesCollection{``0},``0)">
+            <summary>
+                The method used to set entry of type <typeparamref name="T" /> in cache synchronously.
+            </summary>
+            <param name="caches">The caches collection.</param>
+            <param name="value">The value to set.</param>
+            <typeparam name="T">The type of entry.</typeparam>
+            <returns>The <see cref="T:System.Threading.Tasks.Task`1" /> that returns the setting result of entry of type <typeparamref name="T" />.</returns>
+        </member>
+    </members>
+</doc>

@@ -23,7 +23,7 @@ namespace mrlldd.Caching.Loaders
         /// </param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}" /> that returns the object of result type.</returns>
-        ValueTask<Result<TResult>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
+        ValueTask<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
             CancellationToken token = default);
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace mrlldd.Caching.Loaders
         /// </param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The object of result <typeparamref name="TResult" /> type.</returns>
-        Result<TResult> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
+        Result<TResult?> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default);
 
         /// <summary>
         ///     The method used for setting the object entry of result type in cache.
@@ -45,14 +45,14 @@ namespace mrlldd.Caching.Loaders
         /// <param name="result">The data.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The task.</returns>
-        ValueTask<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default);
+        ValueTask<Result> SetAsync(TArgs args, TResult? result, CancellationToken token = default);
 
         /// <summary>
         ///     The method used for setting the object entry of result type in cache.
         /// </summary>
         /// <param name="args">The argument.</param>
         /// <param name="result">The data.</param>
-        Result Set(TArgs args, TResult result);
+        Result Set(TArgs args, TResult? result);
 
         /// <summary>
         ///     The method used for getting the object entry of result type from cache.
@@ -60,14 +60,14 @@ namespace mrlldd.Caching.Loaders
         /// <param name="args">The argument.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The <see cref="Task{TResult}" /> that returns the object of result type.</returns>
-        ValueTask<Result<TResult>> GetAsync(TArgs args, CancellationToken token = default);
+        ValueTask<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default);
 
         /// <summary>
         ///     The method used for getting the object entry of result type from cache.
         /// </summary>
         /// <param name="args">The argument.</param>
         /// <returns>The object of result <typeparamref name="TResult" /> type.</returns>
-        Result<TResult> Get(TArgs args);
+        Result<TResult?> Get(TArgs args);
 
         /// <summary>
         ///     The method used for refreshing the object entry of result type in cache.

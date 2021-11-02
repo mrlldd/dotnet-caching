@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>mrlldd.Caching.Serializers.SystemTextJson</name>
+    </assembly>
+    <members>
+        <member name="T:mrlldd.Caching.Extensions.ServiceCollectionExtensions">
+            <summary>
+                The class that contains extensions methods for dependency injection of System.Text.Json caching serializer.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.ServiceCollectionExtensions.UseSystemTextJson``1(mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection{``0},System.Text.Json.JsonSerializerOptions)">
+            <summary>
+                The method used to register System.Text.Json serializer for specific caching flag in singleton scope.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="options">The json serializer options.</param>
+            <typeparam name="TFlag">The caching flag.</typeparam>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="M:mrlldd.Caching.Extensions.ServiceCollectionExtensions.UseSystemTextJson``1(mrlldd.Caching.Extensions.DependencyInjection.ISerializersCachingServiceCollection{``0},System.Func{System.IServiceProvider,System.Text.Json.JsonSerializerOptions},Microsoft.Extensions.DependencyInjection.ServiceLifetime)">
+            <summary>
+                The method used to register System.Text.Json serializer for specific caching flag in specified scope. 
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="optionsFactory">The json serializer options factory delegate.</param>
+            <param name="scope">The service lifetime scope.</param>
+            <typeparam name="TFlag">The caching flag.</typeparam>
+            <returns>The service collection.</returns>
+        </member>
+        <member name="T:mrlldd.Caching.Serializers.SystemTextJsonCachingSerializer">
+            <summary>
+                The System.Text.Json caching serializer.
+            </summary>
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.SystemTextJsonCachingSerializer.#ctor(System.Text.Json.JsonSerializerOptions)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="options">The json serializer options.</param>
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.SystemTextJsonCachingSerializer.SerializeAsync``1(``0,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:mrlldd.Caching.Serializers.SystemTextJsonCachingSerializer.DeserializeAsync``1(System.Byte[],System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

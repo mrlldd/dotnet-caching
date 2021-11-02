@@ -25,7 +25,7 @@ namespace mrlldd.Caching.Tests.Loaders
         protected abstract Result Result { get; }
         protected abstract Func<Times> SingleActionHits { get; }
 
-        protected abstract Result<VoidUnit> ResultFactory(VoidUnit args);
+        protected abstract Result<VoidUnit?> ResultFactory(VoidUnit args);
 
 
         [Test]
@@ -44,7 +44,7 @@ namespace mrlldd.Caching.Tests.Loaders
                         .ReturnsAsync(unit)
                         .Verifiable();
                     var storeMock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
-                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit>>> getSetup = x =>
+                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit?>>> getSetup = x =>
                         x.Get<VoidUnit>(It.Is<string>(s => s == EntryKey), It.IsAny<ICacheStoreOperationOptions>());
                     storeMock.Setup(getSetup)
                         .Returns(new CacheMissException(EntryKey))
@@ -88,7 +88,7 @@ namespace mrlldd.Caching.Tests.Loaders
                         .ReturnsAsync(unit)
                         .Verifiable();
                     var storeMock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
-                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit>>>> getSetup = x =>
+                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit?>>>> getSetup = x =>
                         x.GetAsync<VoidUnit>(It.Is<string>(s => s == EntryKey),
                             It.IsAny<ICacheStoreOperationOptions>(), It.IsAny<CancellationToken>());
                     storeMock.Setup(getSetup)
@@ -135,7 +135,7 @@ namespace mrlldd.Caching.Tests.Loaders
                         .Verifiable();
                     var storeMock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var fromStore = ResultFactory(unit);
-                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit>>> getSetup = x =>
+                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit?>>> getSetup = x =>
                         x.Get<VoidUnit>(It.Is<string>(s => s == EntryKey), It.IsAny<ICacheStoreOperationOptions>());
                     storeMock.Setup(getSetup)
                         .Returns(fromStore)
@@ -180,7 +180,7 @@ namespace mrlldd.Caching.Tests.Loaders
                         .Verifiable();
                     var storeMock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var fromStore = ResultFactory(unit);
-                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit>>> getSetup = x =>
+                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit?>>> getSetup = x =>
                         x.Get<VoidUnit>(It.Is<string>(s => s == EntryKey), It.IsAny<ICacheStoreOperationOptions>());
                     storeMock.Setup(getSetup)
                         .Returns(fromStore)
@@ -225,7 +225,7 @@ namespace mrlldd.Caching.Tests.Loaders
                         .Verifiable();
                     var storeMock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var fromStore = ResultFactory(unit);
-                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit>>>> getSetup = x =>
+                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit?>>>> getSetup = x =>
                         x.GetAsync<VoidUnit>(It.Is<string>(s => s == EntryKey),
                             It.IsAny<ICacheStoreOperationOptions>(), It.IsAny<CancellationToken>());
                     storeMock.Setup(getSetup)
@@ -272,7 +272,7 @@ namespace mrlldd.Caching.Tests.Loaders
                         .Verifiable();
                     var storeMock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var fromStore = ResultFactory(unit);
-                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit>>>> getSetup = x =>
+                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit?>>>> getSetup = x =>
                         x.GetAsync<VoidUnit>(It.Is<string>(s => s == EntryKey),
                             It.IsAny<ICacheStoreOperationOptions>(),
                             It.IsAny<CancellationToken>());
@@ -313,7 +313,7 @@ namespace mrlldd.Caching.Tests.Loaders
                     var mock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var unit = new VoidUnit();
                     var expected = ResultFactory(unit);
-                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit>>> setup = x => x.Get<VoidUnit>(
+                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit?>>> setup = x => x.Get<VoidUnit>(
                         It.Is<string>(s => s == EntryKey),
                         It.IsAny<ICacheStoreOperationOptions>());
                     mock.Setup(setup).Returns(expected)
@@ -337,7 +337,7 @@ namespace mrlldd.Caching.Tests.Loaders
                     var mock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var unit = new VoidUnit();
                     var expected = ResultFactory(unit);
-                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit>>>> setup = x => x.GetAsync<VoidUnit>(
+                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit?>>>> setup = x => x.GetAsync<VoidUnit>(
                         It.Is<string>(s => s == EntryKey),
                         It.IsAny<ICacheStoreOperationOptions>(),
                         It.IsAny<CancellationToken>());

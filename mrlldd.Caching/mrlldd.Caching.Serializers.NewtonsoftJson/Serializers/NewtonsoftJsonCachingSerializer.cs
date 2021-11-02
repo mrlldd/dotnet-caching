@@ -14,7 +14,7 @@ namespace mrlldd.Caching.Serializers
         private readonly JsonSerializer serializer;
 
         /// <summary>
-        /// The co
+        /// The constructor.
         /// </summary>
         /// <param name="settings"></param>
         public NewtonsoftJsonCachingSerializer(JsonSerializerSettings? settings = null) 

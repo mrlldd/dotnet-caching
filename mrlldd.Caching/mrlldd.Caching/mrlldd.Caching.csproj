@@ -41,6 +41,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\mrlldd.Caching.Abstractions\mrlldd.Caching.Abstractions.csproj" />
+        <ProjectReference Include="..\mrlldd.Caching.Serializers.NewtonsoftJson\mrlldd.Caching.Serializers.NewtonsoftJson.csproj" />
     </ItemGroup>
 
 </Project>

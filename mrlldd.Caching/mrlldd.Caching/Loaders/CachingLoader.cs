@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Functional.Result;
-using Functional.Result.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Flags;
@@ -34,17 +33,17 @@ namespace mrlldd.Caching.Loaders
             => "loader";
 
         /// <inheritdoc />
-        public async ValueTask<Result<TResult>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
+        public async ValueTask<Result<TResult?>> GetOrLoadAsync(TArgs args, bool omitCacheOnLoad = false,
             CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
             {
                 var gettingTask = TryGetFromCacheAsync(keySuffix, token);
-                var inCache = gettingTask.IsCompletedSuccessfully
+                var fromCache = gettingTask.IsCompletedSuccessfully
                     ? gettingTask.Result
                     : await gettingTask;
-                if (inCache.Successful) return inCache.UnwrapAsSuccess();
+                if (fromCache.Successful) return fromCache;
             }
 
             var loaded = await Loader.LoadAsync(args, token);
@@ -63,7 +62,7 @@ namespace mrlldd.Caching.Loaders
         }
 
         /// <inheritdoc />
-        public Result<TResult> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
+        public Result<TResult?> GetOrLoad(TArgs args, bool omitCacheOnLoad = false, CancellationToken token = default)
         {
             var keySuffix = CacheKeySuffixFactory(args);
             if (!omitCacheOnLoad)
@@ -83,25 +82,25 @@ namespace mrlldd.Caching.Loaders
         }
 
         /// <inheritdoc />
-        public ValueTask<Result> SetAsync(TArgs args, TResult result, CancellationToken token = default)
+        public ValueTask<Result> SetAsync(TArgs args, TResult? result, CancellationToken token = default)
         {
             return PerformCachingAsync(result, CacheKeySuffixFactory(args), token);
         }
 
         /// <inheritdoc />
-        public Result Set(TArgs args, TResult result)
+        public Result Set(TArgs args, TResult? result)
         {
             return PerformCaching(result, CacheKeySuffixFactory(args));
         }
 
         /// <inheritdoc />
-        public ValueTask<Result<TResult>> GetAsync(TArgs args, CancellationToken token = default)
+        public ValueTask<Result<TResult?>> GetAsync(TArgs args, CancellationToken token = default)
         {
             return TryGetFromCacheAsync(CacheKeySuffixFactory(args), token);
         }
 
         /// <inheritdoc />
-        public Result<TResult> Get(TArgs args)
+        public Result<TResult?> Get(TArgs args)
         {
             return TryGetFromCache(CacheKeySuffixFactory(args));
         }

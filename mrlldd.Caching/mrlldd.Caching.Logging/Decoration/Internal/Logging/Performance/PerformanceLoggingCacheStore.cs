@@ -28,23 +28,23 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
             this.storeLogPrefix = storeLogPrefix;
         }
 
-        public Result<T> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
+        public Result<T?> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
             return ThroughStopwatch((s, m) => s.Get<T>(key, m), operationOptions);
         }
 
-        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
+        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
             return ThroughStopwatchAsync((s, m) => s.GetAsync<T>(key, m, token), operationOptions);
         }
 
-        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
+        public Result Set<T>(string key, T? value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
         {
             return ThroughStopwatch((s, m) => s.Set(key, value, options, m), operationOptions);
         }
 
-        public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
+        public ValueTask<Result> SetAsync<T>(string key, T? value, CachingOptions options,
             ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {

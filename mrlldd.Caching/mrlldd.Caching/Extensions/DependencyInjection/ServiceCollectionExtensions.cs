@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using mrlldd.Caching.Caches;
 using mrlldd.Caching.Extensions.DependencyInjection.Internal;
+using mrlldd.Caching.Flags;
 using mrlldd.Caching.Loaders;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Internal;
@@ -41,7 +42,9 @@ namespace mrlldd.Caching.Extensions.DependencyInjection
                 .AddCaches(types)
                 .AddLoaders(types)
                 .AddCachingStores();
-            return new CachingServiceCollection(services);
+            return new CachingServiceCollection(services)
+                .Serializers()
+                .UseNewtonsoftJson();
         }
     }
 }

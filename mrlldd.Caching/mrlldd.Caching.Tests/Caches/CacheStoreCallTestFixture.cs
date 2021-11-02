@@ -23,7 +23,7 @@ namespace mrlldd.Caching.Tests.Caches
 
         protected abstract Result Result { get; }
 
-        protected abstract Result<VoidUnit> ResultFactory(VoidUnit unit);
+        protected abstract Result<VoidUnit?> ResultFactory(VoidUnit unit);
 
         [Test]
         public void GetsFromStore()
@@ -34,7 +34,7 @@ namespace mrlldd.Caching.Tests.Caches
                     InjectInstance(CachingOptions);
                     var mock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var unit = new VoidUnit();
-                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit>>> setup = x =>
+                    Expression<Func<ICacheStore<InMoq>, Result<VoidUnit?>>> setup = x =>
                         x.Get<VoidUnit>(It.Is<string>(s => s == EntryKey), It.IsAny<ICacheStoreOperationOptions>());
                     var unitResult = ResultFactory(unit);
                     mock.Setup(setup)
@@ -58,7 +58,7 @@ namespace mrlldd.Caching.Tests.Caches
                     InjectInstance(CachingOptions);
                     var mock = c.GetRequiredService<Mock<ICacheStore<InMoq>>>();
                     var unit = new VoidUnit();
-                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit>>>> setup = x =>
+                    Expression<Func<ICacheStore<InMoq>, ValueTask<Result<VoidUnit?>>>> setup = x =>
                         x.GetAsync<VoidUnit>(It.Is<string>(s => s == EntryKey),
                             It.IsAny<ICacheStoreOperationOptions>(),
                             It.IsAny<CancellationToken>());

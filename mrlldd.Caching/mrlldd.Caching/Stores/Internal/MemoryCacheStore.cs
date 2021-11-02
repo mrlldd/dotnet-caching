@@ -18,19 +18,22 @@ namespace mrlldd.Caching.Stores.Internal
             this.memoryCache = memoryCache;
         }
 
-        public Result<T> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
+        public Result<T?> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
-            return Result.Of(() => memoryCache.Get<T>(key))
-                .Bind(t => t != null ? t : throw new CacheMissException(key));
+            return Result.Of<T?>(() =>
+            {
+                var fromCache = memoryCache.Get<T>(key);
+                return fromCache != null ? fromCache : throw new CacheMissException(key);
+            });
         }
 
-        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
+        public ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
             return new(Get<T>(key, operationOptions));
         }
 
-        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
+        public Result Set<T>(string key, T? value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
         {
             return Result.Of(new Action(() => memoryCache.Set(key, value, new MemoryCacheEntryOptions
             {
@@ -39,7 +42,7 @@ namespace mrlldd.Caching.Stores.Internal
             })));
         }
 
-        public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
+        public ValueTask<Result> SetAsync<T>(string key, T? value, CachingOptions options,
             ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {

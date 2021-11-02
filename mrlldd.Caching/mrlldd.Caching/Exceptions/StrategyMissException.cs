@@ -14,7 +14,7 @@ namespace mrlldd.Caching.Exceptions
         /// </summary>
         /// <param name="strategyName">The name of strategy.</param>
         /// <param name="fails">The fails happen during execution.</param>
-        public StrategyMissException(string strategyName, IReadOnlyCollection<Result<T>> fails) : base(
+        public StrategyMissException(string strategyName, IReadOnlyCollection<Result<T?>> fails) : base(
             $"Failed to get cache entry with strategy '{strategyName}', see exception details.")
         {
             StrategyName = strategyName;
@@ -29,6 +29,6 @@ namespace mrlldd.Caching.Exceptions
         /// <summary>
         ///     The fails happen during execution.
         /// </summary>
-        public IReadOnlyCollection<Result<T>> Fails { get; }
+        public IReadOnlyCollection<Result<T?>> Fails { get; }
     }
 }

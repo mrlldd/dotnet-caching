@@ -34,25 +34,25 @@ namespace mrlldd.Caching.Caches
         }
 
         /// <inheritdoc />
-        public ValueTask<Result> SetAsync(T value, CancellationToken token = default)
+        public ValueTask<Result> SetAsync(T? value, CancellationToken token = default)
         {
             return PerformCachingAsync(value, CacheKeySuffix, token);
         }
 
         /// <inheritdoc />
-        public Result Set(T value)
+        public Result Set(T? value)
         {
             return PerformCaching(value, CacheKeySuffix);
         }
 
         /// <inheritdoc />
-        public ValueTask<Result<T>> GetAsync(CancellationToken token = default)
+        public ValueTask<Result<T?>> GetAsync(CancellationToken token = default)
         {
             return TryGetFromCacheAsync(CacheKeySuffix, token);
         }
 
         /// <inheritdoc />
-        public Result<T> Get()
+        public Result<T?> Get()
         {
             return TryGetFromCache(CacheKeySuffix);
         }

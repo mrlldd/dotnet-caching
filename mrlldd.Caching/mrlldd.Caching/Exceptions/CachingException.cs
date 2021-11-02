@@ -14,5 +14,15 @@ namespace mrlldd.Caching.Exceptions
         public CachingException(string message) : base(message)
         {
         }
+
+        /// <summary>
+        ///     The constructor.
+        /// </summary>
+        /// <param name="message">The exception message.</param>
+        /// <param name="exception">The inner exception.</param>
+        public CachingException(string message, Exception exception) : base(message, exception)
+        {
+            
+        }
     }
 }

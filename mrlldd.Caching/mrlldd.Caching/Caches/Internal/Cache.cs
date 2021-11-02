@@ -14,22 +14,22 @@ namespace mrlldd.Caching.Caches.Internal
 
         public IReadOnlyCachesCollection<T> Instances { get; }
 
-        public Task<Result<T>> GetAsync(CancellationToken token = default)
+        public Task<Result<T?>> GetAsync(CancellationToken token = default)
         {
             return GetAsync(GetFirstSuccessfulStrategy.Instance, token);
         }
 
-        public Result<T> Get()
+        public Result<T?> Get()
         {
             return Get(GetFirstSuccessfulStrategy.Instance);
         }
 
-        public Task<Result<T>> GetAsync(ICacheGetStrategy strategy, CancellationToken token = default)
+        public Task<Result<T?>> GetAsync(ICacheGetStrategy strategy, CancellationToken token = default)
         {
             return strategy.GetAsync(Instances, token);
         }
 
-        public Result<T> Get(ICacheGetStrategy strategy)
+        public Result<T?> Get(ICacheGetStrategy strategy)
         {
             return strategy.Get(Instances);
         }

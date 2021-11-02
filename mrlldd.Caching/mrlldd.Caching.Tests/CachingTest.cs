@@ -42,7 +42,7 @@ namespace mrlldd.Caching.Tests
             Container.AddMock<IStoreOperationOptionsProvider>(MockRepository);
             var mock = Container.GetRequiredService<Mock<IStoreOperationOptionsProvider>>();
             mock.Setup(OperationProviderSetupExpression)
-                .Returns<string>(s => new CacheStoreOperationOptions(Faker.Random.Number(99999), s, new NewtonsoftJsonCachingSerializer()))
+                .Returns<string, ICachingSerializer>((s, _) => new CacheStoreOperationOptions(Faker.Random.Number(99999), s, new NewtonsoftJsonCachingSerializer()))
                 .Verifiable();
             action();
             mock.Verify(OperationProviderSetupExpression, times);
@@ -54,7 +54,7 @@ namespace mrlldd.Caching.Tests
             Container.AddMock<IStoreOperationOptionsProvider>(MockRepository);
             var mock = Container.GetRequiredService<Mock<IStoreOperationOptionsProvider>>();
             mock.Setup(OperationProviderSetupExpression)
-                .Returns<string>(s => new CacheStoreOperationOptions(Faker.Random.Number(99999), s, new NewtonsoftJsonCachingSerializer()))
+                .Returns<string, ICachingSerializer>((s, _) => new CacheStoreOperationOptions(Faker.Random.Number(99999), s, new NewtonsoftJsonCachingSerializer()))
                 .Verifiable();
             await asyncAction();
             mock.Verify(OperationProviderSetupExpression, times);

@@ -27,7 +27,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             this.storeLogPrefix = storeLogPrefix;
         }
 
-        public Result<T> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
+        public Result<T?> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
             LogGetTry<T>(key, operationOptions);
             var result = sourceCacheStore.Get<T>(key, operationOptions);
@@ -35,7 +35,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
+        public async ValueTask<Result<T?>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
             LogGetTry<T>(key, operationOptions);
@@ -44,7 +44,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
+        public Result Set<T>(string key, T? value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
         {
             LogSetTry<T>(key, operationOptions);
             var result = sourceCacheStore.Set(key, value, options, operationOptions);
@@ -52,7 +52,7 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             return result;
         }
 
-        public async ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
+        public async ValueTask<Result> SetAsync<T>(string key, T? value, CachingOptions options,
             ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {

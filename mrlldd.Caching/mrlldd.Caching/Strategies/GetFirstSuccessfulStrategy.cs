@@ -23,11 +23,11 @@ namespace mrlldd.Caching.Strategies
         public static ICacheGetStrategy Instance { get; } = new GetFirstSuccessfulStrategy();
 
         /// <inheritdoc />
-        public async Task<Result<T>> GetAsync<T>(IReadOnlyCachesCollection<T> caches, CancellationToken token = default)
+        public async Task<Result<T?>> GetAsync<T>(IReadOnlyCachesCollection<T> caches, CancellationToken token = default)
         {
-            var tasksList = new List<Task<Result<T>>>();
+            var tasksList = new List<Task<Result<T?>>>();
             var count = caches.Count;
-            var fails = new List<Result<T>>();
+            var fails = new List<Result<T?>>();
             for (var i = 0; i < count; i++)
             {
                 var valueTask = caches.ElementAt(i).GetAsync(token);
@@ -58,10 +58,10 @@ namespace mrlldd.Caching.Strategies
         }
 
         /// <inheritdoc />
-        public Result<T> Get<T>(IReadOnlyCachesCollection<T> caches)
+        public Result<T?> Get<T>(IReadOnlyCachesCollection<T> caches)
         {
             var count = caches.Count;
-            var fails = new List<Result<T>>();
+            var fails = new List<Result<T?>>();
             for (var i = 0; i < count; i++)
             {
                 var result = caches.ElementAt(i).Get();

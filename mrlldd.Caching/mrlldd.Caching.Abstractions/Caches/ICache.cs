@@ -23,13 +23,13 @@ namespace mrlldd.Caching.Caches
         /// </summary>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        Task<Result<T>> GetAsync(CancellationToken token = default);
+        Task<Result<T?>> GetAsync(CancellationToken token = default);
 
         /// <summary>
         ///     The method used for retrieving data from cache.
         /// </summary>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        Result<T> Get();
+        Result<T?> Get();
 
         /// <summary>
         ///     The method used for retrieving data from cache.
@@ -37,14 +37,14 @@ namespace mrlldd.Caching.Caches
         /// <param name="strategy">The caching get strategy.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        Task<Result<T>> GetAsync(ICacheGetStrategy strategy, CancellationToken token = default);
+        Task<Result<T?>> GetAsync(ICacheGetStrategy strategy, CancellationToken token = default);
 
         /// <summary>
         ///     The method used for retrieving data from cache.
         /// </summary>
         /// <param name="strategy">The caching get strategy.</param>
         /// <returns>The cached data or null (if entry was not found or expired).</returns>
-        Result<T> Get(ICacheGetStrategy strategy);
+        Result<T?> Get(ICacheGetStrategy strategy);
 
         /// <summary>
         ///     The method used for performing a caching.
