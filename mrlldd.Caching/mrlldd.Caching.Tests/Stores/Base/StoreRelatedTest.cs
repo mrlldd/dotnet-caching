@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Moq;
+using mrlldd.Caching.Serializers;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Internal;
 
@@ -12,15 +13,15 @@ namespace mrlldd.Caching.Tests.Stores.Base
         protected string Key { get; private set; } = null!;
 
         protected CachingOptions CachingOptions { get; private set; } = null!;
-        protected ICacheStoreOperationMetadata DefaultMetadata { get; private set; } = null!;
+        protected ICacheStoreOperationOptions DefaultOperationOptions { get; private set; } = null!;
 
         protected override void AfterContainerEnriching()
         {
             base.AfterContainerEnriching();
             Key = Faker.Random.String(32);
             CachingOptions = CachingOptions.Enabled(TimeSpan.FromMilliseconds(Faker.Random.Number(60, 6000)));
-            DefaultMetadata =
-                new CacheStoreOperationMetadata(Faker.Random.Number(0, 99999), Faker.Random.String(0, 32));
+            DefaultOperationOptions =
+                new CacheStoreOperationOptions(Faker.Random.Number(0, 99999), Faker.Random.String(0, 32), new NewtonsoftJsonCachingSerializer());
         }
 
         protected static void CallsSpecific<T>(Mock<T> mock,

@@ -20,7 +20,7 @@ namespace mrlldd.Caching
     public abstract class Caching<T, TStoreFlag> : ICaching<T, TStoreFlag>
         where TStoreFlag : CachingFlag
     {
-        private IStoreOperationProvider StoreOperationProvider { get; set; } = null!;
+        private IStoreOperationOptionsProvider StoreOperationOptionsProvider { get; set; } = null!;
 
         private ICacheStore<TStoreFlag> Store { get; set; } = null!;
 
@@ -45,12 +45,16 @@ namespace mrlldd.Caching
         /// </summary>
         // ReSharper disable once VirtualMemberNeverOverridden.Global
         protected virtual string CacheKeyDelimiter => ":";
-        
-        protected virtual ICachingSerializer? Serializer { get; private set; }
+
+        /// <summary>
+        ///     The caching serializer.
+        /// </summary>
+        protected virtual ICachingSerializer Serializer { get; private set; } = null!;
         
         /// <inheritdoc />
         public void Populate(IServiceProvider serviceProvider,
-            IStoreOperationProvider storeOperationProvider)
+            IStoreOperationOptionsProvider storeOperationOptionsProvider,
+            ICachingSerializer globalDefaultSerializer)
         {
             var storeProvider = serviceProvider.GetService<ICacheStoreProvider<TStoreFlag>>();
             if (storeProvider == null)
@@ -59,19 +63,12 @@ namespace mrlldd.Caching
             }
 
             Store = storeProvider.CacheStore;
-            StoreOperationProvider = storeOperationProvider;
+            StoreOperationOptionsProvider = storeOperationOptionsProvider;
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (Serializer == null)
             {
                 var flagSerializer = serviceProvider.GetService<CachingSerializerProvider<TStoreFlag>>();
-                if (flagSerializer == null)
-                {
-                    var globalSerializer = serviceProvider.GetRequiredService<CachingSerializerProvider>();
-                    Serializer = globalSerializer.Serializer;
-                }
-                else
-                {
-                    Serializer = flagSerializer.Serializer;
-                }
+                Serializer = flagSerializer == null ? globalDefaultSerializer : flagSerializer.Serializer;
             }
             EnrichWithDependencies(serviceProvider);
         }
@@ -100,7 +97,7 @@ namespace mrlldd.Caching
         {
             if (!Options.IsCaching) return new DisabledCachingException();
 
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
             return Store.Set(key, data, Options, operation);
         }
@@ -116,7 +113,7 @@ namespace mrlldd.Caching
             CancellationToken token = default)
         {
             if (!Options.IsCaching) return new ValueTask<Result>(new DisabledCachingException());
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
             return Store.SetAsync(key, data, Options, operation, token);
         }
@@ -130,7 +127,7 @@ namespace mrlldd.Caching
         {
             if (!Options.IsCaching) return new DisabledCachingException();
 
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
             return Store.Get<T>(key, operation);
         }
@@ -145,7 +142,7 @@ namespace mrlldd.Caching
         {
             if (!Options.IsCaching) return new ValueTask<Result<T>>(new DisabledCachingException());
 
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
             return Store.GetAsync<T>(key, operation, token);
         }
@@ -158,7 +155,7 @@ namespace mrlldd.Caching
         {
             if (!Options.IsCaching) return new DisabledCachingException();
 
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
 
             return Store.Refresh(key, operation);
@@ -173,7 +170,7 @@ namespace mrlldd.Caching
         {
             if (!Options.IsCaching) return new ValueTask<Result>(new DisabledCachingException());
 
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
             return Store.RefreshAsync(key, operation, token);
         }
@@ -186,7 +183,7 @@ namespace mrlldd.Caching
         {
             if (!Options.IsCaching) return new DisabledCachingException();
 
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
 
             return Store.Remove(key, operation);
@@ -201,7 +198,7 @@ namespace mrlldd.Caching
         {
             if (!Options.IsCaching) return new ValueTask<Result>(new DisabledCachingException());
 
-            var operation = StoreOperationProvider.Next(CacheKeyDelimiter);
+            var operation = StoreOperationOptionsProvider.Next(CacheKeyDelimiter, Serializer);
             var key = CacheKeyFactory(keySuffix);
             return Store.RemoveAsync(key, operation, token);
         }

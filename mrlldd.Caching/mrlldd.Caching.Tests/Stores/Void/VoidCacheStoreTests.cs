@@ -19,7 +19,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
         public void FailOnAnyGet()
         {
             Container
-                .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>().Get<VoidUnit>(Key, DefaultMetadata)
+                .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>().Get<VoidUnit>(Key, DefaultOperationOptions)
                     .Should()
                     .BeFailResult<VoidUnit>()
                     .WithException<VoidUnit, CacheMissException>()
@@ -33,7 +33,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InVoid>>()
-                        .GetAsync<VoidUnit>(Key, DefaultMetadata);
+                        .GetAsync<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeFailResult<VoidUnit>()
@@ -47,7 +47,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
         {
             Container
                 .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
-                    .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
+                    .Set(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions)
                     .Should()
                     .BeSuccessfulResult());
         }
@@ -59,7 +59,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InVoid>>()
-                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result
                         .Should()
                         .BeSuccessfulResult();
@@ -71,7 +71,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
         {
             Container
                 .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
-                    .Refresh(Key, DefaultMetadata)
+                    .Refresh(Key, DefaultOperationOptions)
                     .Should()
                     .BeSuccessfulResult());
         }
@@ -83,7 +83,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InVoid>>()
-                        .RefreshAsync(Key, DefaultMetadata);
+                        .RefreshAsync(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeSuccessfulResult();
@@ -95,7 +95,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
         {
             Container
                 .Effect(c => c.GetRequiredService<ICacheStore<InVoid>>()
-                    .Remove(Key, DefaultMetadata)
+                    .Remove(Key, DefaultOperationOptions)
                     .Should()
                     .BeSuccessfulResult());
         }
@@ -107,7 +107,7 @@ namespace mrlldd.Caching.Tests.Stores.Void
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InVoid>>()
-                        .RemoveAsync(Key, DefaultMetadata);
+                        .RemoveAsync(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeSuccessfulResult();

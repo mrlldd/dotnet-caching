@@ -38,7 +38,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                     var unit = new VoidUnit();
                     var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(unit));
                     distributedCache.Set(Key, bytes);
-                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Get<VoidUnit>(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Get<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeSuccessfulResult<VoidUnit>();
@@ -57,7 +57,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                     var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(unit));
                     await distributedCache.SetAsync(Key, bytes);
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .GetAsync<VoidUnit>(Key, DefaultMetadata);
+                        .GetAsync<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeSuccessfulResult<VoidUnit>();
@@ -71,7 +71,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
             Container
                 .Effect(c =>
                 {
-                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Get<VoidUnit>(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Get<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeFailResult<VoidUnit>();
@@ -90,7 +90,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .GetAsync<VoidUnit>(Key, DefaultMetadata);
+                        .GetAsync<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeFailResult<VoidUnit>();
@@ -108,7 +108,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                 .Effect(c =>
                 {
                     var result = c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .Set(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -121,7 +121,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -143,7 +143,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                                 o => o.SlidingExpiration == CachingOptions.SlidingExpiration)))
                         .Throws<TestException>();
                     var result = c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .Set(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -169,7 +169,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                             It.IsAny<CancellationToken>()))
                         .Throws<TestException>();
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .SetAsync(Key, unit, CachingOptions, DefaultMetadata);
+                        .SetAsync(Key, unit, CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -182,7 +182,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
             Container
                 .Effect(c =>
                 {
-                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Refresh(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Refresh(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -195,7 +195,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RefreshAsync(Key, DefaultMetadata);
+                        .RefreshAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -211,7 +211,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                     var mock = c.GetRequiredService<Mock<IDistributedCache>>();
                     mock.Setup(x => x.Refresh(It.Is<string>(s => s == Key)))
                         .Throws<TestException>();
-                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Refresh(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Refresh(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -229,7 +229,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                     mock.Setup(x => x.RefreshAsync(It.Is<string>(s => s == Key), It.IsAny<CancellationToken>()))
                         .Throws<TestException>();
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RefreshAsync(Key, DefaultMetadata);
+                        .RefreshAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -242,7 +242,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
             Container
                 .Effect(c =>
                 {
-                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Remove(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Remove(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -255,7 +255,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RemoveAsync(Key, DefaultMetadata);
+                        .RemoveAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -271,7 +271,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                     var mock = c.GetRequiredService<Mock<IDistributedCache>>();
                     mock.Setup(x => x.Remove(It.Is<string>(s => s == Key)))
                         .Throws<TestException>();
-                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Remove(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InDistributed>>().Remove(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -289,7 +289,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                     mock.Setup(x => x.RemoveAsync(It.Is<string>(s => s == Key), It.IsAny<CancellationToken>()))
                         .Throws<TestException>();
                     var result = await c.GetRequiredService<ICacheStore<InDistributed>>()
-                        .RemoveAsync(Key, DefaultMetadata);
+                        .RemoveAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();

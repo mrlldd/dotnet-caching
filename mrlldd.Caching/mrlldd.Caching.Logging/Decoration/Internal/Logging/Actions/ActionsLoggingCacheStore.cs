@@ -27,83 +27,83 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
             this.storeLogPrefix = storeLogPrefix;
         }
 
-        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+        public Result<T> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
-            LogGetTry<T>(key, metadata);
-            var result = sourceCacheStore.Get<T>(key, metadata);
-            LogGetResult(result, key, metadata);
+            LogGetTry<T>(key, operationOptions);
+            var result = sourceCacheStore.Get<T>(key, operationOptions);
+            LogGetResult(result, key, operationOptions);
             return result;
         }
 
-        public async ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            LogGetTry<T>(key, metadata);
-            var result = await sourceCacheStore.GetAsync<T>(key, metadata, token);
-            LogGetResult(result, key, metadata);
+            LogGetTry<T>(key, operationOptions);
+            var result = await sourceCacheStore.GetAsync<T>(key, operationOptions, token);
+            LogGetResult(result, key, operationOptions);
             return result;
         }
 
-        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
         {
-            LogSetTry<T>(key, metadata);
-            var result = sourceCacheStore.Set(key, value, options, metadata);
-            LogSetResult<T>(result, key, metadata);
+            LogSetTry<T>(key, operationOptions);
+            var result = sourceCacheStore.Set(key, value, options, operationOptions);
+            LogSetResult<T>(result, key, operationOptions);
             return result;
         }
 
         public async ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
-            ICacheStoreOperationMetadata metadata,
+            ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            LogSetTry<T>(key, metadata);
-            var result = await sourceCacheStore.SetAsync(key, value, options, metadata, token);
-            LogSetResult<T>(result, key, metadata);
+            LogSetTry<T>(key, operationOptions);
+            var result = await sourceCacheStore.SetAsync(key, value, options, operationOptions, token);
+            LogSetResult<T>(result, key, operationOptions);
             return result;
         }
 
-        public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
+        public Result Refresh(string key, ICacheStoreOperationOptions operationOptions)
         {
-            LogRefreshTry(key, metadata);
-            var result = sourceCacheStore.Refresh(key, metadata);
-            LogRefreshResult(result, key, metadata);
+            LogRefreshTry(key, operationOptions);
+            var result = sourceCacheStore.Refresh(key, operationOptions);
+            LogRefreshResult(result, key, operationOptions);
             return result;
         }
 
-        public async ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            LogRefreshTry(key, metadata);
-            var result = await sourceCacheStore.RefreshAsync(key, metadata, token);
-            LogRefreshResult(result, key, metadata);
+            LogRefreshTry(key, operationOptions);
+            var result = await sourceCacheStore.RefreshAsync(key, operationOptions, token);
+            LogRefreshResult(result, key, operationOptions);
             return result;
         }
 
-        public Result Remove(string key, ICacheStoreOperationMetadata metadata)
+        public Result Remove(string key, ICacheStoreOperationOptions operationOptions)
         {
-            LogRemoveTry(key, metadata);
-            var result = sourceCacheStore.Remove(key, metadata);
-            LogRemovingResult(result, key, metadata);
+            LogRemoveTry(key, operationOptions);
+            var result = sourceCacheStore.Remove(key, operationOptions);
+            LogRemovingResult(result, key, operationOptions);
             return result;
         }
 
-        public async ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+        public async ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            LogRemoveTry(key, metadata);
-            var result = await sourceCacheStore.RemoveAsync(key, metadata, token);
-            LogRemovingResult(result, key, metadata);
+            LogRemoveTry(key, operationOptions);
+            var result = await sourceCacheStore.RemoveAsync(key, operationOptions, token);
+            LogRemovingResult(result, key, operationOptions);
             return result;
         }
 
-        private void LogGetTry<T>(string key, ICacheStoreOperationMetadata metadata)
+        private void LogGetTry<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
             logger.Log(loggingOptions.LogLevel,
                 "[{Store}] [{CacheStoreOperationId:D5}] Trying to get entry with key \"{EntryKey}\" with value of type \"{TypeName}\".",
-                storeLogPrefix, metadata.OperationId, key, typeof(T).Name);
+                storeLogPrefix, operationOptions.OperationId, key, typeof(T).Name);
         }
 
-        private void LogGetResult<T>(Result<T> result, string key, ICacheStoreOperationMetadata metadata)
+        private void LogGetResult<T>(Result<T> result, string key, ICacheStoreOperationOptions operationOptions)
         {
             if (result.Successful)
             {
@@ -113,82 +113,82 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Actions
                     unwrapped != null
                         ? "[{Store}] [{CacheStoreOperationId:D5}] Successfully got entry with key \"{EntryKey}\" with value of type \"{TypeName}\"."
                         : "[{Store}] [{CacheStoreOperationId:D5}] Not found entry with key \"{EntryKey}\" with value of type \"{TypeName}\".",
-                    storeLogPrefix, metadata.OperationId, key, typeof(T).Name);
+                    storeLogPrefix, operationOptions.OperationId, key, typeof(T).Name);
             }
             else
             {
                 logger.Log(loggingOptions.ErrorsLogLevel,
                     result,
                     "[{Store}] [{CacheStoreOperationId:D5}] Failed to get entry with key \"{EntryKey}\" with value of type \"{TypeName}\".",
-                    storeLogPrefix, metadata.OperationId, key, typeof(T).Name);
+                    storeLogPrefix, operationOptions.OperationId, key, typeof(T).Name);
             }
         }
 
-        private void LogSetTry<T>(string key, ICacheStoreOperationMetadata metadata)
+        private void LogSetTry<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
             logger.Log(
                 loggingOptions.LogLevel,
                 "[{Store}] [{CacheStoreOperationId:D5}] Trying to set entry with key \"{EntryKey}\" with value of type \"{TypeName}\".",
-                storeLogPrefix, metadata.OperationId, key, typeof(T).Name);
+                storeLogPrefix, operationOptions.OperationId, key, typeof(T).Name);
         }
 
-        private void LogSetResult<T>(Result result, string key, ICacheStoreOperationMetadata metadata)
+        private void LogSetResult<T>(Result result, string key, ICacheStoreOperationOptions operationOptions)
         {
             if (result.Successful)
                 logger.Log(
                     loggingOptions.LogLevel,
                     "[{Store}] [{CacheStoreOperationId:D5}] Successfully set entry with key \"{EntryKey}\" with value of type \"{TypeName}\".",
-                    storeLogPrefix, metadata.OperationId, key, typeof(T).Name);
+                    storeLogPrefix, operationOptions.OperationId, key, typeof(T).Name);
             else
                 logger.Log(
                     loggingOptions.ErrorsLogLevel,
                     result,
                     "[{Store}] [{CacheStoreOperationId:D5}] Failed to set entry with key \"{EntryKey}\" with value of type \"{TypeName}\".",
-                    storeLogPrefix, metadata.OperationId, key, typeof(T).Name);
+                    storeLogPrefix, operationOptions.OperationId, key, typeof(T).Name);
         }
 
-        private void LogRefreshTry(string key, ICacheStoreOperationMetadata metadata)
+        private void LogRefreshTry(string key, ICacheStoreOperationOptions operationOptions)
         {
             logger.Log(loggingOptions.LogLevel,
                 "[{Store}] [{CacheStoreOperationId:D5}] Trying to refresh entry with key \"{EntryKey}\".",
-                storeLogPrefix, metadata.OperationId, key);
+                storeLogPrefix, operationOptions.OperationId, key);
         }
 
-        private void LogRefreshResult(Result result, string key, ICacheStoreOperationMetadata metadata)
+        private void LogRefreshResult(Result result, string key, ICacheStoreOperationOptions operationOptions)
         {
             if (result.Successful)
                 logger.Log(
                     loggingOptions.LogLevel,
                     "[{Store}] [{CacheStoreOperationId:D5}] Successfully refreshed entry with key \"{EntryKey}\".",
-                    storeLogPrefix, metadata.OperationId, key);
+                    storeLogPrefix, operationOptions.OperationId, key);
             else
                 logger.Log(
                     loggingOptions.ErrorsLogLevel,
                     result,
                     "[{Store}] [{CacheStoreOperationId:D5}] Failed to refresh entry with key \"{EntryKey}\".",
-                    storeLogPrefix, metadata.OperationId, key);
+                    storeLogPrefix, operationOptions.OperationId, key);
         }
 
-        private void LogRemoveTry(string key, ICacheStoreOperationMetadata metadata)
+        private void LogRemoveTry(string key, ICacheStoreOperationOptions operationOptions)
         {
             logger.Log(loggingOptions.LogLevel,
                 "[{Store}] [{CacheStoreOperationId:D5}] Trying to remove entry with key \"{EntryKey}\".",
-                storeLogPrefix, metadata.OperationId, key);
+                storeLogPrefix, operationOptions.OperationId, key);
         }
 
-        private void LogRemovingResult(Result result, string key, ICacheStoreOperationMetadata metadata)
+        private void LogRemovingResult(Result result, string key, ICacheStoreOperationOptions operationOptions)
         {
             if (result.Successful)
                 logger.Log(
                     loggingOptions.LogLevel,
                     "[{Store}] [{CacheStoreOperationId:D5}] Successfully removed entry with key \"{EntryKey}\".",
-                    storeLogPrefix, metadata.OperationId, key);
+                    storeLogPrefix, operationOptions.OperationId, key);
             else
                 logger.Log(
                     loggingOptions.ErrorsLogLevel,
                     result,
                     "[{Store}] [{CacheStoreOperationId:D5}] Failed to remove entry with key \"{EntryKey}\".",
-                    storeLogPrefix, metadata.OperationId, key);
+                    storeLogPrefix, operationOptions.OperationId, key);
         }
     }
 }

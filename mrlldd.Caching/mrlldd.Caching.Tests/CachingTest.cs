@@ -5,6 +5,7 @@ using DryIoc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using mrlldd.Caching.Extensions.DependencyInjection;
+using mrlldd.Caching.Serializers;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Internal;
 using mrlldd.Caching.Tests.TestUtilities;
@@ -14,8 +15,8 @@ namespace mrlldd.Caching.Tests
 {
     public abstract class CachingTest : TestBase
     {
-        private static readonly Expression<Func<IStoreOperationProvider, ICacheStoreOperationMetadata>>
-            OperationProviderSetupExpression = x => x.Next(It.IsAny<string>());
+        private static readonly Expression<Func<IStoreOperationOptionsProvider, ICacheStoreOperationOptions>>
+            OperationProviderSetupExpression = x => x.Next(It.IsAny<string>(), It.IsAny<ICachingSerializer>());
 
         protected override void AfterContainerEnriching()
         {
@@ -37,11 +38,11 @@ namespace mrlldd.Caching.Tests
 
         protected void WithExactOperationsCount(Action action, Func<Times> times)
         {
-            var provider = Container.GetRequiredService<IStoreOperationProvider>();
-            Container.AddMock<IStoreOperationProvider>(MockRepository);
-            var mock = Container.GetRequiredService<Mock<IStoreOperationProvider>>();
+            var provider = Container.GetRequiredService<IStoreOperationOptionsProvider>();
+            Container.AddMock<IStoreOperationOptionsProvider>(MockRepository);
+            var mock = Container.GetRequiredService<Mock<IStoreOperationOptionsProvider>>();
             mock.Setup(OperationProviderSetupExpression)
-                .Returns<string>(s => new CacheStoreOperationMetadata(Faker.Random.Number(99999), s))
+                .Returns<string>(s => new CacheStoreOperationOptions(Faker.Random.Number(99999), s, new NewtonsoftJsonCachingSerializer()))
                 .Verifiable();
             action();
             mock.Verify(OperationProviderSetupExpression, times);
@@ -49,16 +50,16 @@ namespace mrlldd.Caching.Tests
 
         protected async Task WithExactOperationsCountAsync(Func<Task> asyncAction, Func<Times> times)
         {
-            var provider = Container.GetRequiredService<IStoreOperationProvider>();
-            Container.AddMock<IStoreOperationProvider>(MockRepository);
-            var mock = Container.GetRequiredService<Mock<IStoreOperationProvider>>();
+            var provider = Container.GetRequiredService<IStoreOperationOptionsProvider>();
+            Container.AddMock<IStoreOperationOptionsProvider>(MockRepository);
+            var mock = Container.GetRequiredService<Mock<IStoreOperationOptionsProvider>>();
             mock.Setup(OperationProviderSetupExpression)
-                .Returns<string>(s => new CacheStoreOperationMetadata(Faker.Random.Number(99999), s))
+                .Returns<string>(s => new CacheStoreOperationOptions(Faker.Random.Number(99999), s, new NewtonsoftJsonCachingSerializer()))
                 .Verifiable();
             await asyncAction();
             mock.Verify(OperationProviderSetupExpression, times);
             InjectInstance(provider);
-            Container.Unregister<Mock<IStoreOperationProvider>>();
+            Container.Unregister<Mock<IStoreOperationOptionsProvider>>();
         }
     }
 }

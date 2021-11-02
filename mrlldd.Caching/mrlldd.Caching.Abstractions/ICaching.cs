@@ -1,5 +1,6 @@
 using System;
 using mrlldd.Caching.Flags;
+using mrlldd.Caching.Serializers;
 using mrlldd.Caching.Stores;
 
 namespace mrlldd.Caching
@@ -14,9 +15,11 @@ namespace mrlldd.Caching
         ///     created in order to reduce the boilerplate constructor code in every implementation.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        /// <param name="storeOperationProvider">The store operation provider.</param>
+        /// <param name="storeOperationOptionsProvider">The store operation provider.</param>
+        /// <param name="globalDefaultSerializer">The global default caching serializer.</param>
         void Populate(IServiceProvider serviceProvider,
-            IStoreOperationProvider storeOperationProvider);
+            IStoreOperationOptionsProvider storeOperationOptionsProvider,
+            ICachingSerializer globalDefaultSerializer);
     }
 
     /// <summary>

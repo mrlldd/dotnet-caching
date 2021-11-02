@@ -28,82 +28,82 @@ namespace mrlldd.Caching.Decoration.Internal.Logging.Performance
             this.storeLogPrefix = storeLogPrefix;
         }
 
-        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+        public Result<T> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
-            return ThroughStopwatch((s, m) => s.Get<T>(key, m), metadata);
+            return ThroughStopwatch((s, m) => s.Get<T>(key, m), operationOptions);
         }
 
-        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            return ThroughStopwatchAsync((s, m) => s.GetAsync<T>(key, m, token), metadata);
+            return ThroughStopwatchAsync((s, m) => s.GetAsync<T>(key, m, token), operationOptions);
         }
 
-        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
         {
-            return ThroughStopwatch((s, m) => s.Set(key, value, options, m), metadata);
+            return ThroughStopwatch((s, m) => s.Set(key, value, options, m), operationOptions);
         }
 
         public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
-            ICacheStoreOperationMetadata metadata,
+            ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            return ThroughStopwatchAsync((s, m) => s.SetAsync(key, value, options, m, token), metadata);
+            return ThroughStopwatchAsync((s, m) => s.SetAsync(key, value, options, m, token), operationOptions);
         }
 
-        public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
+        public Result Refresh(string key, ICacheStoreOperationOptions operationOptions)
         {
-            return ThroughStopwatch((s, m) => s.Refresh(key, m), metadata);
+            return ThroughStopwatch((s, m) => s.Refresh(key, m), operationOptions);
         }
 
-        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            return ThroughStopwatchAsync((s, m) => s.RefreshAsync(key, m, token), metadata);
+            return ThroughStopwatchAsync((s, m) => s.RefreshAsync(key, m, token), operationOptions);
         }
 
-        public Result Remove(string key, ICacheStoreOperationMetadata metadata)
+        public Result Remove(string key, ICacheStoreOperationOptions operationOptions)
         {
-            return ThroughStopwatch((s, m) => s.Remove(key, m), metadata);
+            return ThroughStopwatch((s, m) => s.Remove(key, m), operationOptions);
         }
 
-        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
-            return ThroughStopwatchAsync((s, m) => s.RemoveAsync(key, m, token), metadata);
+            return ThroughStopwatchAsync((s, m) => s.RemoveAsync(key, m, token), operationOptions);
         }
 
-        private T ThroughStopwatch<T>(Func<ICacheStore<TFlag>, ICacheStoreOperationMetadata, T> func,
-            ICacheStoreOperationMetadata metadata)
+        private T ThroughStopwatch<T>(Func<ICacheStore<TFlag>, ICacheStoreOperationOptions, T> func,
+            ICacheStoreOperationOptions operationOptions)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var result = func(sourceCacheStore, metadata);
+            var result = func(sourceCacheStore, operationOptions);
             stopwatch.Stop();
-            LogElapsedTime(stopwatch, metadata);
+            LogElapsedTime(stopwatch, operationOptions);
             return result;
         }
 
         private async ValueTask<T> ThroughStopwatchAsync<T>(
-            Func<ICacheStore<TFlag>, ICacheStoreOperationMetadata, ValueTask<T>> asyncFunc,
-            ICacheStoreOperationMetadata metadata)
+            Func<ICacheStore<TFlag>, ICacheStoreOperationOptions, ValueTask<T>> asyncFunc,
+            ICacheStoreOperationOptions operationOptions)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var task = asyncFunc(sourceCacheStore, metadata);
+            var task = asyncFunc(sourceCacheStore, operationOptions);
             var result = task.IsCompletedSuccessfully
                 ? task.Result
                 : await task;
             stopwatch.Stop();
-            LogElapsedTime(stopwatch, metadata);
+            LogElapsedTime(stopwatch, operationOptions);
             return result;
         }
 
-        private void LogElapsedTime(Stopwatch stopwatch, ICacheStoreOperationMetadata metadata)
+        private void LogElapsedTime(Stopwatch stopwatch, ICacheStoreOperationOptions operationOptions)
         {
             logger.Log(loggingOptions.LogLevel,
                 "[{Store}] [{CacheStoreOperationId:D5}] Action executed in {ElapsedMilliseconds}ms.", storeLogPrefix,
-                metadata.OperationId,
+                operationOptions.OperationId,
                 stopwatch.Elapsed.TotalMilliseconds);
         }
     }

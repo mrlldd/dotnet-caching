@@ -24,7 +24,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                         c.GetRequiredService<Mock<IDistributedCache>>(),
                         x => x.Get(It.Is<string>(s => s.Equals(Key))),
                         d => new DistributedCacheStore(d)
-                            .Get<VoidUnit>(Key, DefaultMetadata)
+                            .Get<VoidUnit>(Key, DefaultOperationOptions)
                     )
                 );
         }
@@ -38,7 +38,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                         c.GetRequiredService<Mock<IDistributedCache>>(),
                         x => x.GetAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                         d => new DistributedCacheStore(d)
-                            .GetAsync<VoidUnit>(Key, DefaultMetadata)
+                            .GetAsync<VoidUnit>(Key, DefaultOperationOptions)
                             .AsTask(),
                         Task.CompletedTask
                     )
@@ -56,7 +56,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                             It.Is<DistributedCacheEntryOptions>(o =>
                                 o.SlidingExpiration == CachingOptions.SlidingExpiration)),
                         d => new DistributedCacheStore(d)
-                            .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
+                            .Set(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions)
                     )
                 );
         }
@@ -73,7 +73,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                                 o.SlidingExpiration == CachingOptions.SlidingExpiration),
                             It.IsAny<CancellationToken>()),
                         d => new DistributedCacheStore(d)
-                            .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
+                            .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions)
                             .AsTask(),
                         Task.CompletedTask
                     )
@@ -91,7 +91,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                             It.Is<string>(s => s.Equals(Key))
                         ),
                         d => new DistributedCacheStore(d)
-                            .Refresh(Key, DefaultMetadata)
+                            .Refresh(Key, DefaultOperationOptions)
                     )
                 );
         }
@@ -105,7 +105,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                         c.GetRequiredService<Mock<IDistributedCache>>(),
                         x => x.RefreshAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                         d => new DistributedCacheStore(d)
-                            .RefreshAsync(Key, DefaultMetadata)
+                            .RefreshAsync(Key, DefaultOperationOptions)
                             .AsTask(),
                         Task.CompletedTask
                     )
@@ -121,7 +121,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                         c.GetRequiredService<Mock<IDistributedCache>>(),
                         x => x.Remove(It.Is<string>(s => s.Equals(Key))),
                         d => new DistributedCacheStore(d)
-                            .Remove(Key, DefaultMetadata)
+                            .Remove(Key, DefaultOperationOptions)
                     )
                 );
         }
@@ -135,7 +135,7 @@ namespace mrlldd.Caching.Tests.Stores.Distributed
                         c.GetRequiredService<Mock<IDistributedCache>>(),
                         x => x.RemoveAsync(It.Is<string>(s => s.Equals(Key)), It.IsAny<CancellationToken>()),
                         d => new DistributedCacheStore(d)
-                            .RemoveAsync(Key, DefaultMetadata)
+                            .RemoveAsync(Key, DefaultOperationOptions)
                             .AsTask(),
                         Task.CompletedTask
                     )

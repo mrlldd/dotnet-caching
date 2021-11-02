@@ -17,7 +17,7 @@ namespace mrlldd.Caching.Stores.Internal
             this.distributedCache = distributedCache;
         }
 
-        public Result<T> Get<T>(string key, ICacheStoreOperationMetadata metadata)
+        public Result<T> Get<T>(string key, ICacheStoreOperationOptions operationOptions)
         {
             return Result.Of(() =>
             {
@@ -28,7 +28,7 @@ namespace mrlldd.Caching.Stores.Internal
             });
         }
 
-        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result<T>> GetAsync<T>(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
             var task = Result.Of(async () =>
@@ -41,7 +41,7 @@ namespace mrlldd.Caching.Stores.Internal
             return new ValueTask<Result<T>>(task);
         }
 
-        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationMetadata metadata)
+        public Result Set<T>(string key, T value, CachingOptions options, ICacheStoreOperationOptions operationOptions)
         {
             return Result.Of(() => distributedCache.SetString(key, Serialize(value), new DistributedCacheEntryOptions
             {
@@ -51,7 +51,7 @@ namespace mrlldd.Caching.Stores.Internal
         }
 
         public ValueTask<Result> SetAsync<T>(string key, T value, CachingOptions options,
-            ICacheStoreOperationMetadata metadata, CancellationToken token = default)
+            ICacheStoreOperationOptions operationOptions, CancellationToken token = default)
         {
             var task = Result.Of(() => distributedCache.SetStringAsync(key, Serialize(value),
                 new DistributedCacheEntryOptions
@@ -62,24 +62,24 @@ namespace mrlldd.Caching.Stores.Internal
             return new ValueTask<Result>(task);
         }
 
-        public Result Refresh(string key, ICacheStoreOperationMetadata metadata)
+        public Result Refresh(string key, ICacheStoreOperationOptions operationOptions)
         {
             return Result.Of(() => distributedCache.Refresh(key));
         }
 
-        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RefreshAsync(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
             var task = Result.Of(() => distributedCache.RefreshAsync(key, token));
             return new ValueTask<Result>(task);
         }
 
-        public Result Remove(string key, ICacheStoreOperationMetadata metadata)
+        public Result Remove(string key, ICacheStoreOperationOptions operationOptions)
         {
             return Result.Of(() => distributedCache.Remove(key));
         }
 
-        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationMetadata metadata,
+        public ValueTask<Result> RemoveAsync(string key, ICacheStoreOperationOptions operationOptions,
             CancellationToken token = default)
         {
             var task = Result.Of(() => distributedCache.RemoveAsync(key, token));

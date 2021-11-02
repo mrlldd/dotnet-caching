@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using mrlldd.Caching.Exceptions;
 using mrlldd.Caching.Flags;
+using mrlldd.Caching.Serializers;
 using mrlldd.Caching.Stores;
 using mrlldd.Caching.Stores.Internal;
 using mrlldd.Caching.Tests.TestUtilities;
@@ -18,7 +19,7 @@ namespace mrlldd.Caching.Tests.Stores
     public class NoOpDistributedCacheStoreTests : TestBase
     {
         private string Key { get; set; } = null!;
-        private ICacheStoreOperationMetadata OperationMetadata { get; set; } = null!;
+        private ICacheStoreOperationOptions OperationOptions { get; set; } = null!;
 
         private CachingOptions CachingOptions { get; set; } = null!;
 
@@ -26,8 +27,8 @@ namespace mrlldd.Caching.Tests.Stores
         {
             base.AfterContainerEnriching();
             Key = Faker.Random.String(0, 32);
-            OperationMetadata =
-                new CacheStoreOperationMetadata(Faker.Random.Number(0, 99999), Faker.Random.String(0, 32));
+            OperationOptions =
+                new CacheStoreOperationOptions(Faker.Random.Number(0, 99999), Faker.Random.String(0, 32), new NewtonsoftJsonCachingSerializer());
             CachingOptions = CachingOptions.Enabled(TimeSpan.FromMilliseconds(Faker.Random.Double(0, 99999)));
         }
 
@@ -44,7 +45,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .Effect(c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = store.Get<VoidUnit>(Key, OperationMetadata);
+                    var result = store.Get<VoidUnit>(Key, OperationOptions);
                     result.Should()
                         .BeFailResult<VoidUnit>()
                         .Which.Exception.Should()
@@ -60,7 +61,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .EffectAsync(async c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = await store.GetAsync<VoidUnit>(Key, OperationMetadata);
+                    var result = await store.GetAsync<VoidUnit>(Key, OperationOptions);
                     result.Should()
                         .BeFailResult<VoidUnit>()
                         .Which.Exception.Should()
@@ -76,7 +77,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .Effect(c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = store.Set(Key, new VoidUnit(), CachingOptions, OperationMetadata);
+                    var result = store.Set(Key, new VoidUnit(), CachingOptions, OperationOptions);
                     result.Should().BeSuccessfulResult();
                 });
         }
@@ -88,7 +89,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .EffectAsync(async c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = await store.SetAsync(Key, new VoidUnit(), CachingOptions, OperationMetadata);
+                    var result = await store.SetAsync(Key, new VoidUnit(), CachingOptions, OperationOptions);
                     result.Should().BeSuccessfulResult();
                 });
         }
@@ -100,7 +101,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .Effect(c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = store.Refresh(Key, OperationMetadata);
+                    var result = store.Refresh(Key, OperationOptions);
                     result.Should().BeSuccessfulResult();
                 });
         }
@@ -112,7 +113,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .EffectAsync(async c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = await store.RefreshAsync(Key, OperationMetadata);
+                    var result = await store.RefreshAsync(Key, OperationOptions);
                     result.Should().BeSuccessfulResult();
                 });
         }
@@ -124,7 +125,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .Effect(c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = store.Remove(Key, OperationMetadata);
+                    var result = store.Remove(Key, OperationOptions);
                     result.Should().BeSuccessfulResult();
                 });
         }
@@ -136,7 +137,7 @@ namespace mrlldd.Caching.Tests.Stores
                 .EffectAsync(async c =>
                 {
                     var store = c.GetRequiredService<ICacheStoreProvider<InDistributed>>().CacheStore;
-                    var result = await store.RemoveAsync(Key, OperationMetadata);
+                    var result = await store.RemoveAsync(Key, OperationOptions);
                     result.Should().BeSuccessfulResult();
                 });
         }

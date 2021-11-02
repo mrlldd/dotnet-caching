@@ -28,7 +28,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     var unit = new VoidUnit();
                     memoryCache.Set(Key, unit);
                     var result = c.GetRequiredService<ICacheStore<InMemory>>()
-                        .Get<VoidUnit>(Key, NullMetadata.Instance);
+                        .Get<VoidUnit>(Key, NullOperationOptions.Instance);
                     result
                         .Should()
                         .BeSuccessfulResult<VoidUnit>();
@@ -46,7 +46,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     var unit = new VoidUnit();
                     memoryCache.Set(Key, unit);
                     var result = await c.GetRequiredService<ICacheStore<InMemory>>()
-                        .GetAsync<VoidUnit>(Key, DefaultMetadata);
+                        .GetAsync<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeSuccessfulResult<VoidUnit>();
@@ -60,7 +60,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
             Container
                 .Effect(c =>
                 {
-                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Get<VoidUnit>(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Get<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeFailResult<VoidUnit>();
@@ -79,7 +79,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InMemory>>()
-                        .GetAsync<VoidUnit>(Key, DefaultMetadata);
+                        .GetAsync<VoidUnit>(Key, DefaultOperationOptions);
                     result
                         .Should()
                         .BeFailResult<VoidUnit>();
@@ -97,7 +97,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                 .Effect(c =>
                 {
                     var result = c.GetRequiredService<ICacheStore<InMemory>>()
-                        .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .Set(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -110,7 +110,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                 .EffectAsync(async c =>
                 {
                     var result = await c.GetRequiredService<ICacheStore<InMemory>>()
-                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -127,7 +127,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     mock.Setup(x => x.CreateEntry(It.Is<string>(s => s == Key)))
                         .Throws<TestException>();
                     var result = c.GetRequiredService<ICacheStore<InMemory>>()
-                        .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .Set(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -145,7 +145,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     mock.Setup(x => x.CreateEntry(It.Is<string>(s => s == Key)))
                         .Throws<TestException>();
                     var result = await c.GetRequiredService<ICacheStore<InMemory>>()
-                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultMetadata);
+                        .SetAsync(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -158,7 +158,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
             Container
                 .Effect(c =>
                 {
-                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Refresh(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Refresh(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -170,7 +170,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
             return Container
                 .EffectAsync(async c =>
                 {
-                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RefreshAsync(Key, DefaultMetadata);
+                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RefreshAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -187,7 +187,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     object obj;
                     mock.Setup(x => x.TryGetValue(It.Is<string>(s => s == Key), out obj))
                         .Throws<TestException>();
-                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Refresh(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Refresh(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -205,7 +205,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     object obj;
                     mock.Setup(x => x.TryGetValue(It.Is<string>(s => s == Key), out obj))
                         .Throws<TestException>();
-                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RefreshAsync(Key, DefaultMetadata);
+                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RefreshAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -218,7 +218,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
             Container
                 .Effect(c =>
                 {
-                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Remove(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Remove(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -230,7 +230,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
             return Container
                 .EffectAsync(async c =>
                 {
-                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RemoveAsync(Key, DefaultMetadata);
+                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RemoveAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeSuccessfulResult();
                 });
@@ -246,7 +246,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     var mock = c.GetRequiredService<Mock<IMemoryCache>>();
                     mock.Setup(x => x.Remove(It.Is<string>(s => s == Key)))
                         .Throws<TestException>();
-                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Remove(Key, DefaultMetadata);
+                    var result = c.GetRequiredService<ICacheStore<InMemory>>().Remove(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();
@@ -263,7 +263,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     var mock = c.GetRequiredService<Mock<IMemoryCache>>();
                     mock.Setup(x => x.Remove(It.Is<string>(s => s == Key)))
                         .Throws<TestException>();
-                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RemoveAsync(Key, DefaultMetadata);
+                    var result = await c.GetRequiredService<ICacheStore<InMemory>>().RemoveAsync(Key, DefaultOperationOptions);
                     result.Should()
                         .BeFailResult()
                         .Which.Exception.Should().BeOfType<TestException>();

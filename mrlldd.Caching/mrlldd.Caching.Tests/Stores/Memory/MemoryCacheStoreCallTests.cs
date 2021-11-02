@@ -25,7 +25,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                         x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                         m => new MemoryCacheStore(m)
-                            .Get<VoidUnit>(Key, DefaultMetadata)
+                            .Get<VoidUnit>(Key, DefaultOperationOptions)
                     );
                 });
         }
@@ -40,7 +40,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
                         x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                         m => new MemoryCacheStore(m)
-                            .GetAsync<VoidUnit>(Key, DefaultMetadata).AsTask());
+                            .GetAsync<VoidUnit>(Key, DefaultOperationOptions).AsTask());
                 });
         }
 
@@ -52,7 +52,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                         x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
                         m => new MemoryCacheStore(m)
-                            .Set(Key, new VoidUnit(), CachingOptions, DefaultMetadata)
+                            .Set(Key, new VoidUnit(), CachingOptions, DefaultOperationOptions)
                     ));
         }
 
@@ -65,7 +65,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                         x => x.CreateEntry(It.Is<string>(s => s.Equals(Key))),
                         m => new MemoryCacheStore(m)
                             .SetAsync(Key, new VoidUnit(), CachingOptions,
-                                NullMetadata.Instance)
+                                NullOperationOptions.Instance)
                             .AsTask()
                     ));
         }
@@ -80,7 +80,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                         x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                         m => new MemoryCacheStore(m)
-                            .Refresh(Key, DefaultMetadata)
+                            .Refresh(Key, DefaultOperationOptions)
                     );
                 });
         }
@@ -95,7 +95,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     return CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
                         x => x.TryGetValue(It.Is<string>(s => s.Equals(Key)), out obj),
                         m => new MemoryCacheStore(m)
-                            .RefreshAsync(Key, DefaultMetadata)
+                            .RefreshAsync(Key, DefaultOperationOptions)
                             .AsTask()
                     );
                 });
@@ -109,7 +109,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     CallsSpecific(c.GetRequiredService<Mock<IMemoryCache>>(),
                         x => x.Remove(It.Is<string>(s => s.Equals(Key))),
                         m => new MemoryCacheStore(m)
-                            .Remove(Key, DefaultMetadata)
+                            .Remove(Key, DefaultOperationOptions)
                     ));
         }
 
@@ -121,7 +121,7 @@ namespace mrlldd.Caching.Tests.Stores.Memory
                     CallsSpecificAsync(c.GetRequiredService<Mock<IMemoryCache>>(),
                         x => x.Remove(It.Is<string>(s => s.Equals(Key))),
                         m => new MemoryCacheStore(m)
-                            .RemoveAsync(Key, DefaultMetadata)
+                            .RemoveAsync(Key, DefaultOperationOptions)
                             .AsTask()
                     ));
         }
